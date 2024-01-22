@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:musafir_app/main_page.dart';
 
 void main() {
   runApp(const MainApp());
@@ -17,6 +16,5 @@ class MainApp extends StatelessWidget {
         ),
       ),
     );
-    return materialApp;
   }
 }
