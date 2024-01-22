@@ -10,10 +10,12 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    MainPage mainPage = const MainPage();
-
-    MaterialApp materialApp = MaterialApp(
-      home: mainPage,
+    return const MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Text('Hello World!'),
+        ),
+      ),
     );
     return materialApp;
   }
