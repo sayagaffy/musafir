@@ -1,21 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:musafir/shared/theme.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Text title = const Text('Test App');
-    Text body = const Text('Hello world');
+    Widget helloWord() {
+      return Container(
+        width: double.infinity,
+        height: double.infinity,
+        child: Center(
+          child: Text(
+            'HELLO FROM MAIN PAGE',
+            style: blackTextStyle.copyWith(
+              fontSize: 24,
+              fontWeight: semiBold,
+            ),
+          ),
+        ),
+      );
+    }
 
-    AppBar appBar = AppBar(
-      title: title,
+    return Scaffold(
+      backgroundColor: kBackgroundColor,
+      body: Stack(
+        children: [
+          helloWord(),
+        ],
+      ),
     );
-    Scaffold scaffold = Scaffold(
-      appBar: appBar,
-      body: body,
-    );
-
-    return scaffold;
   }
 }
