@@ -64,7 +64,7 @@ class HomePage extends StatelessWidget {
             ),
           ),
           Container(
-            margin: EdgeInsets.only(top: 8, bottom: 9),
+            margin: const EdgeInsets.only(top: 8, bottom: 9),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [

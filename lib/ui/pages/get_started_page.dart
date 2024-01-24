@@ -11,7 +11,7 @@ class GetStartedPage extends StatelessWidget {
       backgroundColor: kBackgroundColor,
       body: Stack(
         children: [
-          Container(
+          const SizedBox(
             width: double.infinity,
             height: double.infinity,
             // decoration: const BoxDecoration(

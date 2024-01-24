@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/pages/account_page.dart';
@@ -6,15 +5,17 @@ import 'package:musafir/ui/pages/community_page.dart';
 import 'package:musafir/ui/pages/explore_pages.dart';
 import 'package:musafir/ui/pages/favorite_page.dart';
 import 'package:musafir/ui/pages/home_page.dart';
+// import 'package:musafir/ui/pages/map_page.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 
 List<Widget> _buildScreens() {
   return [
-    HomePage(),
-    ExplorePage(),
-    FavoritePage(),
-    CommunityPage(),
-    AccountPage()
+    const HomePage(),
+    const ExplorePage(),
+    // MapPage(),
+    const FavoritePage(),
+    const CommunityPage(),
+    const AccountPage()
   ];
 }
 
