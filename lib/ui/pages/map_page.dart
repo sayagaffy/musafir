@@ -43,8 +43,8 @@ class _MapPageState extends State<MapPage> {
               ),
             )
           : GoogleMap(
-              initialCameraPosition: const CameraPosition(
-                target: _pGooglePlex,
+              initialCameraPosition: CameraPosition(
+                target: _currentP!,
                 zoom: 13,
               ),
               markers: {
@@ -99,7 +99,7 @@ class _MapPageState extends State<MapPage> {
           _currentP =
               LatLng(currentLocation.latitude!, currentLocation.longitude!);
           // ignore: avoid_print
-          print(_currentP);
+          // print(_currentP);
         });
       }
     });

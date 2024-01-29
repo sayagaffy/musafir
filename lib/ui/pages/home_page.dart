@@ -1,5 +1,7 @@
 import 'package:musafir/shared/theme.dart';
 import 'package:flutter/material.dart';
+
+import 'package:musafir/ui/widgets/custom_search_button.dart';
 import 'package:musafir/ui/widgets/custom_title.dart';
 import 'package:musafir/ui/widgets/rekomendasi_card.dart';
 import 'package:musafir/ui/widgets/tile_card.dart';
@@ -30,39 +32,7 @@ class HomePage extends StatelessWidget {
           const SizedBox(
             height: 14,
           ),
-          SizedBox(
-            height: 32,
-            child: TextField(
-              style: blackTextStyle.copyWith(
-                fontSize: 12,
-                fontWeight: regular,
-                color: kBlackColor,
-              ),
-              textAlignVertical: TextAlignVertical.center,
-              cursorColor: kBlackColor,
-              decoration: InputDecoration(
-                fillColor: kWhiteColor,
-                contentPadding: const EdgeInsets.all(10.0),
-                filled: true,
-                prefixIcon: const Icon(
-                  Icons.search,
-                  size: 20,
-                ),
-                hintText: 'Cari di musafir,',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(defaultRadius),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(
-                    defaultRadius,
-                  ),
-                  borderSide: BorderSide(
-                    color: kGreyColor,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          const SizedBox(height: 32, child: CustomSearchButton()),
           Container(
             margin: const EdgeInsets.only(top: 8, bottom: 9),
             child: Row(
@@ -261,18 +231,20 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        header(),
-        titleRekomendasi(),
-        rekomendasi(),
-        line(),
-        titleKategoriMakanan(),
-        kategoriMakanan(),
-        line(),
-        titleRekomendasiMasjid(),
-        rekomendasiMasjid(),
-      ],
+    return Scaffold(
+      body: ListView(
+        children: [
+          header(),
+          titleRekomendasi(),
+          rekomendasi(),
+          line(),
+          titleKategoriMakanan(),
+          kategoriMakanan(),
+          line(),
+          titleRekomendasiMasjid(),
+          rekomendasiMasjid(),
+        ],
+      ),
     );
   }
 }

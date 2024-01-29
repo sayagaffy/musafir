@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:musafir/shared/theme.dart';
+import 'package:musafir/ui/pages/detail_page.dart';
+import 'package:musafir/ui/widgets/custom_page_route.dart';
 
 class RekomendasiCard extends StatelessWidget {
   final String name;
@@ -19,12 +21,10 @@ class RekomendasiCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => const DetailPage(),
-        //   ),
-        // );
+        Navigator.of(context).push(CustomPageRoute(
+          child: const DetailPage(),
+          direction: AxisDirection.up,
+        ));
       },
       child: Container(
         width: 178,

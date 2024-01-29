@@ -12,7 +12,7 @@ List<Widget> _buildScreens() {
   return [
     const HomePage(),
     const ExplorePage(),
-    // MapPage(),
+    // const MapPage(),
     const FavoritePage(),
     const CommunityPage(),
     const AccountPage()
