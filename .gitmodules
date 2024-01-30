@@ -1,3 +1,3 @@
 [submodule "sayagaffy/musafir"] 
   path = sayagaffy/musafir 
-	url = https://github.com/sayagaffy/musafir.git
+	url = git@github.com:sayagaffy/musafir.git
