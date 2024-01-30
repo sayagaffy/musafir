@@ -3,13 +3,15 @@ import 'package:musafir/ui/pages/get_started_page.dart';
 import 'package:musafir/ui/pages/main_page.dart';
 import 'package:musafir/ui/pages/sign_up_page.dart';
 import 'package:musafir/ui/pages/splash_widget.dart';
-import 'package:device_preview/device_preview.dart';
+// import 'package:device_preview/device_preview.dart';
 
 void main() {
-  runApp(DevicePreview(
-    enabled: true,
-    builder: (BuildContext context) => const MainApp(),
-  ));
+  // runApp(DevicePreview(
+  //   enabled: true,
+  //   builder: (BuildContext context) => const MainApp(),
+  // ));
+
+  runApp(const MainApp());
 }
 
 class MainApp extends StatelessWidget {

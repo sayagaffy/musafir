@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'package:musafir/ui/pages/home_page.dart';
 import 'package:musafir/ui/pages/main_page.dart';
 import 'package:musafir/ui/pages/sign_up_page.dart';
-
 import 'package:musafir/ui/widgets/custom_page_route.dart';
 import '../../shared/theme.dart';
 
