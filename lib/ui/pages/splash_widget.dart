@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:musafir/ui/pages/home_page.dart';
+import 'package:musafir/ui/pages/main_page.dart';
 import 'package:musafir/ui/pages/sign_up_page.dart';
 
 import 'package:musafir/ui/widgets/custom_page_route.dart';
@@ -54,7 +55,7 @@ class _SplashPageState extends State<SplashPage> {
                 ),
                 onPressed: () {
                   Navigator.of(context).push(CustomPageRoute(
-                    child: const HomePage(),
+                    child: const MainPage(),
                     direction: AxisDirection.left,
                   ));
                 },
