@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/models/autocomplate_prediction.dart';
@@ -16,27 +18,31 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  final Debouncer debouncer = Debouncer(duration: const Duration(seconds: 1));
   List<AutocompletePrediction> placePredictions = [];
 
   void placeAutoComplate(String query) async {
-    Uri uri =
-        Uri.https("maps.googleapis.com", 'maps/api/place/autocomplete/json', {
-      "input": query, // query Parameters
-      "key": "AIzaSyBe_89LiN8WdHYk5mPcmAey5ZyheaskwE0", //Google api key
+    debouncer.run(() async {
+      Uri uri =
+          Uri.https("maps.googleapis.com", 'maps/api/place/autocomplete/json', {
+        "input": query, // query Parameters
+        "key": "AIzaSyBe_89LiN8WdHYk5mPcmAey5ZyheaskwE0", //Google api key
+      });
+
+      String? response = await NetworkUltility.fetchUrl(uri);
+
+      if (response != null) {
+        PlaceAutocompleteResponse result =
+            PlaceAutocompleteResponse.parseAutoComplateResult(response);
+        if (result.predictions != null) {
+          setState(() {
+            placePredictions = result.predictions!;
+          });
+        }
+      }
     });
 
     //its time to GET request
-    String? response = await NetworkUltility.fetchUrl(uri);
-
-    if (response != null) {
-      PlaceAutocompleteResponse result =
-          PlaceAutocompleteResponse.parseAutoComplateResult(response);
-      if (result.predictions != null) {
-        setState(() {
-          placePredictions = result.predictions!;
-        });
-      }
-    }
   }
 
   Widget header(BuildContext context) {
@@ -322,5 +328,22 @@ class _SearchPageState extends State<SearchPage> {
         ],
       ),
     );
+  }
+}
+
+///delay search
+class Debouncer {
+  final Duration duration;
+  Debouncer({required this.duration});
+
+  Timer? _timer;
+
+  void run(VoidCallback action) {
+    bool isActive = _timer?.isActive ?? false;
+
+    if (isActive) {
+      _timer?.cancel();
+    }
+    _timer = Timer(duration, action);
   }
 }
