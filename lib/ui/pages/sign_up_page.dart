@@ -16,7 +16,7 @@ class SignUpPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  'Sign up Page ',
+                  'Login Musafir',
                   style: blackTextStyle.copyWith(
                     fontSize: 32,
                     fontWeight: semiBold,
@@ -24,6 +24,32 @@ class SignUpPage extends StatelessWidget {
                 ),
                 const SizedBox(
                   height: 10,
+                ),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 70),
+                ),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(90.0),
+                      ),
+                      labelText: 'Masukan Email',
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  child: TextField(
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(90.0),
+                      ),
+                      labelText: 'Password',
+                    ),
+                  ),
                 ),
                 CustomButton(
                   title: 'Get Started',
@@ -35,6 +61,16 @@ class SignUpPage extends StatelessWidget {
                   onPressed: () {
                     Navigator.pushNamed(context, '/main');
                   },
+                ),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(10, 10, 20, 30),
+                  child: TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Forgot Password?',
+                      style: TextStyle(color: Colors.grey[600]),
+                    ),
+                  ),
                 ),
               ],
             ),
