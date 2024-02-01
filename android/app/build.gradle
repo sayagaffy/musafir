@@ -23,8 +23,10 @@ if (flutterVersionName == null) {
 }
 
 android {
+    compileSdkVersion 33
+
     namespace "com.example.musafir_app"
-    compileSdkVersion flutter.compileSdkVersion
+    // compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
     compileOptions {

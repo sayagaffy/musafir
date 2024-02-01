@@ -1,0 +1,53 @@
+import 'package:get/get.dart';
+import 'package:musafir/ui/pages/address/add_address_page.dart';
+import 'package:musafir/ui/pages/auth/sign_in_page.dart';
+import 'package:musafir/ui/pages/auth/sign_up_page.dart';
+import 'package:musafir/ui/pages/home_page.dart';
+import 'package:musafir/ui/pages/splash_widget.dart';
+
+class RouteHelper {
+  static const String splashPage = "/splash-page";
+  static const String sigIn = "/sign-in";
+  static const String sigUp = "/sign-up";
+  static const String initial = "/";
+  static const String addAddress = "/add-address";
+
+  // ignore: unnecessary_string_interpolations
+  static String getSplashPage() => '$splashPage';
+  // ignore: unnecessary_string_interpolations
+  static String getInitial() => '$initial';
+  // ignore: unnecessary_string_interpolations
+  static String getsigInPage() => '$sigIn';
+  // ignore: unnecessary_string_interpolations
+  static String getsignUpPage() => '$sigUp';
+  // ignore: unnecessary_string_interpolations
+  static String getAddresssPage() => '$addAddress';
+
+  static List<GetPage> routes = [
+    GetPage(
+      name: splashPage,
+      page: () => const SplashPage(),
+    ),
+    GetPage(
+      name: initial,
+      page: () => const HomePage(),
+      transition: Transition.fade,
+    ),
+    GetPage(
+      name: sigIn,
+      page: () => const SignInPage1(),
+      transition: Transition.fade,
+    ),
+    GetPage(
+      name: sigUp,
+      page: () => const SignUpPage1(),
+      transition: Transition.fade,
+    ),
+    GetPage(
+      name: addAddress,
+      page: () {
+        return const AddAddressPage();
+      },
+    )
+  ];
+}

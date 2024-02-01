@@ -53,16 +53,16 @@ class _MapPageState extends State<MapPage> {
                   icon: BitmapDescriptor.defaultMarker,
                   position: _currentP!,
                 ),
-                const Marker(
-                  markerId: MarkerId("_sourceLocation"),
-                  icon: BitmapDescriptor.defaultMarker,
-                  position: _pApplePark,
-                ),
-                const Marker(
-                  markerId: MarkerId("_destinationLocation"),
-                  icon: BitmapDescriptor.defaultMarker,
-                  position: _pGooglePlex,
-                ),
+                // const Marker(
+                //   markerId: MarkerId("_sourceLocation"),
+                //   icon: BitmapDescriptor.defaultMarker,
+                //   position: _pApplePark,
+                // ),
+                // const Marker(
+                //   markerId: MarkerId("_destinationLocation"),
+                //   icon: BitmapDescriptor.defaultMarker,
+                //   position: _pGooglePlex,
+                // ),
               },
             ),
     );
