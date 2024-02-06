@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 import 'package:musafir/ui/pages/auth/sign_in_page.dart';
 import 'package:musafir/ui/pages/auth/sign_up_page.dart';
 import 'package:musafir/ui/pages/main_page.dart';
@@ -82,10 +84,11 @@ class _SplashPageState extends State<SplashPage> {
                   ),
                 ),
                 onPressed: () {
-                  Navigator.of(context).push(CustomPageRoute(
-                    child: const SignInPage1(),
-                    direction: AxisDirection.up,
-                  ));
+                  Get.to(
+                    () => const SignUpPage1(),
+                    transition: Transition.fadeIn,
+                    duration: const Duration(milliseconds: 300),
+                  );
                 },
                 child: Text(
                   'Daftar',

@@ -11,18 +11,20 @@ class ApiClent extends GetConnect implements GetxService {
   late Map<String, String> _mainHeaders;
   ApiClent({required this.appBaseUrl, required this.sharedPreferences}) {
     baseUrl = appBaseUrl;
-    timeout = const Duration(seconds: 30);
+    timeout = Duration(seconds: 30);
     // token = AppConstants.TOKEN;
     token = sharedPreferences.getString(AppConstants.TOKEN) ?? "";
     _mainHeaders = {
-      'Content-type': 'application/json; charset=UTF-8',
+      'Content-Type': 'application/json',
       'Authorization': 'Bearer  $token',
+      'Accept': '*/*',
     };
   }
   void updateHeader(String token) {
     _mainHeaders = {
-      'Content-type': 'application/json; charset=UTF-8',
+      'Content-Type': 'application/json',
       'Authorization': 'Bearer  $token',
+      'Accept': '*/*',
     };
   }
 
@@ -38,13 +40,10 @@ class ApiClent extends GetConnect implements GetxService {
   Future<Response> posData(String uri, dynamic body) async {
     try {
       Response response = await post(uri, body, headers: _mainHeaders);
-      // ignore: avoid_print
       print(response.toString());
       return response;
     } catch (e) {
-      // ignore: avoid_print
       print(e.toString());
-      // ignore: avoid_print
       print(e.toString());
       return Response(statusCode: 1, statusText: e.toString());
     }

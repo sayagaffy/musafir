@@ -2,14 +2,14 @@ import 'package:get/get.dart';
 import 'package:musafir/ui/pages/address/add_address_page.dart';
 import 'package:musafir/ui/pages/auth/sign_in_page.dart';
 import 'package:musafir/ui/pages/auth/sign_up_page.dart';
-import 'package:musafir/ui/pages/home_page.dart';
+import 'package:musafir/ui/pages/main_page.dart';
 import 'package:musafir/ui/pages/splash_widget.dart';
 
 class RouteHelper {
   static const String splashPage = "/splash-page";
   static const String sigIn = "/sign-in";
   static const String sigUp = "/sign-up";
-  static const String initial = "/";
+  static const String initial = "/main";
   static const String addAddress = "/add-address";
 
   // ignore: unnecessary_string_interpolations
@@ -30,7 +30,7 @@ class RouteHelper {
     ),
     GetPage(
       name: initial,
-      page: () => const HomePage(),
+      page: () => const MainPage(),
       transition: Transition.fade,
     ),
     GetPage(
