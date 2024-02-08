@@ -1,0 +1,43 @@
+import 'package:get/get.dart';
+import 'package:musafir/ui/pages/auth/sign_in_page.dart';
+import 'package:musafir/ui/pages/auth/sign_up_page.dart';
+import 'package:musafir/ui/pages/main_page.dart';
+import 'package:musafir/ui/pages/splash_widget.dart';
+
+class RouteHelper {
+  static const String splashPage = "/splash-page";
+  static const String sigIn = "/sign-in";
+  static const String sigUp = "/sign-up";
+  static const String initial = "/main";
+
+  // ignore: unnecessary_string_interpolations
+  static String getSplashPage() => '$splashPage';
+  // ignore: unnecessary_string_interpolations
+  static String getInitial() => '$initial';
+  // ignore: unnecessary_string_interpolations
+  static String getsigInPage() => '$sigIn';
+  // ignore: unnecessary_string_interpolations
+  static String getsignUpPage() => '$sigUp';
+
+  static List<GetPage> routes = [
+    GetPage(
+      name: splashPage,
+      page: () => const SplashPage(),
+    ),
+    GetPage(
+      name: initial,
+      page: () => const MainPage(),
+      transition: Transition.fade,
+    ),
+    GetPage(
+      name: sigIn,
+      page: () => const SignInPage1(),
+      transition: Transition.fade,
+    ),
+    GetPage(
+      name: sigUp,
+      page: () => const SignUpPage1(),
+      transition: Transition.fade,
+    ),
+  ];
+}
