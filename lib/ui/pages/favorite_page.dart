@@ -31,7 +31,7 @@ class FavoritePage extends StatelessWidget {
                       return SizedBox(
                         width: 200,
                         child: Text(
-                          users.usersList[index].lastName,
+                          users.usersList[index],
                           style: blackTextStyle,
                         ),
                       );

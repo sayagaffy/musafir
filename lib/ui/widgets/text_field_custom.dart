@@ -5,12 +5,14 @@ class TextFieldCustom extends StatelessWidget {
   final TextEditingController textController;
   final String hintText;
   final IconData icon;
+  bool isObscure;
 
-  const TextFieldCustom({
+  TextFieldCustom({
     super.key,
     required this.textController,
     required this.hintText,
     required this.icon,
+    this.isObscure = false,
   });
 
   @override
@@ -27,14 +29,15 @@ class TextFieldCustom extends StatelessWidget {
         color: kWhiteColor,
         boxShadow: [
           BoxShadow(
-            blurRadius: 4,
-            spreadRadius: 3,
-            offset: const Offset(1, 4),
+            blurRadius: 3,
+            spreadRadius: 1,
+            offset: const Offset(1, 1),
             color: Colors.grey.withOpacity(0.2),
           ),
         ],
       ),
       child: TextField(
+        obscureText: isObscure,
         controller: textController,
         decoration: InputDecoration(
           prefixIcon: Icon(
@@ -42,7 +45,7 @@ class TextFieldCustom extends StatelessWidget {
             color: kBlackColor,
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(90.0),
+            borderRadius: BorderRadius.circular(18),
             borderSide: const BorderSide(
               width: 1.5,
               color: Color.fromARGB(255, 3, 106, 154),
