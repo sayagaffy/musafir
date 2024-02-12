@@ -16,12 +16,10 @@ class SignInPage1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var emailController = TextEditingController();
-    var phoneController = TextEditingController();
     var passwordController = TextEditingController();
 
     void _login(AuthController _authController) {
       String email = emailController.text.trim();
-      String phone = phoneController.text.trim();
       String password = passwordController.text.trim();
 
       if (password.isEmpty) {
@@ -36,7 +34,7 @@ class SignInPage1 extends StatelessWidget {
         showCustomSnackBar("Password can not  be less  than six characters",
             title: 'Password');
       } else {
-        _authController.login(email, phone, password).then((status) {
+        _authController.login(email, password).then((status) {
           if (status.isSuccess) {
             Get.toNamed(RouteHelper.getInitial());
           } else {
@@ -88,11 +86,6 @@ class SignInPage1 extends StatelessWidget {
                         textController: emailController,
                         hintText: 'Email',
                         icon: Icons.email,
-                      ),
-                      TextFieldCustom(
-                        textController: phoneController,
-                        hintText: 'Phone',
-                        icon: Icons.phone,
                       ),
                       TextFieldCustom(
                         textController: passwordController,

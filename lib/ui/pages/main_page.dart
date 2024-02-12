@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/pages/account_page.dart';
 import 'package:musafir/ui/pages/community_page.dart';
-import 'package:musafir/ui/pages/explore_pages.dart';
+import 'package:musafir/ui/pages/explore/explore_pages.dart';
+
 import 'package:musafir/ui/pages/favorite_page.dart';
 import 'package:musafir/ui/pages/home_page.dart';
 // import 'package:musafir/ui/pages/map_page.dart';

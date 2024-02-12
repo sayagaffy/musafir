@@ -27,10 +27,9 @@ class AuthRepo {
     return await sharedPreferences.getString(AppConstans.TOKEN) ?? "None";
   }
 
-  Future<Response> login(String email, String phone, String password) async {
+  Future<Response> login(String email, String password) async {
     dynamic data = jsonEncode(<String, String>{
       'email': email,
-      'phone': phone,
       'password': password,
     });
     return await apiClient.posData(AppConstans.LOGIN_URI, data);

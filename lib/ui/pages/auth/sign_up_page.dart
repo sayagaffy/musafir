@@ -16,21 +16,22 @@ class SignUpPage1 extends StatelessWidget {
   Widget build(BuildContext context) {
     var emailController = TextEditingController();
     var passwordController = TextEditingController();
-    var nameController = TextEditingController();
-    var phoneController = TextEditingController();
+    // var nameController = TextEditingController();
+    // var phoneController = TextEditingController();
 
     void _registration() {
       var authController = Get.find<AuthController>();
-      String name = nameController.text.trim();
-      String phone = phoneController.text.trim();
+      // String name = nameController.text.trim();
+      // String phone = phoneController.text.trim();
       String email = emailController.text.trim();
       String password = passwordController.text.trim();
 
-      if (name.isEmpty) {
-        showCustomSnackBar("Type in your name", title: "Name");
-      } else if (phone.isEmpty) {
-        showCustomSnackBar("Type in phone name", title: "Phone numer");
-      } else if (email.isEmpty) {
+      // if (name.isEmpty) {
+      //   showCustomSnackBar("Type in your name", title: "Name");
+      // } else if (phone.isEmpty) {
+      //   showCustomSnackBar("Type in phone name", title: "Phone numer");
+      // }
+      if (email.isEmpty) {
         showCustomSnackBar("Type in your email adress", title: "Email adress");
       } else if (!GetUtils.isEmail(email)) {
         showCustomSnackBar("Type in a valid email adress",
@@ -42,8 +43,8 @@ class SignUpPage1 extends StatelessWidget {
             title: "Password");
       } else {
         SignUpBody signUpBody = SignUpBody(
-          name: name,
-          phone: phone,
+          // name: name,
+          // phone: phone,
           email: email,
           password: password,
         );
@@ -97,16 +98,16 @@ class SignUpPage1 extends StatelessWidget {
               hintText: 'Password',
               icon: Icons.password_rounded,
             ),
-            TextFieldCustom(
-              textController: nameController,
-              hintText: 'Name',
-              icon: Icons.phone_android_rounded,
-            ),
-            TextFieldCustom(
-              textController: phoneController,
-              hintText: 'Phone',
-              icon: Icons.person_rounded,
-            ),
+            // TextFieldCustom(
+            //   textController: nameController,
+            //   hintText: 'Name',
+            //   icon: Icons.phone_android_rounded,
+            // ),
+            // TextFieldCustom(
+            //   textController: phoneController,
+            //   hintText: 'Phone',
+            //   icon: Icons.person_rounded,
+            // ),
             const SizedBox(
               height: 40,
             ),
