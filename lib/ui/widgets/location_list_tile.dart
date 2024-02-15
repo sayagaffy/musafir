@@ -16,21 +16,16 @@ class LocationListTile extends StatelessWidget {
       children: [
         ListTile(
           onTap: press,
-          contentPadding: const EdgeInsets.only(left: 0),
-          horizontalTitleGap: 0,
-          leading: Container(
-            width: 20,
-            height: 20,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/icon_location.png'),
-              ),
-            ),
+          contentPadding: const EdgeInsets.only(left: 15, right: 15),
+          horizontalTitleGap: 8,
+          leading: const Icon(
+            Icons.location_pin,
+            size: 20,
           ),
           title: Text(
             location,
             style: blackTextStyle.copyWith(
-              fontSize: 14,
+              fontSize: 12,
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,

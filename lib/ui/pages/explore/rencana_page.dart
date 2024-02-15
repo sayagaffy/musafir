@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:musafir/base/show_custom_snackbar.dart';
+import 'package:musafir/controllers/explore_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
 import 'package:musafir/ui/widgets/custom_title.dart';
 import 'package:musafir/ui/widgets/rekomendasi_card.dart';
-import 'package:musafir/ui/widgets/textfield_date_time.dart';
-import 'package:musafir/ui/widgets/textfield_search.dart';
+import 'package:musafir/ui/widgets/textfield_datetime_pick.dart';
+import 'package:musafir/ui/widgets/text_fd_custom.dart';
 
 class RencanaPage extends StatelessWidget {
   const RencanaPage({super.key});
@@ -50,31 +51,102 @@ class RencanaPage extends StatelessWidget {
   }
 
   Widget contentPlan(BuildContext context) {
+    var exploreController = Get.find<ExploreController>();
+
+    bool _ready = false;
+
+    void _posting() {
+      String tujuan = exploreController.placeTextEditingController.text.trim();
+      String tanggal =
+          exploreController.dateTimeTextEditingControlle.text.trim();
+
+      if (tujuan.isEmpty) {
+        showCustomSnackBar("Kamu belum memilih Tujuanmu", title: "Tujuanmu");
+      } else if (tanggal.isEmpty) {
+        showCustomSnackBar("Kamu belum memilih Tanggal Berangkat",
+            title: "Tanggal Berangkat");
+      } else {
+        _ready = true;
+        exploreController.addPostingPlan(tujuan, tanggal);
+        showCustomSnackBar(
+          "Berhasil Membuat Rencana Perjalanan",
+          title: "Berhasil",
+          backgroundColor: kBlueColor,
+        );
+      }
+    }
+
     return Container(
-      margin: const EdgeInsets.only(
-        top: 34,
-      ),
-      padding: const EdgeInsets.only(
-        left: 18,
-        right: 18,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const TextfieldDateTime(),
-          const SizedBox(
-            height: 10,
-          ),
-          const TextfieldSearch(),
-          CustomButton(
-            title: 'Buat',
-            onPressed: () {},
-            margin: const EdgeInsets.only(top: 57),
-          )
-        ],
-      ),
-    );
+        margin: const EdgeInsets.only(
+          top: 34,
+        ),
+        padding: const EdgeInsets.only(
+          left: 18,
+          right: 18,
+        ),
+        // child: GetX<ExploreController>(builder: (controller) {
+        //   _tujuan.text = controller.placeX.value;
+        //   _tanggal.text = controller.tanggalX.value;
+        //   return Column(
+        //     mainAxisAlignment: MainAxisAlignment.start,
+        //     crossAxisAlignment: CrossAxisAlignment.start,
+        //     children: [
+        //       TextFdCustom(
+        //         textController: _tujuan,
+        //         labelText: 'Ketik Tujuanmu',
+        //         icon: Icons.search_rounded,
+        //         onTap: () {
+        //           Get.offNamed(RouteHelper.getSearchPage());
+        //         },
+        //         readOnly: true,
+        //       ),
+        //       const SizedBox(
+        //         height: 10,
+        //       ),
+        //       TextfieldDatetimePick(
+        //         textController: _tanggal,
+        //         labelText: 'Tanggal Berangkat',
+        //       ),
+        //       CustomButton(
+        //         title: _ready == false ? 'Buat' : 'Posting',
+        //         onPressed: () {
+        //           _posting();
+        //         },
+        //         margin: const EdgeInsets.only(top: 57),
+        //       )
+        //     ],
+        //   );
+        // }),
+
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextFdCustom(
+              textController: exploreController.placeTextEditingController,
+              labelText: 'Ketik Tujuanmu',
+              icon: Icons.search_rounded,
+              onTap: () {
+                Get.offNamed(RouteHelper.getSearchPage());
+              },
+              readOnly: true,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextfieldDatetimePick(
+              textController: exploreController.dateTimeTextEditingControlle,
+              labelText: 'Tanggal Berangkat',
+            ),
+            CustomButton(
+              title: 'Buat Perjalanan',
+              onPressed: () {
+                _posting();
+              },
+              margin: const EdgeInsets.only(top: 57),
+            )
+          ],
+        ));
   }
 
   Widget line() {

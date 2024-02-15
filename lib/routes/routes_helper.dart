@@ -4,6 +4,7 @@ import 'package:musafir/ui/pages/auth/sign_up_page.dart';
 import 'package:musafir/ui/pages/explore/explore_pages.dart';
 import 'package:musafir/ui/pages/explore/rencana_page.dart';
 import 'package:musafir/ui/pages/main_page.dart';
+import 'package:musafir/ui/pages/search/textfield_search_google.dart';
 import 'package:musafir/ui/pages/splash_widget.dart';
 
 class RouteHelper {
@@ -11,6 +12,7 @@ class RouteHelper {
   static const String sigIn = "/sign-in";
   static const String sigUp = "/sign-up";
   static const String initial = "/main";
+  static const String search = "/search";
   static const String explore = "/explore";
   static const String rencana = "/explore-rencana";
 
@@ -26,6 +28,8 @@ class RouteHelper {
   static String getExplorePage() => '$explore';
   // ignore: unnecessary_string_interpolations
   static String getRencanaPage() => '$rencana';
+  // ignore: unnecessary_string_interpolations
+  static String getSearchPage() => '$search';
 
   static List<GetPage> routes = [
     GetPage(
@@ -56,6 +60,11 @@ class RouteHelper {
       name: rencana,
       page: () => const RencanaPage(),
       transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: search,
+      page: () => const TextfieldSearchGoogle(),
+      transition: Transition.leftToRight,
     ),
   ];
 }

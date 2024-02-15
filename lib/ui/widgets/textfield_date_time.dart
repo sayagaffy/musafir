@@ -1,6 +1,8 @@
+import 'package:flex_list/flex_list.dart';
 import 'package:flutter/material.dart';
 import 'package:musafir/shared/theme.dart';
-import 'package:intl/intl.dart'; //Impo
+import 'package:intl/intl.dart';
+import 'package:musafir/ui/widgets/dry_width.dart'; //Impo
 
 class TextfieldDateTime extends StatefulWidget {
   const TextfieldDateTime({super.key});
@@ -15,17 +17,15 @@ class _TextfieldDateTimeState extends State<TextfieldDateTime> {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: Wrap(
-        spacing: 20,
-        runSpacing: 20,
-        alignment: WrapAlignment.start,
-        crossAxisAlignment: WrapCrossAlignment.start,
-        children: [
-          SizedBox(
-            height: 50,
-            width: 250,
+    return FlexList(
+      horizontalSpacing: 10,
+      verticalSpacing: 10,
+      children: [
+        Container(
+          color: Colors.black,
+          height: 50,
+          width: 200,
+          child: DryIntrinsicWidth(
             child: TextField(
               textAlignVertical: TextAlignVertical.center,
               controller: _dateController,
@@ -58,9 +58,10 @@ class _TextfieldDateTimeState extends State<TextfieldDateTime> {
               },
             ),
           ),
-          SizedBox(
-            height: 50,
-            width: 100,
+        ),
+        Container(
+          width: 100,
+          child: DryIntrinsicHeight(
             child: TextField(
               controller: _timeController,
               decoration: InputDecoration(
@@ -92,8 +93,8 @@ class _TextfieldDateTimeState extends State<TextfieldDateTime> {
               },
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

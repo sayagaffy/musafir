@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
+
 import 'package:musafir/shared/theme.dart';
-import 'package:intl/intl.dart'; //Impo
 
-class TextfieldSearch extends StatefulWidget {
-  const TextfieldSearch({super.key});
+class TextFdCustom extends StatelessWidget {
+  final TextEditingController textController;
+  final String labelText;
+  final IconData icon;
+  final Function() onTap;
+  final bool readOnly;
 
-  @override
-  State<TextfieldSearch> createState() => _TextfieldSearchState();
-}
-
-class _TextfieldSearchState extends State<TextfieldSearch> {
-  TextEditingController _searchController = TextEditingController();
+  const TextFdCustom({
+    super.key,
+    required this.textController,
+    required this.labelText,
+    required this.icon,
+    required this.onTap,
+    this.readOnly = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,20 +24,22 @@ class _TextfieldSearchState extends State<TextfieldSearch> {
       height: 50,
       width: double.infinity,
       child: TextField(
+        style: blackTextStyle.copyWith(
+          fontSize: 14,
+        ),
         textAlignVertical: TextAlignVertical.center,
-        controller: _searchController,
+        controller: textController,
         decoration: InputDecoration(
-          labelText: 'Ketik tujuanmu',
-          contentPadding: EdgeInsets.all(10.0),
+          labelText: labelText,
           labelStyle: blackTextStyle.copyWith(
-            color: kBlackColor,
+            color: kGreyColor,
             fontSize: 14,
           ),
           filled: true,
           fillColor: Color(0xFFFE6E8EA),
-          prefixIcon: const Icon(
-            Icons.search_rounded,
-            color: Color(0xFFFFFFFF),
+          prefixIcon: Icon(
+            icon,
+            color: kBlueColor,
           ),
           enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide.none,
@@ -43,8 +51,8 @@ class _TextfieldSearchState extends State<TextfieldSearch> {
             borderSide: BorderSide(color: Colors.blue),
           ),
         ),
-        readOnly: true,
-        onTap: () {},
+        readOnly: readOnly,
+        onTap: onTap,
       ),
     );
   }

@@ -44,6 +44,8 @@ dependencies:
   device_preview: ^1.1.0
   get: ^4.6.6
   shared_preferences: ^2.2.2
+  flex_list: any
+  omni_datetime_picker: ^1.0.9
 
 
 

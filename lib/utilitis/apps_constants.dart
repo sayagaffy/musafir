@@ -15,6 +15,7 @@ class AppConstans {
   static const String BASE_URL_GOOGLE = "https://maps.googleapis.com/maps/api";
   static const String API_GKEY = "AIzaSyBe_89LiN8WdHYk5mPcmAey5ZyheaskwE0";
   static const String GEOCODE = "/geocode/json";
+  static const String SEARCH = "/place/autocomplete/json";
 
   ///[AUTH]
   static const String TOKEN = "";

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:musafir/controllers/explore_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
+import 'package:musafir/ui/widgets/custom_button.dart';
 
 class ExplorePage extends StatelessWidget {
   const ExplorePage({super.key});
@@ -90,14 +92,137 @@ class ExplorePage extends StatelessWidget {
     );
   }
 
+  Widget titleRencana() {
+    return Text(
+      'Rencana Perjalananmu',
+      style: blackTextStyle.copyWith(
+        fontSize: 16,
+        fontWeight: bold,
+      ),
+    );
+  }
+
+  Widget listPerjalanan(
+    String place,
+    String placeId,
+    String dateTime,
+    String timeCreate,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          margin: const EdgeInsets.only(
+            top: 10,
+            bottom: 0,
+          ),
+          padding:
+              const EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 15),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF5F5F5),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(
+                    Icons.location_pin,
+                    size: 15,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: Text(
+                      place.toString(),
+                      style: blackTextStyle.copyWith(
+                        fontSize: 13,
+                        fontWeight: bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.calendar_month,
+                    size: 15,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: Text(
+                      dateTime,
+                      style: blackTextStyle.copyWith(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: ListView(
         children: [
           header(),
-          cardPerjalanan(),
+          Container(
+            padding: const EdgeInsets.only(left: 18, right: 18),
+            child: GetBuilder<ExploreController>(builder: (explore) {
+              return explore.itemPlans.value > 0
+                  ? SizedBox(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          titleRencana(),
+                          const SizedBox(
+                            height: 21,
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: explore.itemPlans.value,
+                            itemBuilder: (BuildContext context, int index) =>
+                                listPerjalanan(
+                              explore.plans.value[index].place.toString(),
+                              explore.plans.value[index].placeId.toString(),
+                              explore.plans.value[index].tanggalJam.toString(),
+                              explore.plans.value[index].timeCreate.toString(),
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(top: 30),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: CustomButton(
+                                title: 'Buat Rencana lainnya ',
+                                onPressed: () {
+                                  Get.offNamed(RouteHelper.getRencanaPage());
+                                },
+                                width: 207,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  : cardPerjalanan();
+            }),
+          ),
         ],
       ),
     );
