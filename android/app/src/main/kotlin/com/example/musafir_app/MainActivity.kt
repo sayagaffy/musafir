@@ -1,4 +1,4 @@
-package com.example.musafir_app
+package com.devadhikari.musafir_app
 
 import io.flutter.embedding.android.FlutterActivity
 
