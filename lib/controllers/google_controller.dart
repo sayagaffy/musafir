@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:ui';
-
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:musafir/controllers/location_controller.dart';
@@ -80,7 +78,6 @@ class GoogleController extends GetxController {
     debouncer.run(() async {
       Response response = await googleRepo.getPlace(query);
       if (response.statusCode == 200) {
-        print(response.body);
         _getPlaces = [];
         _getPlaces.addAll(GetPlaces.fromJson(response.body).predictions);
 
@@ -98,8 +95,8 @@ void setAddressAndLatlng(String address, double lat, double lang) {
   locationController.setAddress(address);
   locationController.setLatlang(latitude, longitude);
 
-  print(locationController.address);
-  print(locationController.latlng);
+  // print(locationController.address);
+  // print(locationController.latlng);
 }
 
 ///delay search

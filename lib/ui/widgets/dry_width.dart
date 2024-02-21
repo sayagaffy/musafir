@@ -9,6 +9,7 @@ import 'package:flutter/rendering.dart';
 /// This widget is useful in situations where the `child` does not
 /// support dry layout, e.g., `TextField` as of 01/02/2021.
 class DryIntrinsicWidth extends SingleChildRenderObjectWidget {
+  // ignore: use_super_parameters
   const DryIntrinsicWidth({Key? key, Widget? child})
       : super(key: key, child: child);
 
@@ -38,6 +39,7 @@ class RenderDryIntrinsicWidth extends RenderIntrinsicWidth {
 /// This widget is useful in situations where the `child` does not
 /// support dry layout, e.g., `TextField` as of 01/02/2021.
 class DryIntrinsicHeight extends SingleChildRenderObjectWidget {
+  // ignore: use_super_parameters
   const DryIntrinsicHeight({Key? key, Widget? child})
       : super(key: key, child: child);
 

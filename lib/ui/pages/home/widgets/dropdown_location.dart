@@ -38,6 +38,7 @@ class _DropdownLocationState extends State<DropdownLocation> {
         categoryItemlist = jsonData;
 
         // print(response.body['results'][0]['formatted_address']);
+        // ignore: avoid_print
         print(categoryItemlist[0].formattedAddress);
       });
     }

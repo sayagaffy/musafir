@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
-import 'package:musafir/controllers/explore_controller.dart';
 import 'package:musafir/controllers/google_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/pages/home/current_location.dart';
 import 'package:musafir/ui/widgets/location_list_tile.dart';
-import 'package:musafir/ui/widgets/textfield_google.dart';
 
 class SetLoaction extends StatefulWidget {
   const SetLoaction({super.key});
@@ -117,7 +115,7 @@ class _SetLoactionState extends State<SetLoaction> {
           GetBuilder<GoogleController>(builder: (place) {
             return place.isLoaded
                 ? ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: place.getPlaces.length,
                     itemBuilder: (BuildContext context, int index) =>
@@ -137,7 +135,7 @@ class _SetLoactionState extends State<SetLoaction> {
                     ),
                   )
                 : Padding(
-                    padding: EdgeInsets.only(top: 20),
+                    padding: const EdgeInsets.only(top: 20),
                     child: Text(
                       'Perbaharui Lokasimu',
                       style: greyTextStyle.copyWith(fontSize: 12),

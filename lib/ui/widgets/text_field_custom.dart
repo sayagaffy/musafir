@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:musafir/shared/theme.dart';
 
+// ignore: must_be_immutable
 class TextFieldCustom extends StatelessWidget {
   final TextEditingController textController;
   final String hintText;

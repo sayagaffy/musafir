@@ -24,6 +24,7 @@ class AuthRepo {
   }
 
   Future<String> getUserToken() async {
+    // ignore: await_only_futures
     return await sharedPreferences.getString(AppConstans.TOKEN) ?? "None";
   }
 
@@ -46,6 +47,7 @@ class AuthRepo {
       await sharedPreferences.setString(AppConstans.PHONE, numer);
       await sharedPreferences.setString(AppConstans.PASSWORD, password);
     } catch (e) {
+      // ignore: use_rethrow_when_possible
       throw e;
     }
   }

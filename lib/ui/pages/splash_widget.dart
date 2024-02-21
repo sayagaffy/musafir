@@ -4,8 +4,6 @@ import 'package:get/get.dart';
 import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/ui/pages/auth/sign_in_page.dart';
 import 'package:musafir/ui/pages/main_page.dart';
-import 'package:musafir/ui/pages/sign_up_page.dart';
-import 'package:musafir/ui/widgets/custom_page_route.dart';
 import '../../shared/theme.dart';
 
 class SplashPage extends StatefulWidget {

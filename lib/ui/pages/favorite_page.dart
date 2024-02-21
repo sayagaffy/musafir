@@ -24,7 +24,7 @@ class FavoritePage extends StatelessWidget {
           GetBuilder<UsersController>(builder: (users) {
             return users.isLoaded
                 ? ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: users.usersList.length,
                     itemBuilder: (BuildContext context, int index) {

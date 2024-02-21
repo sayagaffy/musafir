@@ -40,6 +40,7 @@ class ListCard extends StatelessWidget {
     ];
 
     String selectedRadius = 'Jarak';
+    // ignore: no_leading_underscores_for_local_identifiers
     _handleValueRadius(String value) {
       selectedRadius = value;
     }
@@ -53,6 +54,7 @@ class ListCard extends StatelessWidget {
     ];
 
     String selectedRating = 'Rating';
+    // ignore: no_leading_underscores_for_local_identifiers
     _handleValueRating(String value) {
       selectedRating = value;
     }
@@ -129,7 +131,7 @@ class ListCard extends StatelessWidget {
   }
 
   Widget chekBox() {
-    return CustomCheckBox();
+    return const CustomCheckBox();
   }
 
   Widget listCard() {
@@ -411,7 +413,7 @@ class ListCard extends StatelessWidget {
                       //     ],
                       //   ),
                       // ),
-                      CustomCheckBox(),
+                      const CustomCheckBox(),
                       CustomButton(
                         title: 'Tampilkan Resto',
                         onPressed: () {},

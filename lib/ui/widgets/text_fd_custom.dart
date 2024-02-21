@@ -37,6 +37,7 @@ class TextFdCustom extends StatelessWidget {
             fontSize: 14,
           ),
           filled: true,
+          // ignore: prefer_const_constructors, use_full_hex_values_for_flutter_colors
           fillColor: Color(0xFFFE6E8EA),
           prefixIcon: Icon(
             icon,

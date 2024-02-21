@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
-import 'package:musafir/controllers/users_controller.dart';
-
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
 
@@ -73,6 +70,7 @@ class _FavoritePage1State extends State<FavoritePage1> {
             localeIdentifier: "en")
         .then((List<Placemark> placemarks) {
       Placemark place = placemarks[0];
+      // ignore: avoid_print
       print(placemarks);
       setState(() {
         _currentAddress =

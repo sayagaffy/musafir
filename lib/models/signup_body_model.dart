@@ -12,6 +12,7 @@ class SignUpBody {
   });
 
   Map<String, dynamic> toJson() {
+    // ignore: unnecessary_new, prefer_collection_literals
     final Map<String, dynamic> data = new Map<String, dynamic>();
     // ignore: unnecessary_this
     // data["f_name"] = this.name;

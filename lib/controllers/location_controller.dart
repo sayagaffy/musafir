@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -11,6 +9,7 @@ class LocationController extends GetxController implements GetxService {
   LocationRepo locationRepo;
 
   LocationController({required this.locationRepo});
+  // ignore: unused_field, prefer_final_fields
   bool _loading = false;
 
   String _address = 'none';

@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:musafir/data/repository/users_repo.dart';
-import 'package:musafir/models/users_models.dart';
 
 class UsersController extends GetxController {
   final UsersRepo usersRepo;
@@ -17,6 +16,7 @@ class UsersController extends GetxController {
     Response response = await usersRepo.getUsersList();
 
     if (response.statusCode == 200) {
+      // ignore: avoid_print
       print(response.body);
       _usersList = [];
       // _usersList.addAll(Users.fromJson(response.body).data);

@@ -25,7 +25,7 @@ class CommunityPage extends StatelessWidget {
               return geocode.isLoaded
                   ? Container(
                       width: 200,
-                      margin: EdgeInsets.all(10),
+                      margin: const EdgeInsets.all(10),
                       child: Text(geocode.geoCode[0].formattedAddress),
                     )
                   : CircularProgressIndicator(color: kRedColor);

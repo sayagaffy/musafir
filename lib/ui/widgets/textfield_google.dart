@@ -62,7 +62,7 @@ class TextfieldGoogle extends StatelessWidget {
                           borderRadius: BorderRadius.circular(
                             radius,
                           ),
-                          borderSide: BorderSide(color: Colors.blue),
+                          borderSide: const BorderSide(color: Colors.blue),
                         ),
                       ),
                     ),

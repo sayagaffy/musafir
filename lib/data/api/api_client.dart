@@ -7,10 +7,11 @@ class ApiClient extends GetConnect implements GetxService {
   final String appBaseUrl;
 
   late SharedPreferences sharedPreferences;
+  // ignore: unused_field
   late Map<String, String> _mainHeaders;
   ApiClient({required this.appBaseUrl, required sharedPreferences}) {
     baseUrl = appBaseUrl;
-    timeout = Duration(seconds: 30);
+    timeout = const Duration(seconds: 30);
 
     token = sharedPreferences.getString(AppConstans.TOKEN) ?? "";
     _mainHeaders = {
@@ -29,6 +30,7 @@ class ApiClient extends GetConnect implements GetxService {
   Future<Response> getData(String uri) async {
     try {
       Response response = await get(uri);
+      // ignore: avoid_print
       print(uri.toString());
       return response;
     } catch (e) {
@@ -39,12 +41,12 @@ class ApiClient extends GetConnect implements GetxService {
   Future<Response> posData(String uri, dynamic body) async {
     try {
       Response response = await post(uri, body);
-      print(uri.toString());
-      print(body.toString());
-      print(_mainHeaders.toString());
+      // print(uri.toString());
+      // print(body.toString());
+      // print(_mainHeaders.toString());
       return response;
     } catch (e) {
-      print(e.toString());
+      // print(e.toString());
       return Response(statusCode: 1, statusText: e.toString());
     }
   }

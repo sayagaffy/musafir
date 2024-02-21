@@ -4,9 +4,6 @@ import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:musafir/ui/pages/home/widgets/dropdown_location.dart';
-import 'package:musafir/ui/pages/home/widgets/dropdown_location2.dart';
-
 import 'package:musafir/ui/widgets/custom_search_button.dart';
 import 'package:musafir/ui/widgets/custom_title.dart';
 import 'package:musafir/ui/widgets/rekomendasi_card.dart';

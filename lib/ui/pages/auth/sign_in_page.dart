@@ -18,6 +18,7 @@ class SignInPage1 extends StatelessWidget {
     var emailController = TextEditingController();
     var passwordController = TextEditingController();
 
+    // ignore: no_leading_underscores_for_local_identifiers
     void _login(AuthController _authController) {
       String email = emailController.text.trim();
       String password = passwordController.text.trim();
@@ -133,7 +134,7 @@ class SignInPage1 extends StatelessWidget {
                     ],
                   ),
                 )
-              : CustomLoader();
+              : const CustomLoader();
         }));
   }
 }

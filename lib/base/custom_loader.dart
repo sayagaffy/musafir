@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:musafir/controllers/auth_controller.dart';
 import 'package:musafir/shared/theme.dart';
 
 class CustomLoader extends StatelessWidget {

@@ -1,6 +1,3 @@
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/controllers/explore_controller.dart';
@@ -70,7 +67,7 @@ Widget header(BuildContext context) {
                   borderRadius: BorderRadius.circular(
                     defaultRadius,
                   ),
-                  borderSide: BorderSide(color: Colors.blue),
+                  borderSide: const BorderSide(color: Colors.blue),
                 ),
               ),
             ),
@@ -101,7 +98,7 @@ Widget listDataSearch() {
         GetBuilder<GoogleController>(builder: (place) {
           return place.isLoaded
               ? ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: place.getPlaces.length,
                   itemBuilder: (BuildContext context, int index) =>
@@ -123,7 +120,7 @@ Widget listDataSearch() {
                   ),
                 )
               : Padding(
-                  padding: EdgeInsets.only(top: 20),
+                  padding: const EdgeInsets.only(top: 20),
                   child: Text(
                     'Cari apa saja !!',
                     style: greyTextStyle.copyWith(fontSize: 12),

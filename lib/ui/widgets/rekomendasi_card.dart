@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:musafir/shared/theme.dart';
-import 'package:musafir/ui/pages/detail_page.dart';
-import 'package:musafir/ui/widgets/custom_page_route.dart';
 
 class RekomendasiCard extends StatelessWidget {
   final String name;

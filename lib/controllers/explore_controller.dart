@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:ffi';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:musafir/data/repository/explore_repo.dart';
@@ -48,7 +46,7 @@ class ExploreController extends GetxController implements GetxService {
     dateTimeTextEditingControlle.clear();
     placeIdX.value = '';
 
-    print(plans.value.length);
+    // print(plans.value.length);
     update();
   }
 }

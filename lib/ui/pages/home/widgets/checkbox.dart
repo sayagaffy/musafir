@@ -61,7 +61,8 @@ class _CustomCheckBoxState extends State<CustomCheckBox> {
               (index) => CheckboxListTile(
                 controlAffinity: ListTileControlAffinity.trailing,
                 contentPadding: EdgeInsets.zero,
-                visualDensity: VisualDensity(horizontal: -3, vertical: -4),
+                visualDensity:
+                    const VisualDensity(horizontal: -3, vertical: -4),
                 dense: true,
                 title: Text(
                   checkListItems[index]["title"],

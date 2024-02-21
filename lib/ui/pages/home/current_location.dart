@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:musafir/controllers/google_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/shared/theme.dart';
 

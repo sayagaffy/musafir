@@ -53,8 +53,10 @@ class RencanaPage extends StatelessWidget {
   Widget contentPlan(BuildContext context) {
     var exploreController = Get.find<ExploreController>();
 
+    // ignore: unused_local_variable, no_leading_underscores_for_local_identifiers
     bool _ready = false;
 
+    // ignore: no_leading_underscores_for_local_identifiers
     void _posting() {
       String tujuan = exploreController.placeTextEditingController.text.trim();
       String tanggal =
@@ -170,7 +172,7 @@ class RencanaPage extends StatelessWidget {
 
   Widget tujuanPopuler() {
     return Container(
-      padding: EdgeInsets.only(left: 18),
+      padding: const EdgeInsets.only(left: 18),
       width: double.infinity,
       child: const SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -217,8 +219,8 @@ class RencanaPage extends StatelessWidget {
 
   Widget rekomendasi() {
     return Container(
-      padding: EdgeInsets.only(left: 18),
-      margin: EdgeInsets.only(bottom: 50),
+      padding: const EdgeInsets.only(left: 18),
+      margin: const EdgeInsets.only(bottom: 50),
       width: double.infinity,
       child: const SingleChildScrollView(
         scrollDirection: Axis.horizontal,

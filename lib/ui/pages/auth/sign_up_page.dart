@@ -19,6 +19,7 @@ class SignUpPage1 extends StatelessWidget {
     // var nameController = TextEditingController();
     // var phoneController = TextEditingController();
 
+    // ignore: no_leading_underscores_for_local_identifiers
     void _registration() {
       var authController = Get.find<AuthController>();
       // String name = nameController.text.trim();

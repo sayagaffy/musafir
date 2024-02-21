@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_this, unnecessary_new
+
 class Users {
   int? _page;
   int? _perPage;
@@ -32,22 +34,23 @@ class Users {
     if (json['data'] != null) {
       _data = <UsersModel>[];
       json['data'].forEach((v) {
-        _data!.add(UsersModel.fromJson(v));
+        _data.add(UsersModel.fromJson(v));
       });
     }
     _support =
-        // ignore: unnecessary_new
         json['support'] != null ? new Support.fromJson(json['support']) : null;
   }
 
   Map<String, dynamic> toJson() {
+    // ignore: prefer_collection_literals
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['page'] = this._page;
     data['per_page'] = this._perPage;
     data['total'] = this._total;
     data['total_pages'] = this._totalPages;
+    // ignore: unnecessary_null_comparison
     if (this._data != null) {
-      data['data'] = this._data!.map((v) => v.toJson()).toList();
+      data['data'] = this._data.map((v) => v.toJson()).toList();
     }
     if (this._support != null) {
       data['support'] = this._support!.toJson();
@@ -74,6 +77,7 @@ class UsersModel {
   }
 
   Map<String, dynamic> toJson() {
+    // ignore: prefer_collection_literals
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['email'] = this.email;
@@ -96,6 +100,7 @@ class Support {
   }
 
   Map<String, dynamic> toJson() {
+    // ignore: prefer_collection_literals
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['url'] = this.url;
     data['text'] = this.text;

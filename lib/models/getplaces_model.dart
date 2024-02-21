@@ -1,5 +1,6 @@
 class GetPlaces {
   late List<GetPlacesModel> _predictions;
+  // ignore: unused_field
   String? _status;
 
   //public class
@@ -9,7 +10,9 @@ class GetPlaces {
     required predictions,
     required status,
   }) {
+    // ignore: unnecessary_this
     this._predictions = predictions;
+    // ignore: unnecessary_this
     this._status = status;
   }
 
@@ -17,7 +20,7 @@ class GetPlaces {
     if (json['predictions'] != null) {
       _predictions = <GetPlacesModel>[];
       json['predictions'].forEach((v) {
-        _predictions!.add(GetPlacesModel.fromJson(v));
+        _predictions.add(GetPlacesModel.fromJson(v));
       });
     }
     _status = json['status'];
@@ -41,6 +44,7 @@ class GetPlacesModel {
     placeId = json['place_id'];
     reference = json['reference'];
     structuredFormatting = json['structured_formatting'] != null
+        // ignore: unnecessary_new
         ? new StructuredFormatting.fromJson(json['structured_formatting'])
         : null;
   }
@@ -60,6 +64,7 @@ class StructuredFormatting {
       mainTextMatchedSubstrings = <MainTextMatchedSubstrings>[];
       json['main_text_matched_substrings'].forEach((v) {
         mainTextMatchedSubstrings!
+            // ignore: unnecessary_new
             .add(new MainTextMatchedSubstrings.fromJson(v));
       });
     }

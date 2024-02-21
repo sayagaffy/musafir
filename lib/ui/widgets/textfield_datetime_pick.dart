@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 
 class TextfieldDatetimePick extends StatefulWidget {
@@ -45,7 +46,8 @@ class _TextfieldDatetimePickState extends State<TextfieldDatetimePick> {
             fontSize: 14,
           ),
           filled: true,
-          fillColor: Color(0xFFFE6E8EA),
+          // ignore: use_full_hex_values_for_flutter_colors
+          fillColor: const Color(0xFFFE6E8EA),
           prefixIcon: Icon(
             Icons.calendar_month_rounded,
             color: kBlueColor,
@@ -69,6 +71,7 @@ class _TextfieldDatetimePickState extends State<TextfieldDatetimePick> {
   }
 
   Future<void> _selectDate() async {
+    // ignore: no_leading_underscores_for_local_identifiers
     DateTime? _picked = await showOmniDateTimePicker(
       context: context,
       initialDate: DateTime.now(),

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -50,7 +48,7 @@ class _DropdownLocationState extends State<DropdownLocation2> {
       height: 30,
       child: DropdownButton(
         isExpanded: true,
-        hint: Text('hooseNumber'),
+        hint: const Text('hooseNumber'),
         itemHeight: 48,
         value: sel,
         icon: Icon(
@@ -123,9 +121,6 @@ class _DropdownLocationState extends State<DropdownLocation2> {
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
 
-    print(permission);
-    print(serviceEnabled);
-    print(await Geolocator.getCurrentPosition());
     return await Geolocator.getCurrentPosition();
   }
 }

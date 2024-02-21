@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 class AppConstans {
   static const String APP_NAME = "Musafir app";
   static const int APP_VERSION = 1;
