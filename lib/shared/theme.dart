@@ -4,7 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 double defaultMargin = 18.0;
 double defaultRadius = 25.0;
 
+Color kPrimarySurface = const Color(0xffDAE7F5);
 Color kPrimaryColor = const Color(0xffFDB82C);
+Color kSecondaryMain = const Color(0xffFFC43A);
+Color kRedMain = const Color(0xffD03131);
+Color kGreenHover = const Color(0xff209150);
 Color kBlackColor = const Color(0xff191D23);
 Color kWhiteColor = const Color(0xffFFFFFF);
 Color kGreyColor = const Color(0xff7B7B7B);
@@ -16,6 +20,7 @@ Color kInactiveColor = const Color(0xffDBD7EC);
 Color kTransparentColor = Colors.transparent;
 Color kAvailableColor = const Color(0xffE0D9FF);
 Color kUnavailableColor = const Color(0xffEBECF1);
+Color kNeutral40 = const Color(0xffE3E4E5);
 
 TextStyle blackTextStyle = GoogleFonts.manrope(
   color: kBlackColor,

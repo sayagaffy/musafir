@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/data/repository/google_repo.dart';
 import 'package:musafir/models/geocode_model.dart';
 import 'package:musafir/models/getplaces_model.dart';
@@ -32,7 +34,43 @@ class GoogleController extends GetxController {
       _geoCode = [];
       _geoCode.addAll(Geocode.fromJson(response.body).results);
 
-      print(_geoCode);
+      // print(_geoCode);
+      _isLoaded = true;
+      update();
+    }
+  }
+
+  Future<void> getGeoCodelatLng(LatLng latLng) async {
+    Response response = await googleRepo.getGeocode(latLng);
+
+    if (response.statusCode == 200) {
+      _geoCode = [];
+      _geoCode.addAll(Geocode.fromJson(response.body).results);
+
+      setAddressAndLatlng(geoCode[0].formattedAddress,
+          geoCode[0].geometry.location.lat, geoCode[0].geometry.location.lng);
+
+      // for (var i in geoCode[0].addressComponents) {
+      //   if (i.types.first == "administrative_area_level_1") {
+      //     print("here is the postal code ${i.longName}");
+      //   }
+      // }
+
+      _isLoaded = true;
+      update();
+    }
+  }
+
+  Future<void> getGeoCodeAddress(String address) async {
+    Response response = await googleRepo.getGeocodeAddress(address);
+
+    if (response.statusCode == 200) {
+      _geoCode = [];
+      _geoCode.addAll(Geocode.fromJson(response.body).results);
+
+      setAddressAndLatlng(geoCode[0].formattedAddress,
+          geoCode[0].geometry.location.lat, geoCode[0].geometry.location.lng);
+
       _isLoaded = true;
       update();
     }
@@ -46,12 +84,22 @@ class GoogleController extends GetxController {
         _getPlaces = [];
         _getPlaces.addAll(GetPlaces.fromJson(response.body).predictions);
 
-        print(_getPlaces);
         _isLoaded = true;
         update();
       }
     });
   }
+}
+
+void setAddressAndLatlng(String address, double lat, double lang) {
+  var locationController = Get.find<LocationController>();
+  double latitude = lat;
+  double longitude = lang;
+  locationController.setAddress(address);
+  locationController.setLatlang(latitude, longitude);
+
+  print(locationController.address);
+  print(locationController.latlng);
 }
 
 ///delay search

@@ -4,10 +4,15 @@ import 'package:musafir/shared/theme.dart';
 class LocationListTile extends StatelessWidget {
   final Function() press;
   final String location;
+  final Icon icon;
   const LocationListTile({
     super.key,
     required this.press,
     required this.location,
+    this.icon = const Icon(
+      Icons.location_pin,
+      size: 20,
+    ),
   });
 
   @override
@@ -18,10 +23,7 @@ class LocationListTile extends StatelessWidget {
           onTap: press,
           contentPadding: const EdgeInsets.only(left: 15, right: 15),
           horizontalTitleGap: 8,
-          leading: const Icon(
-            Icons.location_pin,
-            size: 20,
-          ),
+          leading: icon,
           title: Text(
             location,
             style: blackTextStyle.copyWith(

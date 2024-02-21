@@ -3,9 +3,9 @@ import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/pages/account_page.dart';
 import 'package:musafir/ui/pages/community_page.dart';
 import 'package:musafir/ui/pages/explore/explore_pages.dart';
-
+import 'package:musafir/ui/pages/favorite/favorite_page.dart';
 import 'package:musafir/ui/pages/favorite_page.dart';
-import 'package:musafir/ui/pages/home_page.dart';
+import 'package:musafir/ui/pages/home/home_page.dart';
 // import 'package:musafir/ui/pages/map_page.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 
@@ -14,7 +14,7 @@ List<Widget> _buildScreens() {
     const HomePage(),
     const ExplorePage(),
     // const MapPage(),
-    const FavoritePage(),
+    const FavoritePage1(),
     const CommunityPage(),
     const AccountPage()
   ];

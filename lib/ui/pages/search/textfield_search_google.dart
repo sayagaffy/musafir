@@ -82,6 +82,10 @@ Widget header(BuildContext context) {
 }
 
 Widget listDataSearch() {
+  Get.put<GoogleController>(
+    GoogleController(googleRepo: Get.find()),
+    permanent: true,
+  );
   return Container(
     margin: const EdgeInsets.only(
       bottom: 30,
@@ -134,10 +138,6 @@ Widget listDataSearch() {
 class _TextfieldSearchGoogleState extends State<TextfieldSearchGoogle> {
   @override
   Widget build(BuildContext context) {
-    Get.put<GoogleController>(
-      GoogleController(googleRepo: Get.find()),
-      permanent: true,
-    );
     return Scaffold(
       body: ListView(
         children: [

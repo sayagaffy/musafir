@@ -12,6 +12,11 @@ class GoogleRepo extends GetxService {
         '${AppConstans.GEOCODE}?latlng=${latLng.latitude},${latLng.longitude}&language=id&key=${AppConstans.API_GKEY}');
   }
 
+  Future<Response> getGeocodeAddress(String address) async {
+    return await apiGoogle.getData(
+        '${AppConstans.GEOCODE}?address=${address}&language=id&key=${AppConstans.API_GKEY}');
+  }
+
   Future<Response> getPlace(String query) async {
     return await apiGoogle.getData(
         '${AppConstans.SEARCH}?input=${query}&language=id&key=${AppConstans.API_GKEY}');

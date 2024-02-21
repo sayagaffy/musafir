@@ -46,6 +46,14 @@ dependencies:
   shared_preferences: ^2.2.2
   flex_list: any
   omni_datetime_picker: ^1.0.9
+  geocoding: ^2.1.1
+  # geolocator: ^11.0.0
+  # geolocator_apple: ^2.3.0
+  geolocator: ^10.0.1
+  geolocator_apple: 2.1.1+1
+
+
+
 
 
 
