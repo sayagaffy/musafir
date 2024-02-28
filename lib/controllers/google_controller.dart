@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_brace_in_string_interps
+
 import 'dart:async';
 import 'dart:ui';
 import 'package:get/get.dart';
@@ -6,6 +8,7 @@ import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/data/repository/google_repo.dart';
 import 'package:musafir/models/geocode_model.dart';
 import 'package:musafir/models/getplaces_model.dart';
+import 'package:musafir/models/nearby_model.dart';
 
 class GoogleController extends GetxController {
   final GoogleRepo googleRepo;
@@ -16,11 +19,49 @@ class GoogleController extends GetxController {
   bool _isLoaded = false;
   bool get isLoaded => _isLoaded;
 
+  bool _isLoadedFood = false;
+  bool get isLoadedFood => _isLoadedFood;
+
+  bool _isLoadedMosque = false;
+  bool get isLoadedMosque => _isLoadedMosque;
+
   List<dynamic> _geoCode = [];
   List<dynamic> get geoCode => _geoCode;
 
   List<dynamic> _getPlaces = [];
   List<dynamic> get getPlaces => _getPlaces;
+
+  List<dynamic> _nearbyPlaces = [];
+  List<dynamic> get nearbyPlaces => _nearbyPlaces;
+
+  List<dynamic> _nearbyMosque = [];
+  List<dynamic> get nearbyMosque => _nearbyMosque;
+
+  late String _nextPageTokenMosque;
+  String get nextPageTokenMosque => _nextPageTokenMosque;
+
+  List<dynamic> _nearbyFood = [];
+  List<dynamic> get nearbyFood => _nearbyFood;
+
+  late String _nextPageTokenFood;
+  String get nextPageTokenFood => _nextPageTokenFood;
+
+  String _filterType = 'default';
+  String get filterType => _filterType;
+
+  void setFilterType(String value) {
+    _filterType = value;
+
+    update();
+  }
+
+  int _rate = 0;
+  int get rate => _rate;
+
+  void setRate(int value) {
+    _rate = value;
+    update();
+  }
 
   Future<void> getGeoCode() async {
     Response response = await googleRepo
@@ -70,6 +111,48 @@ class GoogleController extends GetxController {
           geoCode[0].geometry.location.lat, geoCode[0].geometry.location.lng);
 
       _isLoaded = true;
+      update();
+    }
+  }
+
+  Future<void> getNearbyPlace({
+    String? keyword,
+    String? rankby,
+    String? type,
+    String? pagetoken,
+    String? location,
+    int? radius,
+  }) async {
+    var k = keyword != null ? 'keyword=${keyword}&' : '';
+    var r = rankby != null ? 'rankby=${rankby}&' : '';
+    var t = type != null ? 'type=${type}&' : '';
+    var l = location != null ? 'location=${location}&' : '';
+    var rd = radius != null ? 'radius=${radius}&' : '';
+    var pt = pagetoken != null ? 'pagetoken=${pagetoken}&' : '';
+    var query = k + r + t + l + rd + pt;
+
+    Response response = await googleRepo.getNearbyPlace(query);
+
+    if (response.statusCode == 200) {
+      if (type == 'restaurant') {
+        _nearbyFood = [];
+        _nearbyFood.addAll(NearbyPlace.fromJson(response.body).results);
+        _nextPageTokenFood = response.body['next_page_token'];
+
+        _isLoadedFood = true;
+        print('food');
+      }
+
+      if (type == 'mosque') {
+        _nearbyMosque = [];
+        _nearbyMosque.addAll(NearbyPlace.fromJson(response.body).results);
+        _nextPageTokenMosque = response.body['next_page_token'] ?? 'none';
+        _isLoadedMosque = true;
+        print('mosque');
+      }
+
+      // print(query);
+
       update();
     }
   }

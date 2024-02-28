@@ -8,15 +8,19 @@ class RekomendasiCard extends StatelessWidget {
   final double rating;
   final bool isMasjid;
   final EdgeInsets margin;
+  final int ulasan;
+  final double km;
 
   const RekomendasiCard({
     super.key,
     required this.name,
     required this.city,
-    required this.imgUrl,
     this.rating = 0.0,
     this.isMasjid = false,
     this.margin = const EdgeInsets.only(right: 15),
+    this.ulasan = 0,
+    this.imgUrl = 'none',
+    this.km = 0.4,
   });
 
   @override
@@ -47,12 +51,15 @@ class RekomendasiCard extends StatelessWidget {
                 topLeft: Radius.circular(8),
                 topRight: Radius.circular(8),
               ),
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage(
-                  imgUrl,
-                ),
-              ),
+              image: imgUrl == 'none'
+                  ? const DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage('assets/image_destination1.png'),
+                    )
+                  : DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(imgUrl),
+                    ),
             ),
           ),
           Container(
@@ -83,6 +90,8 @@ class RekomendasiCard extends StatelessWidget {
                         style: blackTextStyle.copyWith(
                           fontSize: 12,
                         ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: !isMasjid ? 1 : 3,
                       ),
                       const SizedBox(
                         height: 10,
@@ -95,7 +104,7 @@ class RekomendasiCard extends StatelessWidget {
                             color: kRedMain,
                           ),
                           Text(
-                            '0.4 km',
+                            '$km km',
                             style: blackTextStyle.copyWith(fontSize: 12),
                           ),
                         ],
@@ -164,7 +173,7 @@ class RekomendasiCard extends StatelessWidget {
                                                 fontSize: 12),
                                           ),
                                           Text(
-                                            ' 325 ulasan ',
+                                            ' $ulasan ulasan ',
                                             style: greyTextStyle.copyWith(
                                                 fontSize: 12),
                                           ),

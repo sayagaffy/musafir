@@ -4,50 +4,90 @@ import 'package:flutter/material.dart';
 import 'package:musafir/base/custom_loader.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
 import 'package:musafir/controllers/auth_controller.dart';
+import 'package:musafir/controllers/google_controller.dart';
+import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/pages/auth/sign_up_page.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
 import 'package:musafir/ui/widgets/text_field_custom.dart';
 
-class SignInPage1 extends StatelessWidget {
+class SignInPage1 extends StatefulWidget {
   const SignInPage1({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    var emailController = TextEditingController();
-    var passwordController = TextEditingController();
+  State<SignInPage1> createState() => _SignInPage1State();
+}
 
-    // ignore: no_leading_underscores_for_local_identifiers
-    void _login(AuthController _authController) {
-      String email = emailController.text.trim();
-      String password = passwordController.text.trim();
+class _SignInPage1State extends State<SignInPage1> {
+  @override
+  void initState() {
+    var locationController = Get.find<LocationController>();
+    locationController.startedPosition();
+    super.initState();
+  }
 
-      if (password.isEmpty) {
-        showCustomSnackBar("type in your password", title: 'Password');
-      } else if (email.isEmpty) {
-        showCustomSnackBar("type in your email address",
-            title: 'Email Address');
-      } else if (!GetUtils.isEmail(email)) {
-        showCustomSnackBar("type in a valid email address",
-            title: 'Valid email address');
-      } else if (password.length < 6) {
-        showCustomSnackBar("Password can not  be less  than six characters",
-            title: 'Password');
-      } else {
-        _authController.login(email, password).then((status) {
-          if (status.isSuccess) {
-            Get.toNamed(RouteHelper.getInitial());
-          } else {
-            showCustomSnackBar(status.message);
-          }
-        });
+  var emailController = TextEditingController();
+  var passwordController = TextEditingController();
+
+  // ignore: no_leading_underscores_for_local_identifiers
+  void _login(AuthController _authController) {
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+
+    if (password.isEmpty) {
+      showCustomSnackBar("type in your password", title: 'Password');
+    } else if (email.isEmpty) {
+      showCustomSnackBar("type in your email address", title: 'Email Address');
+    } else if (!GetUtils.isEmail(email)) {
+      showCustomSnackBar("type in a valid email address",
+          title: 'Valid email address');
+    } else if (password.length < 6) {
+      showCustomSnackBar("Password can not  be less  than six characters",
+          title: 'Password');
+    } else {
+      // _authController.login(email, password).then((status) {
+      //   if (status.isSuccess) {
+      //     Get.toNamed(RouteHelper.getInitial());
+      //   } else {
+      //     showCustomSnackBar(status.message);
+      //   }
+      // });
+
+      var googleControllers = Get.find<GoogleController>();
+      var locationController = Get.find<LocationController>();
+
+      String latLang =
+          '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}';
+
+      if (googleControllers.isLoadedFood == false) {
+        googleControllers.getNearbyPlace(
+          keyword: 'food',
+          rankby: 'distance',
+          type: 'restaurant',
+          location: latLang,
+        );
       }
-    }
 
+      if (googleControllers.isLoadedMosque == false) {
+        googleControllers.getNearbyPlace(
+          keyword: 'masjid',
+          rankby: 'distance',
+          type: 'mosque',
+          location: latLang,
+        );
+      }
+
+      Get.toNamed(RouteHelper.getInitial());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: kBackgroundColor,
-        body: GetBuilder<AuthController>(builder: (authController) {
+      backgroundColor: kBackgroundColor,
+      body: GetBuilder<AuthController>(
+        builder: (authController) {
           return !authController.isLoading
               ? SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
@@ -135,6 +175,8 @@ class SignInPage1 extends StatelessWidget {
                   ),
                 )
               : const CustomLoader();
-        }));
+        },
+      ),
+    );
   }
 }

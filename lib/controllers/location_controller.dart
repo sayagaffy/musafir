@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_brace_in_string_interps
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -15,8 +17,8 @@ class LocationController extends GetxController implements GetxService {
   String _address = 'none';
   String get address => _address;
 
-  late LatLng _latLng;
-  LatLng get latlng => _latLng;
+  LatLng? _latLng;
+  LatLng? get latlng => _latLng;
 
   late Position _position;
   Position get position => _position;
@@ -40,6 +42,24 @@ class LocationController extends GetxController implements GetxService {
         position.latitude,
         position.longitude,
       ));
+
+      _latLng = LatLng(position.latitude, position.longitude);
+    }).catchError((e) {
+      debugPrint(e);
+    });
+  }
+
+  Future<void> startedPosition() async {
+    final hasPermission = _serviceEnabled;
+
+    if (!hasPermission) return;
+    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+        .then((Position position) {
+      _position = position;
+
+      _latLng = LatLng(position.latitude, position.longitude);
+
+      print(_latLng);
     }).catchError((e) {
       debugPrint(e);
     });
@@ -53,6 +73,9 @@ class LocationController extends GetxController implements GetxService {
   void setLatlang(double lat, double lng) async {
     _latLng =
         LatLng(double.parse(lat.toString()), double.parse(lng.toString()));
+
+    // print('location');
+    // print('${_latLng.latitude.toString()},${_latLng.longitude.toString()}');
   }
 
   void setPermision(bool serviceE, LocationPermission permis) {

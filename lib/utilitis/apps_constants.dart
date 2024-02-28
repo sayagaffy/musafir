@@ -18,6 +18,8 @@ class AppConstans {
   static const String API_GKEY = "AIzaSyBe_89LiN8WdHYk5mPcmAey5ZyheaskwE0";
   static const String GEOCODE = "/geocode/json";
   static const String SEARCH = "/place/autocomplete/json";
+  static const String NEARBYSEARCH = "/place/nearbysearch/json";
+  static const String PLACE_PHOTO = "/place/photo";
 
   ///[AUTH]
   static const String TOKEN = "";

@@ -4,14 +4,24 @@ import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:musafir/ui/widgets/custom_button.dart';
 import 'package:musafir/ui/widgets/custom_search_button.dart';
 import 'package:musafir/ui/widgets/custom_title.dart';
 import 'package:musafir/ui/widgets/rekomendasi_card.dart';
 import 'package:musafir/ui/widgets/rekomendasi_title.dart';
 import 'package:musafir/ui/widgets/tile_card.dart';
+import 'package:musafir/utilitis/apps_constants.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  bool _somethingFromApiLoaded = false;
 
   Widget header() {
     var locationController = Get.find<LocationController>();
@@ -127,73 +137,74 @@ class HomePage extends StatelessWidget {
       ),
       padding: const EdgeInsets.symmetric(horizontal: 17.5),
       child: RekomendasiTitle(
-          title: 'Rekomendasi',
-          onTap: () {
-            Get.offNamed(RouteHelper.getHomeListPage('filterList_food'));
-          }),
+        title: 'Rekomendasi',
+        onTap: () {
+          Get.offNamed(RouteHelper.getHomeListPage('filterList_food'));
+        },
+      ),
     );
   }
 
-  Widget rekomendasi(BuildContext context) {
+  Widget rekomendasi() {
     return Container(
       padding: EdgeInsets.only(left: defaultMargin),
       width: double.infinity,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        clipBehavior: Clip.none,
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: () {
-                Get.offNamed(RouteHelper.getHomeDetailPage(
-                    01, 'Shinju Ramen', 'homePage'));
-              },
-              child: const RekomendasiCard(
-                name: 'Shinju Ramen',
-                city: 'Tokyo, Jepang',
-                imgUrl: 'assets/image_destination1.png',
-                rating: 4.7,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Get.offNamed(RouteHelper.getHomeDetailPage(
-                    02, 'Burger Boss', 'homePage'));
-              },
-              child: const RekomendasiCard(
-                name: 'Burger Boss',
-                city: 'Nagasaki, Jepang',
-                imgUrl: 'assets/image_destination2.png',
-                rating: 4.3,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Get.offNamed(RouteHelper.getHomeDetailPage(
-                    03, 'The Halal Guys', 'homePage'));
-              },
-              child: const RekomendasiCard(
-                name: 'The Halal Guys',
-                city: 'Jakarta, Indonesia',
-                imgUrl: 'assets/image_destination3.png',
-                rating: 4.8,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Get.offNamed(RouteHelper.getHomeDetailPage(
-                    04, 'Pecel Gairah Malam', 'homePage'));
-              },
-              child: const RekomendasiCard(
-                name: 'Pecel Gairah Malam',
-                city: 'Tebet, Jakarta',
-                imgUrl: 'assets/image_destination4.png',
-                rating: 5.0,
-              ),
-            ),
-          ],
-        ),
-      ),
+      child: GetBuilder<GoogleController>(builder: (place) {
+        return place.isLoadedFood
+            ? SizedBox(
+                height: 206,
+                width: double.infinity,
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    clipBehavior: Clip.none,
+                    shrinkWrap: true,
+                    itemCount: 5,
+                    itemBuilder: (BuildContext context, int index) {
+                      final sortItems = place.nearbyFood
+                        ..sort((a, b) =>
+                            b.userRatingsTotal.compareTo(a.userRatingsTotal));
+                      final item = sortItems[index];
+
+                      return GestureDetector(
+                        onTap: () {
+                          Get.offNamed(
+                            RouteHelper.getHomeDetailPage(
+                                index, '${item.placeId}', 'homePage'),
+                          );
+                        },
+                        //'${AppConstans.BASE_URL_GOOGLE}${AppConstans.PLACE_PHOTO}?maxwidth=400&photo_reference=${item.photos.first.photoReference,}&key=${AppConstans.API_GKEY}',
+                        child: RekomendasiCard(
+                          name: item.name,
+                          city: item.vicinity,
+                          // imgUrl:
+                          //     '${AppConstans.BASE_URL_GOOGLE}${AppConstans.PLACE_PHOTO}?maxwidth=400&photo_reference=${item.photos.first.photoReference}&key=${AppConstans.API_GKEY}',
+                          rating: item.rating,
+                          ulasan: item.userRatingsTotal,
+                        ),
+                      );
+                    }),
+              )
+            : SizedBox(
+                height: 206,
+                width: double.infinity,
+                child: Skeletonizer(
+                  ignorePointers: false,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      clipBehavior: Clip.none,
+                      shrinkWrap: true,
+                      itemCount: 3,
+                      itemBuilder: (BuildContext context, int index) {
+                        return const RekomendasiCard(
+                          name: 'item.name',
+                          city: 'item.vicinity',
+                          rating: 10,
+                          ulasan: 10,
+                        );
+                      }),
+                ),
+              );
+      }),
     );
   }
 
@@ -257,7 +268,12 @@ class HomePage extends StatelessWidget {
         bottom: 15,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 17.5),
-      child: const CustomTitle(title: 'Masjid Tedekat'),
+      child: RekomendasiTitle(
+        title: 'Masjid Terdekat',
+        onTap: () {
+          Get.offNamed(RouteHelper.getHomeListPage('filterList_mosque'));
+        },
+      ),
     );
   }
 
@@ -265,43 +281,71 @@ class HomePage extends StatelessWidget {
     return Container(
       padding: EdgeInsets.only(left: defaultMargin, bottom: 50),
       width: double.infinity,
-      child: const SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        clipBehavior: Clip.none,
-        child: Row(
-          children: [
-            RekomendasiCard(
-              name: 'Al-Azhar',
-              city: 'Kota Jakarta Selatan',
-              imgUrl: 'assets/image_destination1.png',
-              rating: 4.7,
-              isMasjid: true,
-            ),
-            RekomendasiCard(
-              name: 'Masjid Besar Al-ihsan',
-              city: 'Nagasaki, Jepang',
-              imgUrl: 'assets/image_destination2.png',
-              rating: 4.3,
-              isMasjid: true,
-            ),
-            RekomendasiCard(
-              name: 'Ar-Rahman',
-              city: 'Jakarta, Indonesia',
-              imgUrl: 'assets/image_destination3.png',
-              rating: 4.8,
-              isMasjid: true,
-            ),
-            RekomendasiCard(
-              name: 'Al-irsyad Satya',
-              city: 'Tebet, Bandung',
-              imgUrl: 'assets/image_destination4.png',
-              rating: 5.0,
-              isMasjid: true,
-            ),
-          ],
-        ),
-      ),
+      child: GetBuilder<GoogleController>(builder: (place) {
+        return place.isLoadedMosque
+            ? SizedBox(
+                height: 206,
+                width: double.infinity,
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    clipBehavior: Clip.none,
+                    shrinkWrap: true,
+                    itemCount: 5,
+                    itemBuilder: (BuildContext context, int index) {
+                      final item = place.nearbyMosque[index];
+
+                      return GestureDetector(
+                        onTap: () {
+                          Get.offNamed(
+                            RouteHelper.getHomeDetailPage(
+                                index, '${item.placeId}', 'homePage'),
+                          );
+                        },
+                        child: RekomendasiCard(
+                          name: item.name,
+                          city: item.vicinity,
+                          // imgUrl: item.photos != null
+                          //     ? '${AppConstans.BASE_URL_GOOGLE}${AppConstans.PLACE_PHOTO}?maxwidth=400&photo_reference=${item.photos.first.photoReference}&key=${AppConstans.API_GKEY}'
+                          //     : 'none',
+                          rating: item.rating,
+                          ulasan: item.userRatingsTotal,
+                          isMasjid: true,
+                        ),
+                      );
+                    }),
+              )
+            : SizedBox(
+                height: 206,
+                width: double.infinity,
+                child: Skeletonizer(
+                  ignorePointers: false,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      clipBehavior: Clip.none,
+                      shrinkWrap: true,
+                      itemCount: 3,
+                      itemBuilder: (BuildContext context, int index) {
+                        return const RekomendasiCard(
+                          name: 'item.name',
+                          city: 'item.vicinity',
+                          rating: 10,
+                          ulasan: 10,
+                        );
+                      }),
+                ),
+              );
+      }),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -311,7 +355,7 @@ class HomePage extends StatelessWidget {
         children: [
           header(),
           titleRekomendasi(),
-          rekomendasi(context),
+          rekomendasi(),
           line(),
           titleKategoriMakanan(),
           kategoriMakanan(),

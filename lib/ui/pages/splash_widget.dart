@@ -3,7 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/ui/pages/auth/sign_in_page.dart';
-import 'package:musafir/ui/pages/main_page.dart';
+import 'package:musafir/ui/pages/auth/sign_up_page.dart';
 import '../../shared/theme.dart';
 
 class SplashPage extends StatefulWidget {
@@ -52,7 +52,7 @@ class _SplashPageState extends State<SplashPage> {
                 ),
                 onPressed: () {
                   Get.to(
-                    () => const MainPage(),
+                    () => const SignInPage1(),
                     transition: Transition.fadeIn,
                     duration: const Duration(milliseconds: 300),
                   );
@@ -82,7 +82,7 @@ class _SplashPageState extends State<SplashPage> {
                 ),
                 onPressed: () {
                   Get.to(
-                    () => const SignInPage1(),
+                    () => const SignUpPage1(),
                     transition: Transition.fadeIn,
                     duration: const Duration(milliseconds: 300),
                   );
