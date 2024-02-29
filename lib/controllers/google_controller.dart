@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_brace_in_string_interps
+// ignore_for_file: unnecessary_brace_in_string_interps, avoid_print
 
 import 'dart:async';
 import 'dart:ui';
@@ -31,6 +31,7 @@ class GoogleController extends GetxController {
   List<dynamic> _getPlaces = [];
   List<dynamic> get getPlaces => _getPlaces;
 
+  // ignore: prefer_final_fields
   List<dynamic> _nearbyPlaces = [];
   List<dynamic> get nearbyPlaces => _nearbyPlaces;
 

@@ -4,13 +4,11 @@ import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:musafir/ui/widgets/custom_button.dart';
 import 'package:musafir/ui/widgets/custom_search_button.dart';
 import 'package:musafir/ui/widgets/custom_title.dart';
 import 'package:musafir/ui/widgets/rekomendasi_card.dart';
 import 'package:musafir/ui/widgets/rekomendasi_title.dart';
 import 'package:musafir/ui/widgets/tile_card.dart';
-import 'package:musafir/utilitis/apps_constants.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,8 +19,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool _somethingFromApiLoaded = false;
-
   Widget header() {
     var locationController = Get.find<LocationController>();
     Get.put<GoogleController>(
@@ -168,8 +164,8 @@ class _HomePageState extends State<HomePage> {
                       return GestureDetector(
                         onTap: () {
                           Get.offNamed(
-                            RouteHelper.getHomeDetailPage(
-                                index, '${item.placeId}', 'homePage'),
+                            RouteHelper.getHomeDetailPage(index.toString(),
+                                '${item.placeId}', 'homePage'),
                           );
                         },
                         //'${AppConstans.BASE_URL_GOOGLE}${AppConstans.PLACE_PHOTO}?maxwidth=400&photo_reference=${item.photos.first.photoReference,}&key=${AppConstans.API_GKEY}',
@@ -297,8 +293,8 @@ class _HomePageState extends State<HomePage> {
                       return GestureDetector(
                         onTap: () {
                           Get.offNamed(
-                            RouteHelper.getHomeDetailPage(
-                                index, '${item.placeId}', 'homePage'),
+                            RouteHelper.getHomeDetailPage(index.toString(),
+                                '${item.placeId}', 'homePage'),
                           );
                         },
                         child: RekomendasiCard(

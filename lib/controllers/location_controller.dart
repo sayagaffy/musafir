@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_brace_in_string_interps
+// ignore_for_file: unnecessary_brace_in_string_interps, avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -63,6 +63,26 @@ class LocationController extends GetxController implements GetxService {
     }).catchError((e) {
       debugPrint(e);
     });
+  }
+
+  void refreshNearbyPlace() {
+    var googleControllers = Get.find<GoogleController>();
+
+    String latLang = '${latlng?.latitude}, ${latlng?.longitude}';
+
+    googleControllers.getNearbyPlace(
+      keyword: 'food',
+      rankby: 'distance',
+      type: 'restaurant',
+      location: latLang,
+    );
+
+    googleControllers.getNearbyPlace(
+      keyword: 'masjid',
+      rankby: 'distance',
+      type: 'mosque',
+      location: latLang,
+    );
   }
 
   void setAddress(String address) {

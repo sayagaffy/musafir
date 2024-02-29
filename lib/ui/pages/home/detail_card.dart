@@ -10,7 +10,7 @@ import 'package:musafir/ui/widgets/custom_title.dart';
 import 'package:musafir/ui/widgets/ulasan_card.dart';
 
 class DetailCard extends StatelessWidget {
-  final int pageId;
+  final String pageId;
   final String page;
   final String from;
 
@@ -50,7 +50,9 @@ class DetailCard extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   if (from == 'filterList_food') {
-                    Get.offNamed(RouteHelper.getHomeListPage(page));
+                    Get.offNamed(RouteHelper.getHomeListPage(from));
+                  } else if (from == 'filterList_mosque') {
+                    Get.offNamed(RouteHelper.getHomeListPage(from));
                   } else {
                     Get.offNamed(RouteHelper.getInitial());
                   }

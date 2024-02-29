@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/controllers/google_controller.dart';
@@ -8,9 +10,7 @@ import 'package:musafir/ui/pages/home/widgets/checkbox.dart';
 import 'package:musafir/ui/pages/home/widgets/dropdown.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
 import 'package:musafir/ui/widgets/rekomendasi_card.dart';
-
 import 'package:musafir/ui/widgets/textfield_google.dart';
-import 'package:musafir/utilitis/apps_constants.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class ListCard extends StatefulWidget {
@@ -290,7 +290,9 @@ class _ListCardState extends State<ListCard> {
             ? place.nearbyFood
             : place.nearbyMosque;
       } else if (place.filterType == 'rating') {
-        defaultList = defaultList.where((a) => a.rating == place.rate).toList();
+        defaultList = defaultList
+            .where((a) => a.rating >= place.rate && a.rating <= place.rate + .9)
+            .toList();
       } else if (place.filterType == 'ulasan_1') {
         defaultList
             .sort((a, b) => b.userRatingsTotal.compareTo(a.userRatingsTotal));
@@ -298,11 +300,6 @@ class _ListCardState extends State<ListCard> {
         defaultList
             .sort((a, b) => a.userRatingsTotal.compareTo(b.userRatingsTotal));
       }
-
-      // final sortByTotalReview = place.nearbyFood
-      //   ..sort((a, b) => b.userRatingsTotal.compareTo(a.userRatingsTotal));
-      // final showOnlyByRate =
-      //     place.nearbyFood.where((a) => a.rating == rate).toList();
 
       return widget.type == 'filterList_food'
           ? card20(defaultList, place.isLoadedFood)
@@ -327,16 +324,22 @@ class _ListCardState extends State<ListCard> {
                     itemCount: defaultList.length,
                     itemBuilder: (BuildContext ctx, index) {
                       final item = defaultList[index];
-                      return RekomendasiCard(
-                        name: item.name,
-                        city: item.vicinity,
-                        // imgUrl: item.photos != null
-                        //     ? '${AppConstans.BASE_URL_GOOGLE}${AppConstans.PLACE_PHOTO}?maxwidth=400&photo_reference=${item.photos.first.photoReference}&key=${AppConstans.API_GKEY}'
-                        //     : 'none',
-                        rating: item.rating,
-                        ulasan: item.userRatingsTotal,
-                        km: index.toDouble(),
-                        margin: const EdgeInsets.only(right: 0),
+                      return GestureDetector(
+                        onTap: () {
+                          Get.offNamed(RouteHelper.getHomeDetailPage(
+                              item.placeId.toString(), item.name, widget.type));
+                        },
+                        child: RekomendasiCard(
+                          name: item.name,
+                          city: item.vicinity,
+                          // imgUrl: item.photos != null
+                          //     ? '${AppConstans.BASE_URL_GOOGLE}${AppConstans.PLACE_PHOTO}?maxwidth=400&photo_reference=${item.photos.first.photoReference}&key=${AppConstans.API_GKEY}'
+                          //     : 'none',
+                          rating: item.rating,
+                          ulasan: item.userRatingsTotal,
+                          km: index.toDouble(),
+                          margin: const EdgeInsets.only(right: 0),
+                        ),
                       );
                     },
                   )

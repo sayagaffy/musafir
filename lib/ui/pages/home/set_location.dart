@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
 import 'package:musafir/controllers/google_controller.dart';
+import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
-import 'package:musafir/ui/pages/home/current_location.dart';
+import 'package:musafir/ui/pages/home/widgets/current_location.dart';
 import 'package:musafir/ui/widgets/location_list_tile.dart';
 
 class SetLoaction extends StatefulWidget {
@@ -40,6 +41,8 @@ class _SetLoactionState extends State<SetLoaction> {
             children: [
               GestureDetector(
                   onTap: () {
+                    var locationController = Get.find<LocationController>();
+                    locationController.refreshNearbyPlace();
                     Get.offNamed(RouteHelper.getInitial());
                   },
                   child: const Icon(Icons.keyboard_backspace_rounded)),

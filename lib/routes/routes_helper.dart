@@ -41,7 +41,7 @@ class RouteHelper {
   // ignore: unnecessary_string_interpolations
   static String getHomePage() => '$home';
   // ignore: unnecessary_string_interpolations
-  static String getHomeDetailPage(int pageId, String page, String from) =>
+  static String getHomeDetailPage(String pageId, String page, String from) =>
       '$homedetail?pageId=$pageId&page=$page&from=$from';
   // ignore: unnecessary_string_interpolations
   static String getHomeListPage(String type) => '$homelist?type=$type';
@@ -94,7 +94,7 @@ class RouteHelper {
         var pageId = Get.parameters['pageId'];
         var page = Get.parameters['page'];
         var from = Get.parameters['from'];
-        return DetailCard(pageId: int.parse(pageId!), page: page!, from: from!);
+        return DetailCard(pageId: pageId!, page: page!, from: from!);
       },
       transition: Transition.fade,
     ),
