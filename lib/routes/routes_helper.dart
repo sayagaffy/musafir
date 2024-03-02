@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_string_interpolations
+
 import 'package:get/get.dart';
 import 'package:musafir/ui/pages/auth/sign_in_page.dart';
 import 'package:musafir/ui/pages/auth/sign_up_page.dart';
@@ -5,6 +7,7 @@ import 'package:musafir/ui/pages/explore/explore_pages.dart';
 import 'package:musafir/ui/pages/explore/rencana_page.dart';
 import 'package:musafir/ui/pages/home/detail_card.dart';
 import 'package:musafir/ui/pages/home/home_page.dart';
+import 'package:musafir/ui/pages/home/home_search.dart';
 import 'package:musafir/ui/pages/home/llist_card.dart';
 import 'package:musafir/ui/pages/home/set_location.dart';
 import 'package:musafir/ui/pages/main_page.dart';
@@ -23,30 +26,32 @@ class RouteHelper {
   static const String homedetail = "/home-detail";
   static const String homelist = "/home-list";
   static const String setlocation = "/setlocation";
+  static const String homeSearch = "/home-search";
 
-  // ignore: unnecessary_string_interpolations
   static String getSplashPage() => '$splashPage';
-  // ignore: unnecessary_string_interpolations
+
   static String getInitial() => '$initial';
-  // ignore: unnecessary_string_interpolations
+
   static String getsigInPage() => '$sigIn';
-  // ignore: unnecessary_string_interpolations
+
   static String getsignUpPage() => '$sigUp';
-  // ignore: unnecessary_string_interpolations
+
   static String getExplorePage() => '$explore';
-  // ignore: unnecessary_string_interpolations
+
   static String getRencanaPage() => '$rencana';
-  // ignore: unnecessary_string_interpolations
+
   static String getSearchPage() => '$search';
-  // ignore: unnecessary_string_interpolations
+
   static String getHomePage() => '$home';
-  // ignore: unnecessary_string_interpolations
+
   static String getHomeDetailPage(String pageId, String page, String from) =>
       '$homedetail?pageId=$pageId&page=$page&from=$from';
-  // ignore: unnecessary_string_interpolations
+
   static String getHomeListPage(String type) => '$homelist?type=$type';
-  // ignore: unnecessary_string_interpolations
+
   static String getLocationPage() => '$setlocation';
+
+  static String getHomeSearchPage() => '$homeSearch';
 
   static List<GetPage> routes = [
     GetPage(
@@ -109,6 +114,11 @@ class RouteHelper {
     GetPage(
       name: setlocation,
       page: () => const SetLoaction(),
+      transition: Transition.fade,
+    ),
+    GetPage(
+      name: homeSearch,
+      page: () => const HomeSearch(),
       transition: Transition.fade,
     ),
   ];

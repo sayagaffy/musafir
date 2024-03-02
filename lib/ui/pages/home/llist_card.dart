@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:musafir/controllers/google_controller.dart';
 import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
@@ -23,7 +22,7 @@ class ListCard extends StatefulWidget {
 }
 
 class _ListCardState extends State<ListCard> {
-  var googleController = Get.find<GoogleController>();
+  var homeController = Get.find<HomeController>();
   var locationController = Get.find<LocationController>();
 
   List<String> ratings = [
@@ -41,12 +40,12 @@ class _ListCardState extends State<ListCard> {
   // ignore: no_leading_underscores_for_local_identifiers
   _handleValueRating(String value) {
     if (value == 'Rating') {
-      googleController.setFilterType('default');
+      homeController.setFilterType('default');
     } else {
-      googleController.setFilterType('rating');
+      homeController.setFilterType('rating');
       if (value != 'Rating') {
         selectedRating = value;
-        googleController.setRate(int.parse(value));
+        homeController.setRate(int.parse(value));
       }
     }
   }
@@ -63,7 +62,7 @@ class _ListCardState extends State<ListCard> {
     selectedRadius = value;
 
     if (widget.type == 'filterList_food' && value == '< 2 km') {
-      googleController.getNearbyPlace(
+      homeController.getNearbyPlace(
         keyword: 'food',
         rankby: 'prominence',
         type: 'restaurant',
@@ -72,7 +71,7 @@ class _ListCardState extends State<ListCard> {
             '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
       );
     } else if (widget.type == 'filterList_food' && value == '> 2 km') {
-      googleController.getNearbyPlace(
+      homeController.getNearbyPlace(
         keyword: 'food',
         rankby: 'prominence',
         type: 'restaurant',
@@ -81,7 +80,7 @@ class _ListCardState extends State<ListCard> {
             '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
       );
     } else if (widget.type == 'filterList_food' && value == 'Jarak') {
-      googleController.getNearbyPlace(
+      homeController.getNearbyPlace(
         keyword: 'food',
         rankby: 'distance',
         type: 'restaurant',
@@ -91,7 +90,7 @@ class _ListCardState extends State<ListCard> {
     }
 
     if (widget.type == 'filterList_mosque' && value == '< 2 km') {
-      googleController.getNearbyPlace(
+      homeController.getNearbyPlace(
         keyword: 'masjid',
         rankby: 'prominence',
         type: 'mosque',
@@ -100,7 +99,7 @@ class _ListCardState extends State<ListCard> {
             '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
       );
     } else if (widget.type == 'filterList_mosque' && value == '> 2 km') {
-      googleController.getNearbyPlace(
+      homeController.getNearbyPlace(
         keyword: 'masjid',
         rankby: 'prominence',
         type: 'mosque',
@@ -109,7 +108,7 @@ class _ListCardState extends State<ListCard> {
             '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
       );
     } else if (widget.type == 'filterList_mosque' && value == 'Jarak') {
-      googleController.getNearbyPlace(
+      homeController.getNearbyPlace(
         keyword: 'masjid',
         rankby: 'distance',
         type: 'mosque',
@@ -131,10 +130,10 @@ class _ListCardState extends State<ListCard> {
 
   _handleValueUlasan(String value) {
     if (value == 'Ulasan') {
-      googleController.setFilterType('default');
+      homeController.setFilterType('default');
 
       if (widget.type == 'filterList_food') {
-        googleController.getNearbyPlace(
+        homeController.getNearbyPlace(
           keyword: 'food',
           rankby: 'distance',
           type: 'restaurant',
@@ -142,7 +141,7 @@ class _ListCardState extends State<ListCard> {
               '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
         );
       } else if (widget.type == 'filterList_mosque') {
-        googleController.getNearbyPlace(
+        homeController.getNearbyPlace(
           keyword: 'masjid',
           rankby: 'distance',
           type: 'mosque',
@@ -151,9 +150,9 @@ class _ListCardState extends State<ListCard> {
         );
       }
     } else if (value == 'Paling Tinggi') {
-      googleController.setFilterType('ulasan_1');
+      homeController.setFilterType('ulasan_1');
     } else if (value == 'Paling Rendah') {
-      googleController.setFilterType('ulasan_0');
+      homeController.setFilterType('ulasan_0');
     }
 
     selectedUlasan = value;
@@ -164,7 +163,7 @@ class _ListCardState extends State<ListCard> {
         hintText: 'Ketik lokasi disini',
         onTap: () {
           Get.offNamed(RouteHelper.getInitial());
-          googleController.setFilterType('default');
+          homeController.setFilterType('default');
         });
   }
 
@@ -281,7 +280,7 @@ class _ListCardState extends State<ListCard> {
     //     List.generate(10, (index) => {"id": index, "name": "Product $index"})
     //         .toList();
 
-    return GetBuilder<GoogleController>(builder: (place) {
+    return GetBuilder<HomeController>(builder: (place) {
       var defaultList = widget.type == 'filterList_food'
           ? place.nearbyFood
           : place.nearbyMosque;

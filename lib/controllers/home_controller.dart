@@ -1,7 +1,7 @@
-// ignore_for_file: unused_field, prefer_final_fields
-
+// ignore_for_file: unused_field, prefer_final_fields, unnecessary_brace_in_string_interps, avoid_print
 import 'package:get/get.dart';
 import 'package:musafir/data/repository/google_repo.dart';
+import 'package:musafir/models/nearby_model.dart';
 import 'package:musafir/models/place_detail_model.dart';
 
 class HomeController extends GetxController implements GetxService {
@@ -13,10 +13,93 @@ class HomeController extends GetxController implements GetxService {
 
   set loading(bool? loading) => _loading = loading!;
 
-  ///['PARAMETER FOR PLACE DETAIL']
+  ///['PARAMETER FOR NEARBY PLACE']
+  ///[Food]
+  bool _isLoadedFood = false;
+  bool get isLoadedFood => _isLoadedFood;
+
+  List<dynamic> _nearbyFood = [];
+  List<dynamic> get nearbyFood => _nearbyFood;
+
+  late String _nextPageTokenFood;
+  String get nextPageTokenFood => _nextPageTokenFood;
+
+  ///[Mosque]
+  bool _isLoadedMosque = false;
+  bool get isLoadedMosque => _isLoadedMosque;
+
+  List<dynamic> _nearbyMosque = [];
+  List<dynamic> get nearbyMosque => _nearbyMosque;
+
+  late String _nextPageTokenMosque;
+  String get nextPageTokenMosque => _nextPageTokenMosque;
+
+  ///['Place Detail']
   dynamic _placeDtl;
   dynamic get placeDtl => _placeDtl;
 
+  ///['PARAMETER FILTER IN LIST PAGE']
+  ///['Filter Default']
+  String _filterType = 'default';
+  String get filterType => _filterType;
+  void setFilterType(String value) {
+    _filterType = value;
+    update();
+  }
+
+  ///['Filter By Rating']
+  int _rate = 0;
+  int get rate => _rate;
+
+  void setRate(int value) {
+    _rate = value;
+    update();
+  }
+
+  ///['FUNCTION GET NEARBY PLACE']
+  Future<void> getNearbyPlace({
+    String? keyword,
+    String? rankby,
+    String? type,
+    String? pagetoken,
+    String? location,
+    int? radius,
+  }) async {
+    var k = keyword != null ? 'keyword=${keyword}&' : '';
+    var r = rankby != null ? 'rankby=${rankby}&' : '';
+    var t = type != null ? 'type=${type}&' : '';
+    var l = location != null ? 'location=${location}&' : '';
+    var rd = radius != null ? 'radius=${radius}&' : '';
+    var pt = pagetoken != null ? 'pagetoken=${pagetoken}&' : '';
+    var query = k + r + t + l + rd + pt;
+
+    Response response = await googleRepo.getNearbyPlace(query);
+
+    if (response.statusCode == 200) {
+      if (type == 'restaurant') {
+        _nearbyFood = [];
+        _nearbyFood.addAll(NearbyPlace.fromJson(response.body).results);
+        _nextPageTokenFood = response.body['next_page_token'];
+
+        _isLoadedFood = true;
+        print('food');
+      }
+
+      if (type == 'mosque') {
+        _nearbyMosque = [];
+        _nearbyMosque.addAll(NearbyPlace.fromJson(response.body).results);
+        _nextPageTokenMosque = response.body['next_page_token'] ?? 'none';
+        _isLoadedMosque = true;
+        print('mosque');
+      }
+
+      // print(query);
+
+      update();
+    }
+  }
+
+  ///['FUNCTION PLACE DETAIL']
   Future<void> placeDetail(String placeId) async {
     Response response = await googleRepo.getPlaceDetail(placeId);
 

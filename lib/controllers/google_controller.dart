@@ -176,8 +176,8 @@ void setAddressAndLatlng(String address, double lat, double lang) {
   var locationController = Get.find<LocationController>();
   double latitude = lat;
   double longitude = lang;
-  locationController.setAddress(address);
-  locationController.setLatlang(latitude, longitude);
+  // locationController.setAddress(address);
+  // locationController.setLatlang(latitude, longitude);
 
   // print(locationController.address);
   // print(locationController.latlng);

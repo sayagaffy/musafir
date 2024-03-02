@@ -1,10 +1,12 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:musafir/base/custom_loader.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
 import 'package:musafir/controllers/auth_controller.dart';
-import 'package:musafir/controllers/google_controller.dart';
+import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
@@ -24,6 +26,11 @@ class _SignInPage1State extends State<SignInPage1> {
   void initState() {
     var locationController = Get.find<LocationController>();
     locationController.startedPosition();
+
+    print(locationController.serviceEnabled);
+    print(locationController.latlng);
+    print(locationController.permission);
+
     super.initState();
   }
 
@@ -54,14 +61,15 @@ class _SignInPage1State extends State<SignInPage1> {
       //   }
       // });
 
-      var googleControllers = Get.find<GoogleController>();
+      var homeController = Get.find<HomeController>();
+
       var locationController = Get.find<LocationController>();
 
       String latLang =
           '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}';
 
-      if (googleControllers.isLoadedFood == false) {
-        googleControllers.getNearbyPlace(
+      if (homeController.isLoadedFood == false) {
+        homeController.getNearbyPlace(
           keyword: 'food',
           rankby: 'distance',
           type: 'restaurant',
@@ -69,14 +77,14 @@ class _SignInPage1State extends State<SignInPage1> {
         );
       }
 
-      // if (googleControllers.isLoadedMosque == false) {
-      //   googleControllers.getNearbyPlace(
-      //     keyword: 'masjid',
-      //     rankby: 'distance',
-      //     type: 'mosque',
-      //     location: latLang,
-      //   );
-      // }
+      if (homeController.isLoadedMosque == false) {
+        homeController.getNearbyPlace(
+          keyword: 'masjid',
+          rankby: 'distance',
+          type: 'mosque',
+          location: latLang,
+        );
+      }
 
       Get.toNamed(RouteHelper.getInitial());
     }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
-import 'package:musafir/controllers/google_controller.dart';
+import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
@@ -16,6 +16,29 @@ class SetLoaction extends StatefulWidget {
 }
 
 class _SetLoactionState extends State<SetLoaction> {
+  var locationController = Get.find<LocationController>();
+
+  void refreshNearbyPlace() {
+    var homeController = Get.find<HomeController>();
+
+    String latLang =
+        '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}';
+
+    homeController.getNearbyPlace(
+      keyword: 'food',
+      rankby: 'distance',
+      type: 'restaurant',
+      location: latLang,
+    );
+
+    homeController.getNearbyPlace(
+      keyword: 'masjid',
+      rankby: 'distance',
+      type: 'mosque',
+      location: latLang,
+    );
+  }
+
   Widget header() {
     return Container(
       width: double.infinity,
@@ -41,8 +64,7 @@ class _SetLoactionState extends State<SetLoaction> {
             children: [
               GestureDetector(
                   onTap: () {
-                    var locationController = Get.find<LocationController>();
-                    locationController.refreshNearbyPlace();
+                    refreshNearbyPlace();
                     Get.offNamed(RouteHelper.getInitial());
                   },
                   child: const Icon(Icons.keyboard_backspace_rounded)),
@@ -55,7 +77,7 @@ class _SetLoactionState extends State<SetLoaction> {
                   width: double.infinity,
                   child: TextFormField(
                     onChanged: (value) {
-                      Get.find<GoogleController>().getPlace(value);
+                      locationController.getPlace(value);
                     },
                     style: blackTextStyle.copyWith(
                       fontSize: 12,
@@ -115,7 +137,7 @@ class _SetLoactionState extends State<SetLoaction> {
       padding: const EdgeInsets.only(),
       child: Column(
         children: [
-          GetBuilder<GoogleController>(builder: (place) {
+          GetBuilder<LocationController>(builder: (place) {
             return place.isLoaded
                 ? ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),

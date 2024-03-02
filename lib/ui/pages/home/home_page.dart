@@ -1,11 +1,10 @@
 import 'package:get/get.dart';
-import 'package:musafir/controllers/google_controller.dart';
 import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:musafir/ui/widgets/custom_search_button.dart';
+
 import 'package:musafir/ui/widgets/custom_title.dart';
 import 'package:musafir/ui/widgets/rekomendasi_card.dart';
 import 'package:musafir/ui/widgets/rekomendasi_title.dart';
@@ -22,10 +21,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Widget header() {
     var locationController = Get.find<LocationController>();
-    Get.put<GoogleController>(
-      GoogleController(googleRepo: Get.find()),
-      permanent: true,
-    );
 
     return Container(
       width: double.infinity,
@@ -117,7 +112,44 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     )),
-          const SizedBox(height: 32, child: CustomSearchButton()),
+          SizedBox(
+            height: 32,
+            child: GestureDetector(
+              onTap: () {
+                Get.offNamed(RouteHelper.getHomeSearchPage());
+              },
+              child: Container(
+                height: 32,
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 6,
+                  horizontal: 12,
+                ),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: kGreyColor,
+                  ),
+                  borderRadius: BorderRadius.circular(defaultRadius),
+                  color: kBackgroundColor,
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.search_rounded,
+                      size: 20,
+                    ),
+                    const SizedBox(
+                      width: 2,
+                    ),
+                    Text(
+                      'Cari di Musafir',
+                      style: greyTextStyle.copyWith(fontSize: 12),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
           const SizedBox(
             height: 20,
           ),
@@ -146,7 +178,7 @@ class _HomePageState extends State<HomePage> {
     return Container(
       padding: EdgeInsets.only(left: defaultMargin),
       width: double.infinity,
-      child: GetBuilder<GoogleController>(builder: (place) {
+      child: GetBuilder<HomeController>(builder: (place) {
         return place.isLoadedFood
             ? SizedBox(
                 height: 206,
@@ -279,7 +311,7 @@ class _HomePageState extends State<HomePage> {
     return Container(
       padding: EdgeInsets.only(left: defaultMargin, bottom: 50),
       width: double.infinity,
-      child: GetBuilder<GoogleController>(builder: (place) {
+      child: GetBuilder<HomeController>(builder: (place) {
         return place.isLoadedMosque
             ? SizedBox(
                 height: 206,
