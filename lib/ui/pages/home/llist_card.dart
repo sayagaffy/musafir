@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/controllers/google_controller.dart';
+import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
@@ -326,6 +327,9 @@ class _ListCardState extends State<ListCard> {
                       final item = defaultList[index];
                       return GestureDetector(
                         onTap: () {
+                          var homecontroller = Get.find<HomeController>();
+
+                          homecontroller.placeDetail(item.placeId.toString());
                           Get.offNamed(RouteHelper.getHomeDetailPage(
                               item.placeId.toString(), item.name, widget.type));
                         },

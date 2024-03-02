@@ -5,7 +5,6 @@ import 'package:musafir/ui/widgets/custom_button.dart';
 import 'package:musafir/ui/widgets/custom_page_route.dart';
 
 import 'package:musafir/ui/widgets/custom_title.dart';
-import 'package:musafir/ui/widgets/ulasan_card.dart';
 
 class DetailPage extends StatelessWidget {
   const DetailPage({super.key});
@@ -578,8 +577,8 @@ class DetailPage extends StatelessWidget {
               )
             ],
           ),
-          const UlasanCard(),
-          const UlasanCard(),
+          // const UlasanCard(),
+          // const UlasanCard(),
         ],
       ),
     );

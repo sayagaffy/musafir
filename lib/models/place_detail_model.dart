@@ -1,7 +1,7 @@
 // ignore_for_file: unused_field, unnecessary_this
 
 class PlaceDetail {
-  late PlaceDetailModel _result;
+  PlaceDetailModel? _result;
   String? _status;
 
   PlaceDetailModel? get result => _result;
@@ -16,9 +16,9 @@ class PlaceDetail {
   }
 
   PlaceDetail.fromJson(Map<String, dynamic> json) {
-    _result = (json['result'] != null
+    _result = json['result'] != null
         ? PlaceDetailModel.fromJson(json['result'])
-        : null)!;
+        : null;
     _status = json['status'];
   }
 }
@@ -127,7 +127,8 @@ class PlaceDetailModel {
     plusCode =
         json['plus_code'] != null ? PlusCode.fromJson(json['plus_code']) : null;
     priceLevel = json['price_level'];
-    rating = json['rating'];
+    // ignore: prefer_null_aware_operators
+    rating = json['rating'] != null ? json['rating'].toDouble() : null;
     reference = json['reference'];
     reservable = json['reservable'];
     if (json['reviews'] != null) {
@@ -283,7 +284,7 @@ class Reviews {
   String? language;
   String? originalLanguage;
   String? profilePhotoUrl;
-  int? rating;
+  double? rating;
   String? relativeTimeDescription;
   String? text;
   int? time;
@@ -307,7 +308,8 @@ class Reviews {
     language = json['language'];
     originalLanguage = json['original_language'];
     profilePhotoUrl = json['profile_photo_url'];
-    rating = json['rating'];
+    // ignore: prefer_null_aware_operators
+    rating = json['rating'] != null ? json['rating'].toDouble() : null;
     relativeTimeDescription = json['relative_time_description'];
     text = json['text'];
     time = json['time'];

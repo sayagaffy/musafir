@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:musafir/controllers/google_controller.dart';
+import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
@@ -163,10 +164,11 @@ class _HomePageState extends State<HomePage> {
 
                       return GestureDetector(
                         onTap: () {
-                          Get.offNamed(
-                            RouteHelper.getHomeDetailPage(index.toString(),
-                                '${item.placeId}', 'homePage'),
-                          );
+                          var homecontroller = Get.find<HomeController>();
+                          homecontroller.placeDetail(item.placeId.toString());
+
+                          Get.offNamed(RouteHelper.getHomeDetailPage(
+                              item.placeId.toString(), item.name, 'homePage'));
                         },
                         //'${AppConstans.BASE_URL_GOOGLE}${AppConstans.PLACE_PHOTO}?maxwidth=400&photo_reference=${item.photos.first.photoReference,}&key=${AppConstans.API_GKEY}',
                         child: RekomendasiCard(
@@ -292,10 +294,11 @@ class _HomePageState extends State<HomePage> {
 
                       return GestureDetector(
                         onTap: () {
-                          Get.offNamed(
-                            RouteHelper.getHomeDetailPage(index.toString(),
-                                '${item.placeId}', 'homePage'),
-                          );
+                          var homecontroller = Get.find<HomeController>();
+                          homecontroller.placeDetail(item.placeId.toString());
+
+                          Get.offNamed(RouteHelper.getHomeDetailPage(
+                              item.placeId.toString(), item.name, 'homePage'));
                         },
                         child: RekomendasiCard(
                           name: item.name,

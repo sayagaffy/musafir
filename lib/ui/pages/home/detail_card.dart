@@ -1,5 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/pages/review_rate_page.dart';
@@ -7,9 +12,12 @@ import 'package:musafir/ui/widgets/custom_button.dart';
 import 'package:musafir/ui/widgets/custom_page_route.dart';
 
 import 'package:musafir/ui/widgets/custom_title.dart';
-import 'package:musafir/ui/widgets/ulasan_card.dart';
+import 'package:musafir/utilitis/apps_constants.dart';
+// ignore: depend_on_referenced_packages
+import 'package:intl/intl.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
-class DetailCard extends StatelessWidget {
+class DetailCard extends StatefulWidget {
   final String pageId;
   final String page;
   final String from;
@@ -21,7 +29,12 @@ class DetailCard extends StatelessWidget {
     required this.from,
   });
 
-  Widget backgroundImage(BuildContext context) {
+  @override
+  State<DetailCard> createState() => _DetailCardState();
+}
+
+class _DetailCardState extends State<DetailCard> {
+  Widget backgroundImage(BuildContext context, home) {
     return Stack(
       children: [
         ColorFiltered(
@@ -30,12 +43,21 @@ class DetailCard extends StatelessWidget {
           child: Container(
             height: 245,
             width: double.infinity,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/image_destination1.png'),
-                fit: BoxFit.cover,
-              ),
-            ),
+            decoration: home.placeDtl.photos != null
+                ? BoxDecoration(
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(
+                        '${AppConstans.BASE_URL_GOOGLE}${AppConstans.PLACE_PHOTO}?maxwidth=400&photo_reference=${home.placeDtl.photos.first.photoReference}&key=${AppConstans.API_GKEY}',
+                      ),
+                    ),
+                  )
+                : const BoxDecoration(
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage('assets/image_destination1.png'),
+                    ),
+                  ),
           ),
         ),
         Container(
@@ -49,13 +71,15 @@ class DetailCard extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  if (from == 'filterList_food') {
-                    Get.offNamed(RouteHelper.getHomeListPage(from));
-                  } else if (from == 'filterList_mosque') {
-                    Get.offNamed(RouteHelper.getHomeListPage(from));
+                  if (widget.from == 'filterList_food') {
+                    Get.offNamed(RouteHelper.getHomeListPage(widget.from));
+                  } else if (widget.from == 'filterList_mosque') {
+                    Get.offNamed(RouteHelper.getHomeListPage(widget.from));
                   } else {
                     Get.offNamed(RouteHelper.getInitial());
                   }
+
+                  home.loading = false;
                 },
                 // onTap: onTap,
 
@@ -91,7 +115,7 @@ class DetailCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      page,
+                      home.placeDtl.name ?? 'no name',
                       style: blackTextStyle.copyWith(
                         fontSize: 20,
                         fontWeight: bold,
@@ -100,10 +124,20 @@ class DetailCard extends StatelessWidget {
                     const SizedBox(
                       height: 15,
                     ),
-                    Text(
-                      'Burger, Fried chicken, Kebab...',
-                      style: blackTextStyle.copyWith(
-                        fontSize: 12,
+                    SizedBox(
+                      height: 20,
+                      width: double.infinity,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: home.placeDtl.types.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Text(
+                            '${home.placeDtl.types[index]}, ',
+                            style: blackTextStyle.copyWith(
+                              fontSize: 12,
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -120,7 +154,7 @@ class DetailCard extends StatelessWidget {
     );
   }
 
-  Widget tileReview() {
+  Widget tileReview(home) {
     return Row(
       children: [
         Expanded(
@@ -144,15 +178,28 @@ class DetailCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.star_outline_rounded,
-                      size: 20,
+                    RatingBar.builder(
+                      initialRating: home.placeDtl.rating ?? 0,
+                      minRating: 1,
+                      direction: Axis.horizontal,
+                      allowHalfRating: true,
+                      itemCount: 5,
+                      itemSize: 15,
+                      itemPadding: const EdgeInsets.symmetric(horizontal: 0),
+                      itemBuilder: (context, _) => const Icon(
+                        Icons.star_rounded,
+                        color: Colors.amber,
+                      ),
+                      onRatingUpdate: (rating) {},
+                      ignoreGestures: true,
                     ),
                     const SizedBox(
                       width: 7,
                     ),
                     Text(
-                      '4.7',
+                      home.placeDtl.rating != null
+                          ? home.placeDtl.rating.toString()
+                          : '0',
                       style: blackTextStyle.copyWith(
                         fontSize: 10,
                       ),
@@ -163,7 +210,9 @@ class DetailCard extends StatelessWidget {
                   height: 4,
                 ),
                 Text(
-                  '1.200 rating',
+                  home.placeDtl.userRatingsTotal != null
+                      ? '${home.placeDtl.userRatingsTotal.toString()} rating'
+                      : 'belum ada rating',
                   style: blackTextStyle.copyWith(
                     fontSize: 10,
                   ),
@@ -250,10 +299,12 @@ class DetailCard extends StatelessWidget {
                       size: 20,
                     ),
                     const SizedBox(
-                      width: 7,
+                      width: 0,
                     ),
                     Text(
-                      '4.7',
+                      home.placeDtl.priceLevel != null
+                          ? home.placeDtl.priceLevel.toString()
+                          : 'uknown',
                       style: blackTextStyle.copyWith(
                         fontSize: 10,
                       ),
@@ -264,7 +315,7 @@ class DetailCard extends StatelessWidget {
                   height: 4,
                 ),
                 Text(
-                  '30rb-70rb',
+                  'Price level',
                   style: blackTextStyle.copyWith(
                     fontSize: 10,
                   ),
@@ -280,7 +331,7 @@ class DetailCard extends StatelessWidget {
     );
   }
 
-  Widget content() {
+  Widget content(home) {
     return Container(
       padding: const EdgeInsets.only(left: 25, right: 23),
       margin: const EdgeInsets.only(top: 19),
@@ -333,7 +384,7 @@ class DetailCard extends StatelessWidget {
             height: 5,
           ),
           Text(
-            'Jl. Sukamenak No. 55 Kec. margahayu, Bandung, Jawa Barat',
+            home.placeDtl.formattedAddress,
             style: blackTextStyle.copyWith(
               fontSize: 12,
             ),
@@ -343,7 +394,18 @@ class DetailCard extends StatelessWidget {
     );
   }
 
-  Widget mapLocation() {
+  Widget mapLocation(home) {
+    // ignore: no_leading_underscores_for_local_identifiers
+    List<Marker> _markers = <Marker>[
+      Marker(
+        markerId: const MarkerId('SomeId'),
+        position: LatLng(home.placeDtl.geometry.location.lat,
+            home.placeDtl.geometry.location.lng),
+        infoWindow: InfoWindow(title: '${home.placeDtl.name}'),
+        icon: BitmapDescriptor.defaultMarker,
+      )
+    ];
+
     return Container(
       margin: const EdgeInsets.only(
         top: 14,
@@ -357,77 +419,68 @@ class DetailCard extends StatelessWidget {
           fit: BoxFit.cover,
         ),
       ),
-    );
-  }
-
-  Widget titleRekomendasi() {
-    return Container(
-      margin: const EdgeInsets.only(
-        bottom: 5,
-      ),
-      padding: const EdgeInsets.only(left: 25, right: 23),
-      child: const CustomTitle(title: 'Foto'),
-    );
-  }
-
-  Widget foto() {
-    return Container(
-      padding: const EdgeInsets.only(left: 25),
-      width: double.infinity,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        clipBehavior: Clip.none,
-        child: Row(
-          children: [
-            Container(
-              width: 92,
-              height: 121,
-              margin: const EdgeInsets.only(right: 15),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: const Color(0xFFF5F5F5),
-              ),
-            ),
-            Container(
-              width: 92,
-              height: 121,
-              margin: const EdgeInsets.only(right: 15),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: const Color(0xFFF5F5F5),
-              ),
-            ),
-            Container(
-              width: 92,
-              height: 121,
-              margin: const EdgeInsets.only(right: 15),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: const Color(0xFFF5F5F5),
-              ),
-            ),
-            Container(
-              width: 92,
-              height: 121,
-              margin: const EdgeInsets.only(right: 15),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: const Color(0xFFF5F5F5),
-              ),
-            ),
-            Container(
-              width: 92,
-              height: 121,
-              margin: const EdgeInsets.only(right: 15),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: const Color(0xFFF5F5F5),
-              ),
-            ),
-          ],
+      child: GoogleMap(
+        zoomControlsEnabled: false,
+        zoomGesturesEnabled: false,
+        initialCameraPosition: CameraPosition(
+          target: LatLng(home.placeDtl.geometry.location.lat,
+              home.placeDtl.geometry.location.lng),
+          zoom: 16,
         ),
+        markers: Set<Marker>.of(_markers),
       ),
     );
+  }
+
+  Widget titleRekomendasi(home) {
+    return home.placeDtl.photos != null
+        ? Container(
+            margin: const EdgeInsets.only(
+              bottom: 5,
+            ),
+            padding: const EdgeInsets.only(left: 25, right: 23),
+            child: const CustomTitle(title: 'Foto'),
+          )
+        : const SizedBox();
+  }
+
+  Widget foto(home) {
+    return home.placeDtl.photos != null
+        ? Container(
+            padding: const EdgeInsets.only(left: 25),
+            width: double.infinity,
+            child: SizedBox(
+                height: 121,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: home.placeDtl.photos.length,
+                  clipBehavior: Clip.none,
+                  shrinkWrap: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      width: 92,
+                      height: 121,
+                      margin: const EdgeInsets.only(right: 15),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color(0xFFF5F5F5),
+                        image: home.placeDtl.photos == null
+                            ? const DecorationImage(
+                                fit: BoxFit.cover,
+                                image:
+                                    AssetImage('assets/image_destination1.png'),
+                              )
+                            : DecorationImage(
+                                fit: BoxFit.cover,
+                                image: NetworkImage(
+                                    '${AppConstans.BASE_URL_GOOGLE}${AppConstans.PLACE_PHOTO}?maxwidth=400&photo_reference=${home.placeDtl.photos[index].photoReference}&key=${AppConstans.API_GKEY}'),
+                              ),
+                      ),
+                    );
+                  },
+                )),
+          )
+        : const SizedBox();
   }
 
   Widget line() {
@@ -534,74 +587,194 @@ class DetailCard extends StatelessWidget {
     );
   }
 
-  Widget titleUlasan() {
-    return Container(
-      margin: const EdgeInsets.only(
-        bottom: 11,
-        top: 27,
-      ),
-      padding: const EdgeInsets.only(left: 25, right: 23),
-      child: const CustomTitle(title: 'Ulasan'),
-    );
+  Widget titleUlasan(home) {
+    return home.placeDtl.reviews != null
+        ? Container(
+            margin: const EdgeInsets.only(
+              bottom: 11,
+            ),
+            padding: const EdgeInsets.only(left: 25, right: 23),
+            child: const CustomTitle(title: 'Ulasan'),
+          )
+        : const SizedBox();
   }
 
-  Widget ulasan() {
-    return Container(
-      padding: const EdgeInsets.only(
-        left: 25,
-        right: 23,
-        bottom: 50,
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.star_outline_rounded,
-                size: 24,
-              ),
-              const SizedBox(
-                width: 6,
-              ),
-              Text(
-                '5.0',
-                style: blackTextStyle.copyWith(
-                  fontSize: 12,
-                  fontWeight: bold,
+  Widget ulasan(home) {
+    return home.placeDtl.reviews != null
+        ? Container(
+            padding: const EdgeInsets.only(
+              left: 25,
+              right: 23,
+              bottom: 50,
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    RatingBar.builder(
+                      initialRating: home.placeDtl.rating ?? 0,
+                      minRating: 1,
+                      direction: Axis.horizontal,
+                      allowHalfRating: true,
+                      itemCount: 5,
+                      itemSize: 15,
+                      itemPadding: const EdgeInsets.symmetric(horizontal: 0),
+                      itemBuilder: (context, _) => const Icon(
+                        Icons.star_rounded,
+                        color: Colors.amber,
+                      ),
+                      onRatingUpdate: (rating) {},
+                      ignoreGestures: true,
+                    ),
+                    const SizedBox(
+                      width: 6,
+                    ),
+                    Text(
+                      home.placeDtl.rating.toString(),
+                      style: blackTextStyle.copyWith(
+                        fontSize: 12,
+                        fontWeight: bold,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 6,
+                    ),
+                    Text(
+                      'dari ${home.placeDtl.userRatingsTotal.toString()} rating',
+                      style: blackTextStyle.copyWith(
+                        fontSize: 10,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 6,
+                    ),
+                    const Icon(
+                      Icons.fiber_manual_record,
+                      size: 10,
+                    ),
+                    const SizedBox(
+                      width: 6,
+                    ),
+                    Text(
+                      '${home.placeDtl.userRatingsTotal.toString()} ulasan',
+                      style: blackTextStyle.copyWith(
+                        fontSize: 10,
+                      ),
+                    )
+                  ],
                 ),
-              ),
-              const SizedBox(
-                width: 6,
-              ),
-              Text(
-                'dari 40 rating',
-                style: blackTextStyle.copyWith(
-                  fontSize: 10,
-                ),
-              ),
-              const SizedBox(
-                width: 6,
-              ),
-              const Icon(
-                Icons.fiber_manual_record,
-                size: 10,
-              ),
-              const SizedBox(
-                width: 6,
-              ),
-              Text(
-                '811 ulasan',
-                style: blackTextStyle.copyWith(
-                  fontSize: 10,
-                ),
-              )
-            ],
-          ),
-          const UlasanCard(),
-          const UlasanCard(),
-        ],
-      ),
-    );
+                SizedBox(
+                    height: 350,
+                    child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: home.placeDtl.reviews.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        var date = DateTime.fromMillisecondsSinceEpoch(
+                            home.placeDtl.reviews[index].time * 1000);
+
+                        String dtFormat =
+                            DateFormat('dd-MMM-yyy hh:mm').format(date);
+
+                        return Column(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(
+                                top: 18,
+                                bottom: 11,
+                              ),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        height: 31,
+                                        width: 31,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                            image: NetworkImage(
+                                                '${home.placeDtl.reviews[index].profilePhotoUrl}'),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 15,
+                                      ),
+                                      Text(
+                                        home.placeDtl.reviews[index].authorName,
+                                        style: blackTextStyle.copyWith(
+                                          fontWeight: bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Column(
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    RatingBar.builder(
+                                      initialRating:
+                                          home.placeDtl.reviews[index].rating ??
+                                              0,
+                                      minRating: 1,
+                                      direction: Axis.horizontal,
+                                      allowHalfRating: true,
+                                      itemCount: 5,
+                                      itemSize: 15,
+                                      itemPadding: const EdgeInsets.symmetric(
+                                          horizontal: 0),
+                                      itemBuilder: (context, _) => const Icon(
+                                        Icons.star_rounded,
+                                        color: Colors.amber,
+                                      ),
+                                      onRatingUpdate: (rating) {},
+                                      ignoreGestures: true,
+                                    ),
+                                    const SizedBox(
+                                      width: 12,
+                                    ),
+                                    Text(
+                                      dtFormat,
+                                      style:
+                                          blackTextStyle.copyWith(fontSize: 11),
+                                    )
+                                  ],
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(top: 15),
+                                  padding: const EdgeInsets.only(bottom: 5),
+                                  child: Text(
+                                    home.placeDtl.reviews[index].text,
+                                    style:
+                                        blackTextStyle.copyWith(fontSize: 12),
+                                    textAlign: TextAlign.start,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 7,
+                                ),
+                                const Divider(
+                                  height: 1,
+                                  color: Color(0xFFD9D9D9),
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      },
+                    )),
+              ],
+            ),
+          )
+        : const SizedBox();
   }
 
   @override
@@ -609,19 +782,26 @@ class DetailCard extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: kBackgroundColor,
-      body: ListView(children: [
-        backgroundImage(context),
-        tileReview(),
-        content(),
-        mapLocation(),
-        titleRekomendasi(),
-        foto(),
-        line(),
-        rating(context),
-        line(),
-        titleUlasan(),
-        ulasan(),
-      ]),
+      body: GetBuilder<HomeController>(builder: (home) {
+        return home.loading
+            ? Skeletonizer(
+                enabled: home.placeDtl.name == null,
+                child: ListView(children: [
+                  backgroundImage(context, home),
+                  tileReview(home),
+                  content(home),
+                  mapLocation(home),
+                  titleRekomendasi(home),
+                  foto(home),
+                  line(),
+                  rating(context),
+                  line(),
+                  titleUlasan(home),
+                  ulasan(home),
+                ]),
+              )
+            : const SizedBox();
+      }),
     );
   }
 

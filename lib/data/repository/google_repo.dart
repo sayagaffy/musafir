@@ -28,4 +28,9 @@ class GoogleRepo extends GetxService {
     return await apiGoogle.getData(
         '${AppConstans.NEARBYSEARCH}?${query}key=${AppConstans.API_GKEY}');
   }
+
+  Future<Response> getPlaceDetail(String placeId) async {
+    return await apiGoogle.getData(
+        '${AppConstans.PLACE_DETAIL}?place_id=${placeId}&language=id&key=${AppConstans.API_GKEY}');
+  }
 }

@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:musafir/controllers/auth_controller.dart';
 import 'package:musafir/controllers/explore_controller.dart';
 import 'package:musafir/controllers/google_controller.dart';
+import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/controllers/users_controller.dart';
 import 'package:musafir/data/api/api_client.dart';
@@ -35,6 +36,7 @@ Future<void> init() async {
   Get.lazyPut(() => UsersController(usersRepo: Get.find()));
   Get.lazyPut(() => ExploreController(exploreRepo: Get.find()));
   Get.lazyPut(() => LocationController(locationRepo: Get.find()));
+  Get.lazyPut(() => HomeController(googleRepo: Get.find()));
 
   ///[Google Client]
   Get.lazyPut(() => ApiGoogle(appBaseUrlGoogle: AppConstans.BASE_URL_GOOGLE));

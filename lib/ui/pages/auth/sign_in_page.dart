@@ -69,14 +69,14 @@ class _SignInPage1State extends State<SignInPage1> {
         );
       }
 
-      if (googleControllers.isLoadedMosque == false) {
-        googleControllers.getNearbyPlace(
-          keyword: 'masjid',
-          rankby: 'distance',
-          type: 'mosque',
-          location: latLang,
-        );
-      }
+      // if (googleControllers.isLoadedMosque == false) {
+      //   googleControllers.getNearbyPlace(
+      //     keyword: 'masjid',
+      //     rankby: 'distance',
+      //     type: 'mosque',
+      //     location: latLang,
+      //   );
+      // }
 
       Get.toNamed(RouteHelper.getInitial());
     }
