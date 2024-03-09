@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:musafir/ui/widgets/custom_button.dart';
+import 'package:musafir/data/dummies/dummy_authentication.dart';
+import 'package:musafir/data/dummies/dummy_user_repository.dart';
+import 'package:musafir/data/entities/result.dart';
+import 'package:musafir/data/firebase/firebase_authentication.dart';
+import 'package:musafir/data/firebase/firebase_user_repository.dart';
+import 'package:musafir/data/usecases/login/login.dart';
+import 'package:musafir/presentation/pages/main_page.dart';
+import 'package:musafir/presentation/providers/usecases/login_provider.dart';
+import 'package:musafir/presentation/widgets/custom_button.dart';
 import '../../shared/theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SignUpPage extends StatelessWidget {
+class SignUpPage extends ConsumerWidget {
   const SignUpPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: kBackgroundColor,
       body: Stack(
@@ -59,7 +68,21 @@ class SignUpPage extends StatelessWidget {
                     bottom: 80,
                   ),
                   onPressed: () {
-                    Navigator.pushNamed(context, '/main');
+                    Login login = ref.watch(loginProvider);
+                    login(LoginParams(
+                            email: 'kitacoba@bisa.com', password: '123456'))
+                        .then((result) {
+                      if (result.isSuccess) {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              MainPage(user: result.resultValue!),
+                        ));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(result.errorMessage!),
+                        ));
+                      }
+                    });
                   },
                 ),
                 Container(

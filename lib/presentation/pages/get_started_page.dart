@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import 'package:musafir/ui/widgets/custom_button.dart';
+import 'package:musafir/presentation/widgets/custom_button.dart';
 import '../../shared/theme.dart';
 
 class GetStartedPage extends StatelessWidget {
@@ -11,7 +11,7 @@ class GetStartedPage extends StatelessWidget {
       backgroundColor: kBackgroundColor,
       body: Stack(
         children: [
-          Container(
+          const SizedBox(
             width: double.infinity,
             height: double.infinity,
             // decoration: const BoxDecoration(
