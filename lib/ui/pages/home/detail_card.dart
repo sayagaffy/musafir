@@ -37,28 +37,34 @@ class _DetailCardState extends State<DetailCard> {
   Widget backgroundImage(BuildContext context, home) {
     return Stack(
       children: [
-        ColorFiltered(
-          colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.2), BlendMode.dstATop),
-          child: Container(
-            height: 245,
-            width: double.infinity,
-            decoration: home.placeDtl.photos != null
-                ? BoxDecoration(
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(
-                        '${AppConstans.BASE_URL_GOOGLE}${AppConstans.PLACE_PHOTO}?maxwidth=400&photo_reference=${home.placeDtl.photos.first.photoReference}&key=${AppConstans.API_GKEY}',
-                      ),
-                    ),
-                  )
-                : const BoxDecoration(
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage('assets/image_destination1.png'),
+        Container(
+          height: 245,
+          width: double.infinity,
+          foregroundDecoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black.withOpacity(.1),
+                Colors.black.withOpacity(.8),
+              ],
+            ),
+          ),
+          decoration: home.placeDtl.photos != null
+              ? BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: NetworkImage(
+                      '${AppConstans.PLACE_PHOTO}${home.placeDtl.photos.first.photoReference}',
                     ),
                   ),
-          ),
+                )
+              : const BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: AssetImage('assets/image_destination1.png'),
+                  ),
+                ),
         ),
         Container(
           padding: const EdgeInsets.only(
@@ -72,9 +78,11 @@ class _DetailCardState extends State<DetailCard> {
               GestureDetector(
                 onTap: () {
                   if (widget.from == 'filterList_food') {
-                    Get.offNamed(RouteHelper.getHomeListPage(widget.from));
+                    Get.offNamed(
+                        RouteHelper.getHomeListPage(widget.from, 'none'));
                   } else if (widget.from == 'filterList_mosque') {
-                    Get.offNamed(RouteHelper.getHomeListPage(widget.from));
+                    Get.offNamed(
+                        RouteHelper.getHomeListPage(widget.from, 'none'));
                   } else {
                     Get.offNamed(RouteHelper.getInitial());
                   }
@@ -83,18 +91,20 @@ class _DetailCardState extends State<DetailCard> {
                 },
                 // onTap: onTap,
 
-                child: const Icon(
+                child: Icon(
                   Icons.keyboard_backspace_rounded,
                   size: 35,
+                  color: kWhiteColor,
                 ),
               ),
               GestureDetector(
                 onTap: () {
                   _dialogBuilder(context);
                 },
-                child: const Icon(
+                child: Icon(
                   Icons.more_horiz,
                   size: 35,
+                  color: kWhiteColor,
                 ),
               )
             ],
@@ -116,7 +126,7 @@ class _DetailCardState extends State<DetailCard> {
                   children: [
                     Text(
                       home.placeDtl.name ?? 'no name',
-                      style: blackTextStyle.copyWith(
+                      style: whiteTextStyle.copyWith(
                         fontSize: 20,
                         fontWeight: bold,
                       ),
@@ -133,7 +143,7 @@ class _DetailCardState extends State<DetailCard> {
                         itemBuilder: (BuildContext context, int index) {
                           return Text(
                             '${home.placeDtl.types[index]}, ',
-                            style: blackTextStyle.copyWith(
+                            style: whiteTextStyle.copyWith(
                               fontSize: 12,
                             ),
                           );
@@ -143,9 +153,10 @@ class _DetailCardState extends State<DetailCard> {
                   ],
                 ),
               ),
-              const Icon(
+              Icon(
                 Icons.bookmark_border_rounded,
                 size: 30,
+                color: kWhiteColor,
               )
             ],
           ),
@@ -155,25 +166,28 @@ class _DetailCardState extends State<DetailCard> {
   }
 
   Widget tileReview(home) {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
+    return Container(
+      height: 67,
+      width: double.infinity,
+      padding: const EdgeInsets.only(top: 15, bottom: 15, left: 10, right: 10),
+      decoration: BoxDecoration(
+        color: kNeutral20,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
             decoration: const BoxDecoration(
               border: Border(
                 right: BorderSide(
                   width: 1,
                   color: Color(0xFFD9D9D9),
                 ),
-                bottom: BorderSide(
-                  width: 1,
-                  color: Color(0xFFD9D9D9),
-                ),
               ),
             ),
-            height: 56,
+            width: 92,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -183,8 +197,8 @@ class _DetailCardState extends State<DetailCard> {
                       minRating: 1,
                       direction: Axis.horizontal,
                       allowHalfRating: true,
-                      itemCount: 5,
-                      itemSize: 15,
+                      itemCount: 1,
+                      itemSize: 16,
                       itemPadding: const EdgeInsets.symmetric(horizontal: 0),
                       itemBuilder: (context, _) => const Icon(
                         Icons.star_rounded,
@@ -194,60 +208,60 @@ class _DetailCardState extends State<DetailCard> {
                       ignoreGestures: true,
                     ),
                     const SizedBox(
-                      width: 7,
+                      width: 3,
                     ),
                     Text(
                       home.placeDtl.rating != null
                           ? home.placeDtl.rating.toString()
                           : '0',
                       style: blackTextStyle.copyWith(
-                        fontSize: 10,
+                        fontSize: 12,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  home.placeDtl.userRatingsTotal != null
-                      ? '${home.placeDtl.userRatingsTotal.toString()} rating'
-                      : 'belum ada rating',
-                  style: blackTextStyle.copyWith(
-                    fontSize: 10,
-                  ),
-                ),
-                const SizedBox(
                   height: 5,
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      home.placeDtl.userRatingsTotal != null
+                          ? '${home.placeDtl.userRatingsTotal.toString()} ulasan'
+                          : 'belum ada rating',
+                      style: blackTextStyle.copyWith(
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),
-        ),
-        Expanded(
-          child: Container(
+          Container(
             decoration: const BoxDecoration(
               border: Border(
                 right: BorderSide(
                   width: 1,
                   color: Color(0xFFD9D9D9),
                 ),
-                bottom: BorderSide(
-                  width: 1,
-                  color: Color(0xFFD9D9D9),
-                ),
               ),
             ),
-            height: 56,
+            width: 92,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.place,
-                      size: 20,
+                      size: 18,
+                      color: kRedMain,
+                    ),
+                    const SizedBox(
+                      width: 3,
                     ),
                     Text(
                       '3,63 km',
@@ -258,49 +272,58 @@ class _DetailCardState extends State<DetailCard> {
                   ],
                 ),
                 const SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  'Jarak',
-                  style: blackTextStyle.copyWith(
-                    fontSize: 10,
-                  ),
-                ),
-                const SizedBox(
                   height: 5,
+                ),
+                Center(
+                  child: Text(
+                    'Jarak',
+                    style: blackTextStyle.copyWith(
+                      fontSize: 10,
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
-        ),
-        Expanded(
-          child: Container(
+          Container(
             decoration: const BoxDecoration(
               border: Border(
                 right: BorderSide(
                   width: 1,
                   color: Color(0xFFD9D9D9),
                 ),
-                bottom: BorderSide(
-                  width: 1,
-                  color: Color(0xFFD9D9D9),
-                ),
               ),
             ),
-            height: 56,
+            width: 92,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.attach_money_rounded,
-                      size: 20,
+                      size: 16,
+                      color: kBlackColor,
                     ),
-                    const SizedBox(
-                      width: 0,
+                    Icon(
+                      Icons.attach_money_rounded,
+                      size: 16,
+                      color: kBlackColor,
                     ),
+                    Icon(
+                      Icons.attach_money_rounded,
+                      size: 16,
+                      color: kBlackColor,
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                     Text(
                       home.placeDtl.priceLevel != null
                           ? home.placeDtl.priceLevel.toString()
@@ -310,24 +333,46 @@ class _DetailCardState extends State<DetailCard> {
                       ),
                     ),
                   ],
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  'Price level',
-                  style: blackTextStyle.copyWith(
-                    fontSize: 10,
-                  ),
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 92,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ImageIcon(
+                      const AssetImage(
+                        "assets/icon_prayer.png",
+                      ),
+                      size: 18,
+                      color: kWarningMain,
+                    ),
+                  ],
                 ),
                 const SizedBox(
                   height: 5,
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Prayer Space',
+                      style: blackTextStyle.copyWith(
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -339,54 +384,87 @@ class _DetailCardState extends State<DetailCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Status',
+            'Kehalalan',
             style: blackTextStyle.copyWith(
-              fontSize: 12,
+              fontSize: 16,
+              height: 1.5,
+              fontWeight: bold,
             ),
           ),
           Container(
-            margin: const EdgeInsets.only(top: 3),
-            height: 40,
+            margin: const EdgeInsets.only(top: 10),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 8,
+            ),
+            height: 52,
             width: double.infinity,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4),
-              color: const Color(0xFFE6E8EA),
+              borderRadius: BorderRadius.circular(8),
+              color: kSuccessSurface,
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(
-                  width: 12,
+                Container(
+                  width: 20,
+                  height: 20,
+                  margin: const EdgeInsets.only(
+                    right: 4,
+                  ),
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/icon_halal.png'),
+                    ),
+                  ),
                 ),
-                const Icon(
-                  Icons.check_box_outline_blank_rounded,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Halal Certified',
+                        style: blackTextStyle.copyWith(
+                          fontSize: 14,
+                          fontWeight: bold,
+                          height: 1.4,
+                          color: kSuccessHover,
+                        ),
+                      ),
+                      Text(
+                        'Update terakhir: 21 Januari 2024',
+                        style: blackTextStyle.copyWith(fontSize: 10),
+                      )
+                    ],
+                  ),
                 ),
-                const SizedBox(
-                  width: 8,
-                ),
-                Text(
-                  'Halal Certified',
-                  style: blackTextStyle,
+                Icon(
+                  Icons.info_rounded,
+                  size: 20,
+                  color: kBlackColor,
                 )
               ],
             ),
           ),
           const SizedBox(
-            height: 24,
+            height: 30,
           ),
           Text(
             'Alamat',
             style: blackTextStyle.copyWith(
-              fontSize: 12,
+              fontSize: 16,
+              height: 1.5,
               fontWeight: bold,
             ),
           ),
           const SizedBox(
-            height: 5,
+            height: 10,
           ),
           Text(
             home.placeDtl.formattedAddress,
             style: blackTextStyle.copyWith(
               fontSize: 12,
+              height: 1.3,
             ),
           ),
         ],
@@ -408,8 +486,8 @@ class _DetailCardState extends State<DetailCard> {
 
     return Container(
       margin: const EdgeInsets.only(
-        top: 14,
-        bottom: 33,
+        top: 15,
+        bottom: 30,
       ),
       width: double.infinity,
       height: 188,
@@ -436,7 +514,7 @@ class _DetailCardState extends State<DetailCard> {
     return home.placeDtl.photos != null
         ? Container(
             margin: const EdgeInsets.only(
-              bottom: 5,
+              bottom: 10,
             ),
             padding: const EdgeInsets.only(left: 25, right: 23),
             child: const CustomTitle(title: 'Foto'),
@@ -453,7 +531,7 @@ class _DetailCardState extends State<DetailCard> {
                 height: 121,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: home.placeDtl.photos.length,
+                  itemCount: 4,
                   clipBehavior: Clip.none,
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, int index) {
@@ -473,7 +551,7 @@ class _DetailCardState extends State<DetailCard> {
                             : DecorationImage(
                                 fit: BoxFit.cover,
                                 image: NetworkImage(
-                                    '${AppConstans.BASE_URL_GOOGLE}${AppConstans.PLACE_PHOTO}?maxwidth=400&photo_reference=${home.placeDtl.photos[index].photoReference}&key=${AppConstans.API_GKEY}'),
+                                    '${AppConstans.PLACE_PHOTO}${home.placeDtl.photos[index].photoReference}'),
                               ),
                       ),
                     );
@@ -483,105 +561,80 @@ class _DetailCardState extends State<DetailCard> {
         : const SizedBox();
   }
 
-  Widget line() {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.symmetric(vertical: 25),
-      height: 7,
-      decoration: const BoxDecoration(color: Color(0xFFF2F2F2)),
-    );
-  }
-
   Widget rating(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(left: 25),
+      padding: const EdgeInsets.only(
+        left: 25,
+      ),
+      margin: const EdgeInsets.only(top: 30, bottom: 30),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Beri rating dan ulasan',
             style: blackTextStyle.copyWith(
-              fontSize: 12,
+              fontSize: 16,
+              height: 1.5,
               fontWeight: bold,
             ),
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                height: 31,
-                width: 31,
-                margin: const EdgeInsets.only(
-                  top: 15,
-                  right: 15,
-                ),
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: AssetImage('assets/image_destination1.png'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
+          const SizedBox(
+            height: 10,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                width: 1,
+                color: kNeutral40,
               ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                    CustomPageRoute(
-                      child: const ReviewRatePage(),
-                      direction: AxisDirection.up,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+            height: 62,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  height: 31,
+                  width: 31,
+                  margin: const EdgeInsets.only(right: 5),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: AssetImage('assets/image_destination1.png'),
+                      fit: BoxFit.cover,
                     ),
-                  );
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(top: 5),
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.star_outline_rounded,
-                        size: 35,
-                        color: Color(0xFFD9D9D9),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Icon(
-                        Icons.star_outline_rounded,
-                        size: 35,
-                        color: Color(0xFFD9D9D9),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Icon(
-                        Icons.star_outline_rounded,
-                        size: 35,
-                        color: Color(0xFFD9D9D9),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Icon(
-                        Icons.star_outline_rounded,
-                        size: 35,
-                        color: Color(0xFFD9D9D9),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Icon(
-                        Icons.star_outline_rounded,
-                        size: 35,
-                        color: Color(0xFFD9D9D9),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                    ],
                   ),
                 ),
-              )
-            ],
-          )
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      CustomPageRoute(
+                        child: const ReviewRatePage(),
+                        direction: AxisDirection.up,
+                      ),
+                    );
+                  },
+                  child: RatingBar.builder(
+                    initialRating: 0,
+                    minRating: 1,
+                    direction: Axis.horizontal,
+                    allowHalfRating: true,
+                    itemCount: 5,
+                    itemSize: 30,
+                    itemPadding: const EdgeInsets.symmetric(horizontal: 0),
+                    itemBuilder: (context, _) => const Icon(
+                      Icons.star_rounded,
+                      color: Colors.amber,
+                    ),
+                    onRatingUpdate: (rating) {},
+                    ignoreGestures: true,
+                  ),
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -793,9 +846,7 @@ class _DetailCardState extends State<DetailCard> {
                   mapLocation(home),
                   titleRekomendasi(home),
                   foto(home),
-                  line(),
                   rating(context),
-                  line(),
                   titleUlasan(home),
                   ulasan(home),
                 ]),

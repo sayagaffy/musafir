@@ -20,6 +20,7 @@ class RekomendasiTitle extends StatelessWidget {
             style: blackTextStyle.copyWith(
               fontSize: 16,
               fontWeight: bold,
+              height: 0.6,
             ),
           ),
         ),
@@ -28,8 +29,9 @@ class RekomendasiTitle extends StatelessWidget {
           child: Text(
             'Lihat Semua',
             style: greyTextStyle.copyWith(
-              fontSize: 10,
+              fontSize: 12,
               fontWeight: bold,
+              color: kBlueColor,
             ),
           ),
         ),

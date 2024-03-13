@@ -86,7 +86,7 @@ class _SignInPage1State extends State<SignInPage1> {
         );
       }
 
-      Get.toNamed(RouteHelper.getInitial());
+      Get.offNamed(RouteHelper.getInitial());
     }
   }
 

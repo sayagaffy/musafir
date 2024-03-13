@@ -14,13 +14,25 @@ Color kWhiteColor = const Color(0xffFFFFFF);
 Color kGreyColor = const Color(0xff7B7B7B);
 Color kGreenColor = const Color(0xff0EC3AE);
 Color kRedColor = const Color(0xffEB70A5);
-Color kBlueColor = const Color(0xff4789CE);
+
 Color kBackgroundColor = const Color(0xffFAFAFA);
 Color kInactiveColor = const Color(0xffDBD7EC);
 Color kTransparentColor = Colors.transparent;
 Color kAvailableColor = const Color(0xffE0D9FF);
 Color kUnavailableColor = const Color(0xffEBECF1);
+
+Color kWarningMain = const Color(0xffEB8625);
+Color kSuccessSurface = const Color(0xffD4EFDF);
+Color kSuccessHover = const Color(0xff209150);
+
+Color kBlueColor = const Color(0xff4789CE);
+Color kBlueSurface = const Color(0xffDAE7F5);
+Color kBluePressed = const Color(0xff234467);
+Color kBlueColorHover = const Color(0xff3B72AB);
+
+Color kNeutral20 = const Color(0xffF6F6F6);
 Color kNeutral40 = const Color(0xffE3E4E5);
+Color kNeutral70 = const Color(0xff838588);
 
 TextStyle blackTextStyle = GoogleFonts.manrope(
   color: kBlackColor,

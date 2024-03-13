@@ -4,11 +4,10 @@ import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:flutter/material.dart';
-
-import 'package:musafir/ui/widgets/custom_title.dart';
 import 'package:musafir/ui/widgets/rekomendasi_card.dart';
 import 'package:musafir/ui/widgets/rekomendasi_title.dart';
 import 'package:musafir/ui/widgets/tile_card.dart';
+import 'package:musafir/utilitis/apps_constants.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class HomePage extends StatefulWidget {
@@ -27,20 +26,25 @@ class _HomePageState extends State<HomePage> {
       padding: EdgeInsets.only(
         left: defaultMargin,
         top: 20,
-        bottom: 9,
-        right: defaultMargin,
+        right: 18,
       ),
-      decoration: BoxDecoration(color: kPrimarySurface),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Assalamualaikum, Habib',
             style: blackTextStyle.copyWith(
-                fontWeight: extraBold, fontSize: 20, height: 0.7),
+              fontWeight: extraBold,
+              fontSize: 20,
+              height: 0.7,
+              color: kBlueColorHover,
+            ),
           ),
           Container(
-              margin: const EdgeInsets.only(top: 11, bottom: 11),
+              margin: const EdgeInsets.only(
+                top: 5,
+                bottom: 15,
+              ),
               child: locationController.address != "none"
                   ? Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -59,7 +63,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Get.offNamed(RouteHelper.getLocationPage());
+                            Get.toNamed(RouteHelper.getLocationPage());
                           },
                           child: Row(
                             children: [
@@ -85,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                     )
                   : GestureDetector(
                       onTap: () {
-                        Get.offNamed(RouteHelper.getLocationPage());
+                        Get.toNamed(RouteHelper.getLocationPage());
                       },
                       child: Row(
                         children: [
@@ -116,7 +120,7 @@ class _HomePageState extends State<HomePage> {
             height: 32,
             child: GestureDetector(
               onTap: () {
-                Get.offNamed(RouteHelper.getHomeSearchPage());
+                Get.toNamed(RouteHelper.getHomeSearchPage());
               },
               child: Container(
                 height: 32,
@@ -126,11 +130,8 @@ class _HomePageState extends State<HomePage> {
                   horizontal: 12,
                 ),
                 decoration: BoxDecoration(
-                  border: Border.all(
-                    color: kGreyColor,
-                  ),
-                  borderRadius: BorderRadius.circular(defaultRadius),
-                  color: kBackgroundColor,
+                  borderRadius: BorderRadius.circular(8),
+                  color: kNeutral20,
                 ),
                 child: Row(
                   children: [
@@ -139,19 +140,16 @@ class _HomePageState extends State<HomePage> {
                       size: 20,
                     ),
                     const SizedBox(
-                      width: 2,
+                      width: 3,
                     ),
                     Text(
-                      'Cari di Musafir',
+                      'Cari resto atau ruang shalat di Musafir',
                       style: greyTextStyle.copyWith(fontSize: 12),
                     )
                   ],
                 ),
               ),
             ),
-          ),
-          const SizedBox(
-            height: 20,
           ),
         ],
       ),
@@ -161,14 +159,14 @@ class _HomePageState extends State<HomePage> {
   Widget titleRekomendasi() {
     return Container(
       margin: const EdgeInsets.only(
-        top: 20,
-        bottom: 15,
+        top: 30,
+        bottom: 20,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 17.5),
+      padding: EdgeInsets.symmetric(horizontal: defaultMargin),
       child: RekomendasiTitle(
-        title: 'Rekomendasi',
+        title: 'Rekomendasi Resto Terdekat',
         onTap: () {
-          Get.offNamed(RouteHelper.getHomeListPage('filterList_food'));
+          Get.toNamed(RouteHelper.getHomeListPage('filterList_resto', 'none'));
         },
       ),
     );
@@ -176,7 +174,10 @@ class _HomePageState extends State<HomePage> {
 
   Widget rekomendasi() {
     return Container(
-      padding: EdgeInsets.only(left: defaultMargin),
+      padding: EdgeInsets.only(
+        left: defaultMargin,
+        bottom: 20,
+      ),
       width: double.infinity,
       child: GetBuilder<HomeController>(builder: (place) {
         return place.isLoadedFood
@@ -189,25 +190,22 @@ class _HomePageState extends State<HomePage> {
                     shrinkWrap: true,
                     itemCount: 5,
                     itemBuilder: (BuildContext context, int index) {
-                      final sortItems = place.nearbyFood
-                        ..sort((a, b) =>
-                            b.userRatingsTotal.compareTo(a.userRatingsTotal));
-                      final item = sortItems[index];
+                      final item = place.nearbyFood[index];
 
                       return GestureDetector(
                         onTap: () {
                           var homecontroller = Get.find<HomeController>();
                           homecontroller.placeDetail(item.placeId.toString());
 
-                          Get.offNamed(RouteHelper.getHomeDetailPage(
+                          Get.toNamed(RouteHelper.getHomeDetailPage(
                               item.placeId.toString(), item.name, 'homePage'));
                         },
-                        //'${AppConstans.BASE_URL_GOOGLE}${AppConstans.PLACE_PHOTO}?maxwidth=400&photo_reference=${item.photos.first.photoReference,}&key=${AppConstans.API_GKEY}',
                         child: RekomendasiCard(
                           name: item.name,
                           city: item.vicinity,
-                          // imgUrl:
-                          //     '${AppConstans.BASE_URL_GOOGLE}${AppConstans.PLACE_PHOTO}?maxwidth=400&photo_reference=${item.photos.first.photoReference}&key=${AppConstans.API_GKEY}',
+                          imgUrl: item.photos != null
+                              ? '${AppConstans.PLACE_PHOTO}${item.photos.first.photoReference}'
+                              : 'none',
                           rating: item.rating,
                           ulasan: item.userRatingsTotal,
                         ),
@@ -241,7 +239,6 @@ class _HomePageState extends State<HomePage> {
   Widget line() {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.symmetric(vertical: 25),
       height: 7,
       decoration: const BoxDecoration(color: Color(0xFFF2F2F2)),
     );
@@ -250,41 +247,119 @@ class _HomePageState extends State<HomePage> {
   Widget titleKategoriMakanan() {
     return Container(
       margin: const EdgeInsets.only(
-        bottom: 15,
+        top: 20,
+        bottom: 20,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 17.5),
-      child: const CustomTitle(title: 'Kategori Makanan'),
+      padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+      child: RekomendasiTitle(
+        title: 'Kategori',
+        onTap: () {},
+      ),
     );
   }
 
   Widget kategoriMakanan() {
+    var homeController = Get.find<HomeController>();
+    var locationController = Get.find<LocationController>();
+    String latLang =
+        '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}';
     return Container(
-      padding: EdgeInsets.only(left: defaultMargin),
+      padding: EdgeInsets.only(left: defaultMargin, bottom: 20),
       width: double.infinity,
-      child: const SingleChildScrollView(
+      child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.none,
         child: Row(
           children: [
-            TileCard(
-              title: 'Algerian',
-              imgUrl: 'assets/image_destination3.png',
+            GestureDetector(
+              onTap: () {
+                homeController.getNearbyPlace(
+                  keyword: 'algerian+food',
+                  rankby: 'distance',
+                  type: 'food',
+                  location: latLang,
+                );
+
+                Get.toNamed(
+                  RouteHelper.getHomeListPage('filterList_food', 'Algerian'),
+                );
+              },
+              child: const TileCard(
+                title: 'Algerian',
+                imgUrl: 'assets/Algerian.png',
+              ),
             ),
-            TileCard(
-              title: 'Desert',
-              imgUrl: 'assets/image_destination2.png',
+            GestureDetector(
+              onTap: () {
+                homeController.getNearbyPlace(
+                  keyword: 'indian+food',
+                  rankby: 'distance',
+                  type: 'food',
+                  location: latLang,
+                );
+
+                Get.toNamed(
+                  RouteHelper.getHomeListPage('filterList_food', 'Indian'),
+                );
+              },
+              child: const TileCard(
+                title: 'Indian',
+                imgUrl: 'assets/Indian.png',
+              ),
             ),
-            TileCard(
-              title: 'Hindi',
-              imgUrl: 'assets/image_destination1.png',
+            GestureDetector(
+              onTap: () {
+                homeController.getNearbyPlace(
+                  keyword: 'japan+food',
+                  rankby: 'distance',
+                  type: 'food',
+                  location: latLang,
+                );
+
+                Get.toNamed(
+                  RouteHelper.getHomeListPage('filterList_food', 'Japan'),
+                );
+              },
+              child: const TileCard(
+                title: 'Japan',
+                imgUrl: 'assets/Japanse.png',
+              ),
             ),
-            TileCard(
-              title: 'Bake',
-              imgUrl: 'assets/image_destination4.png',
+            GestureDetector(
+              onTap: () {
+                homeController.getNearbyPlace(
+                  keyword: 'bakery+food',
+                  rankby: 'distance',
+                  type: 'food',
+                  location: latLang,
+                );
+
+                Get.toNamed(
+                  RouteHelper.getHomeListPage('filterList_food', 'Bakery'),
+                );
+              },
+              child: const TileCard(
+                title: 'Bakery',
+                imgUrl: 'assets/Bakery.png',
+              ),
             ),
-            TileCard(
-              title: 'Pizza',
-              imgUrl: 'assets/image_destination2.png',
+            GestureDetector(
+              onTap: () {
+                homeController.getNearbyPlace(
+                  keyword: 'korean+food',
+                  rankby: 'distance',
+                  type: 'food',
+                  location: latLang,
+                );
+
+                Get.toNamed(
+                  RouteHelper.getHomeListPage('filterList_food', 'Korean'),
+                );
+              },
+              child: const TileCard(
+                title: 'Korean',
+                imgUrl: 'assets/Korean.png',
+              ),
             ),
           ],
         ),
@@ -295,13 +370,14 @@ class _HomePageState extends State<HomePage> {
   Widget titleRekomendasiMasjid() {
     return Container(
       margin: const EdgeInsets.only(
-        bottom: 15,
+        bottom: 20,
+        top: 20,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 17.5),
       child: RekomendasiTitle(
         title: 'Masjid Terdekat',
         onTap: () {
-          Get.offNamed(RouteHelper.getHomeListPage('filterList_mosque'));
+          Get.toNamed(RouteHelper.getHomeListPage('filterList_mosque', 'none'));
         },
       ),
     );
@@ -329,15 +405,15 @@ class _HomePageState extends State<HomePage> {
                           var homecontroller = Get.find<HomeController>();
                           homecontroller.placeDetail(item.placeId.toString());
 
-                          Get.offNamed(RouteHelper.getHomeDetailPage(
+                          Get.toNamed(RouteHelper.getHomeDetailPage(
                               item.placeId.toString(), item.name, 'homePage'));
                         },
                         child: RekomendasiCard(
                           name: item.name,
                           city: item.vicinity,
-                          // imgUrl: item.photos != null
-                          //     ? '${AppConstans.BASE_URL_GOOGLE}${AppConstans.PLACE_PHOTO}?maxwidth=400&photo_reference=${item.photos.first.photoReference}&key=${AppConstans.API_GKEY}'
-                          //     : 'none',
+                          imgUrl: item.photos != null
+                              ? '${AppConstans.PLACE_PHOTO}${item.photos.first.photoReference}'
+                              : 'none',
                           rating: item.rating,
                           ulasan: item.userRatingsTotal,
                           isMasjid: true,

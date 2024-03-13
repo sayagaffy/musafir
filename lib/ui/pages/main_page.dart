@@ -22,14 +22,13 @@ List<Widget> _buildScreens() {
 List<PersistentBottomNavBarItem> _navBarsItems() {
   return [
     PersistentBottomNavBarItem(
-      icon: const ImageIcon(
-        AssetImage(
-          "assets/icon_home.png",
-        ),
-      ),
+      icon: const ImageIcon(AssetImage(
+        "assets/icon_home.png",
+      )),
       title: "Home",
-      activeColorPrimary: kPrimaryColor,
+      activeColorPrimary: kBlueColor,
       inactiveColorPrimary: kGreyColor,
+      textStyle: blackTextStyle.copyWith(fontSize: 9),
     ),
     PersistentBottomNavBarItem(
       icon: const ImageIcon(
@@ -38,8 +37,9 @@ List<PersistentBottomNavBarItem> _navBarsItems() {
         ),
       ),
       title: "Explore",
-      activeColorPrimary: kPrimaryColor,
+      activeColorPrimary: kBlueColor,
       inactiveColorPrimary: kGreyColor,
+      textStyle: blackTextStyle.copyWith(fontSize: 9),
     ),
     PersistentBottomNavBarItem(
       icon: const ImageIcon(
@@ -48,8 +48,9 @@ List<PersistentBottomNavBarItem> _navBarsItems() {
         ),
       ),
       title: "Favorite",
-      activeColorPrimary: kPrimaryColor,
+      activeColorPrimary: kBlueColor,
       inactiveColorPrimary: kGreyColor,
+      textStyle: blackTextStyle.copyWith(fontSize: 9),
     ),
     PersistentBottomNavBarItem(
       icon: const ImageIcon(
@@ -58,8 +59,9 @@ List<PersistentBottomNavBarItem> _navBarsItems() {
         ),
       ),
       title: "Community",
-      activeColorPrimary: kPrimaryColor,
+      activeColorPrimary: kBlueColor,
       inactiveColorPrimary: kGreyColor,
+      textStyle: blackTextStyle.copyWith(fontSize: 9),
     ),
     PersistentBottomNavBarItem(
       icon: const ImageIcon(
@@ -68,8 +70,9 @@ List<PersistentBottomNavBarItem> _navBarsItems() {
         ),
       ),
       title: "Account",
-      activeColorPrimary: kPrimaryColor,
+      activeColorPrimary: kBlueColor,
       inactiveColorPrimary: kGreyColor,
+      textStyle: blackTextStyle.copyWith(fontSize: 9),
     ),
   ];
 }
@@ -98,9 +101,12 @@ class MainPage extends StatelessWidget {
             hideNavigationBarWhenKeyboardShows:
                 true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
             decoration: NavBarDecoration(
-              borderRadius: BorderRadius.circular(10.0),
               colorBehindNavBar: Colors.white,
+              border: Border(
+                top: BorderSide(width: 0.3, color: kNeutral70),
+              ),
             ),
+
             popAllScreensOnTapOfSelectedTab: true,
             popActionScreens: PopActionScreensType.all,
             itemAnimationProperties: const ItemAnimationProperties(
@@ -115,7 +121,7 @@ class MainPage extends StatelessWidget {
             //   duration: Duration(milliseconds: 200),
             // ),
             navBarStyle: NavBarStyle
-                .style6, // Choose the nav bar style with this property.
+                .style3, // Choose the nav bar style with this property.
           ),
         ],
       ),

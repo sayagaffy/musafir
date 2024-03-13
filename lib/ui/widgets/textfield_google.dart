@@ -21,7 +21,7 @@ class TextfieldGoogle extends StatelessWidget {
         children: [
           Padding(
             padding:
-                const EdgeInsets.only(left: 18, right: 18, top: 25, bottom: 25),
+                const EdgeInsets.only(left: 18, right: 18, top: 25, bottom: 20),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -47,7 +47,7 @@ class TextfieldGoogle extends StatelessWidget {
                       textAlignVertical: TextAlignVertical.center,
                       cursorColor: kBlackColor,
                       decoration: InputDecoration(
-                        fillColor: kWhiteColor,
+                        fillColor: kNeutral20,
                         contentPadding: const EdgeInsets.all(10.0),
                         filled: true,
                         prefixIcon: const Icon(
@@ -55,14 +55,16 @@ class TextfieldGoogle extends StatelessWidget {
                           size: 18,
                         ),
                         hintText: hintText,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(radius),
+                        hintStyle: blackTextStyle.copyWith(
+                          fontSize: 12,
+                          fontWeight: regular,
+                          color: kNeutral70,
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            radius,
-                          ),
-                          borderSide: const BorderSide(color: Colors.blue),
+                          borderSide: BorderSide(color: kNeutral20, width: 0.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: kNeutral20, width: 0.0),
                         ),
                       ),
                     ),
@@ -70,12 +72,6 @@ class TextfieldGoogle extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-          Container(
-            width: double.infinity,
-            margin: const EdgeInsets.only(bottom: 16),
-            height: 2,
-            decoration: const BoxDecoration(color: Color(0xFFD9D9D9)),
           ),
         ],
       ),

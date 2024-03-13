@@ -23,19 +23,21 @@ class _SplashPageState extends State<SplashPage> {
   // ignore: annotate_overrides
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kPrimaryColor,
+      backgroundColor: kBlueColor,
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Container(
-              width: 300,
-              height: 300,
-              margin: const EdgeInsets.only(bottom: 50),
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                    'assets/icon_musafir.png',
+            Expanded(
+              child: Container(
+                width: 210,
+                height: 50,
+                margin: const EdgeInsets.only(bottom: 50),
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(
+                      'assets/icon_musafir.png',
+                    ),
                   ),
                 ),
               ),
@@ -45,7 +47,7 @@ class _SplashPageState extends State<SplashPage> {
               height: 44,
               child: TextButton(
                 style: TextButton.styleFrom(
-                  backgroundColor: kBackgroundColor,
+                  backgroundColor: kBlueSurface,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(defaultRadius),
                   ),
@@ -60,22 +62,23 @@ class _SplashPageState extends State<SplashPage> {
                 child: Text(
                   'Masuk',
                   style: blackTextStyle.copyWith(
-                    fontSize: 12,
-                    fontWeight: semiBold,
-                    letterSpacing: 1,
+                    fontSize: 16,
+                    fontWeight: bold,
+                    color: kBluePressed,
+                    height: 0.6,
                   ),
                 ),
               ),
             ),
             const SizedBox(
-              height: 10,
+              height: 20,
             ),
             SizedBox(
               width: 339,
               height: 44,
               child: TextButton(
                 style: TextButton.styleFrom(
-                  backgroundColor: kBlueColor,
+                  backgroundColor: kBlueSurface,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(defaultRadius),
                   ),
@@ -90,12 +93,16 @@ class _SplashPageState extends State<SplashPage> {
                 child: Text(
                   'Daftar',
                   style: whiteTextStyle.copyWith(
-                    fontSize: 12,
-                    fontWeight: semiBold,
-                    letterSpacing: 1,
+                    fontSize: 16,
+                    fontWeight: bold,
+                    color: kBluePressed,
+                    height: 0.6,
                   ),
                 ),
               ),
+            ),
+            const SizedBox(
+              height: 60,
             ),
           ],
         ),
@@ -141,6 +148,8 @@ class _SplashPageState extends State<SplashPage> {
     // continue accessing the position of the device.
 
     locationController.setPermision(serviceEnabled, permission);
+
+    print('sasasa');
 
     return await Geolocator.getCurrentPosition();
   }

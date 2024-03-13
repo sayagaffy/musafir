@@ -19,8 +19,10 @@ class AppConstans {
   static const String GEOCODE = "/geocode/json";
   static const String SEARCH = "/place/autocomplete/json";
   static const String NEARBYSEARCH = "/place/nearbysearch/json";
-  static const String PLACE_PHOTO = "/place/photo";
   static const String PLACE_DETAIL = "/place/details/json";
+  static const String PLACE_PHOTO =
+      '$BASE_URL_GOOGLE/place/photo?maxwidth=400&key=$API_GKEY&photo_reference=';
+  static const String PLACE_TEXTSEARCH = "/place/textsearch/json";
 
   ///[AUTH]
   static const String TOKEN = "";

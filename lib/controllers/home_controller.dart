@@ -14,7 +14,7 @@ class HomeController extends GetxController implements GetxService {
   set loading(bool? loading) => _loading = loading!;
 
   ///['PARAMETER FOR NEARBY PLACE']
-  ///[Food]
+  ///[Restaurant]
   bool _isLoadedFood = false;
   bool get isLoadedFood => _isLoadedFood;
 
@@ -23,6 +23,18 @@ class HomeController extends GetxController implements GetxService {
 
   late String _nextPageTokenFood;
   String get nextPageTokenFood => _nextPageTokenFood;
+
+  ///[Food Kategory]
+  bool _isLoadedFoodKategory = false;
+  bool get isLoadedFoodKategory => _isLoadedFoodKategory;
+  set isLoadedFoodKategory(bool? isLoadedFoodKategory) =>
+      _isLoadedFoodKategory = isLoadedFoodKategory!;
+
+  List<dynamic> _nearbyFoodKategory = [];
+  List<dynamic> get nearbyFoodKategory => _nearbyFoodKategory;
+
+  late String _nextPageTokenFoodKategory;
+  String get nextPageTokenFoodKategory => _nextPageTokenFoodKategory;
 
   ///[Mosque]
   bool _isLoadedMosque = false;
@@ -82,7 +94,7 @@ class HomeController extends GetxController implements GetxService {
         _nextPageTokenFood = response.body['next_page_token'];
 
         _isLoadedFood = true;
-        print('food');
+        print('resto');
       }
 
       if (type == 'mosque') {
@@ -91,6 +103,14 @@ class HomeController extends GetxController implements GetxService {
         _nextPageTokenMosque = response.body['next_page_token'] ?? 'none';
         _isLoadedMosque = true;
         print('mosque');
+      }
+
+      if (type == 'food') {
+        _nearbyFoodKategory = [];
+        _nearbyFoodKategory.addAll(NearbyPlace.fromJson(response.body).results);
+        _nextPageTokenFoodKategory = response.body['next_page_token'] ?? 'none';
+        _isLoadedFoodKategory = true;
+        print('food');
       }
 
       // print(query);

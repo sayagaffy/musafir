@@ -11,11 +11,13 @@ import 'package:musafir/ui/pages/home/widgets/dropdown.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
 import 'package:musafir/ui/widgets/rekomendasi_card.dart';
 import 'package:musafir/ui/widgets/textfield_google.dart';
+import 'package:musafir/utilitis/apps_constants.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class ListCard extends StatefulWidget {
   final String type;
-  const ListCard({super.key, required this.type});
+  final String search;
+  const ListCard({super.key, required this.type, required this.search});
 
   @override
   State<ListCard> createState() => _ListCardState();
@@ -37,7 +39,25 @@ class _ListCardState extends State<ListCard> {
 
   String selectedRating = 'Rating';
   int? rate;
-  // ignore: no_leading_underscores_for_local_identifiers
+  List<String> radius = [
+    'Jarak',
+    '< 2 km',
+    '> 2 km',
+  ];
+
+  String selectedRadius = 'Jarak';
+
+  void getPlace(String keyword, String type, int jarak) {
+    homeController.getNearbyPlace(
+      keyword: keyword,
+      rankby: 'prominence',
+      type: type,
+      radius: jarak,
+      location:
+          '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
+    );
+  }
+
   _handleValueRating(String value) {
     if (value == 'Rating') {
       homeController.setFilterType('default');
@@ -50,36 +70,14 @@ class _ListCardState extends State<ListCard> {
     }
   }
 
-  List<String> radius = [
-    'Jarak',
-    '< 2 km',
-    '> 2 km',
-  ];
-
-  String selectedRadius = 'Jarak';
-  // ignore: no_leading_underscores_for_local_identifiers
   _handleValueRadius(String value) {
     selectedRadius = value;
 
-    if (widget.type == 'filterList_food' && value == '< 2 km') {
-      homeController.getNearbyPlace(
-        keyword: 'food',
-        rankby: 'prominence',
-        type: 'restaurant',
-        radius: 2000,
-        location:
-            '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
-      );
-    } else if (widget.type == 'filterList_food' && value == '> 2 km') {
-      homeController.getNearbyPlace(
-        keyword: 'food',
-        rankby: 'prominence',
-        type: 'restaurant',
-        radius: 10000,
-        location:
-            '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
-      );
-    } else if (widget.type == 'filterList_food' && value == 'Jarak') {
+    if (widget.type == 'filterList_resto' && value == '< 2 km') {
+      getPlace('food', 'restaurant', 2000);
+    } else if (widget.type == 'filterList_resto' && value == '> 2 km') {
+      getPlace('food', 'restaurant', 10000);
+    } else if (widget.type == 'filterList_resto' && value == 'Jarak') {
       homeController.getNearbyPlace(
         keyword: 'food',
         rankby: 'distance',
@@ -90,28 +88,28 @@ class _ListCardState extends State<ListCard> {
     }
 
     if (widget.type == 'filterList_mosque' && value == '< 2 km') {
-      homeController.getNearbyPlace(
-        keyword: 'masjid',
-        rankby: 'prominence',
-        type: 'mosque',
-        radius: 2000,
-        location:
-            '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
-      );
+      getPlace('masjid', 'mosque', 2000);
     } else if (widget.type == 'filterList_mosque' && value == '> 2 km') {
-      homeController.getNearbyPlace(
-        keyword: 'masjid',
-        rankby: 'prominence',
-        type: 'mosque',
-        radius: 10000,
-        location:
-            '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
-      );
+      getPlace('masjid', 'mosque', 10000);
     } else if (widget.type == 'filterList_mosque' && value == 'Jarak') {
       homeController.getNearbyPlace(
         keyword: 'masjid',
         rankby: 'distance',
         type: 'mosque',
+        location:
+            '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
+      );
+    }
+
+    if (widget.type == 'filterList_food' && value == '< 2 km') {
+      getPlace('${widget.search}+food', 'food', 2000);
+    } else if (widget.type == 'filterList_food' && value == '> 2 km') {
+      getPlace('${widget.search}+food', 'food', 10000);
+    } else if (widget.type == 'filterList_food' && value == 'Jarak') {
+      homeController.getNearbyPlace(
+        keyword: '${widget.search}+food',
+        rankby: 'distance',
+        type: 'food',
         location:
             '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
       );
@@ -132,7 +130,7 @@ class _ListCardState extends State<ListCard> {
     if (value == 'Ulasan') {
       homeController.setFilterType('default');
 
-      if (widget.type == 'filterList_food') {
+      if (widget.type == 'filterList_resto') {
         homeController.getNearbyPlace(
           keyword: 'food',
           rankby: 'distance',
@@ -148,6 +146,14 @@ class _ListCardState extends State<ListCard> {
           location:
               '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
         );
+      } else if (widget.type == 'filterList_food') {
+        homeController.getNearbyPlace(
+          keyword: '${widget.search}+food',
+          rankby: 'distance',
+          type: 'food',
+          location:
+              '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
+        );
       }
     } else if (value == 'Paling Tinggi') {
       homeController.setFilterType('ulasan_1');
@@ -160,20 +166,31 @@ class _ListCardState extends State<ListCard> {
 
   Widget header(BuildContext context) {
     return TextfieldGoogle(
-        hintText: 'Ketik lokasi disini',
+        hintText: 'Cari resto atau ruang shalat di Musafir',
         onTap: () {
-          Get.offNamed(RouteHelper.getInitial());
+          if (widget.type == 'filterList_food') {
+            homeController.isLoadedFoodKategory = false;
+          }
+
           homeController.setFilterType('default');
+          Get.toNamed(RouteHelper.getInitial());
         });
   }
 
   Widget title() {
+    String titleList = 'Rekomendasi Resto Terdekat';
+    if (widget.type == 'filterList_mosque') {
+      titleList = 'Masjid Terdeka';
+    } else if (widget.type == 'filterList_food') {
+      titleList = '${widget.search} Food';
+    } else {
+      titleList = 'Rekomendasi Resto Terdekat';
+    }
+
     return Padding(
       padding: const EdgeInsets.only(left: 18, right: 18),
       child: Text(
-        widget.type == 'filterList_food'
-            ? 'Rekomendasi Resto Terdekat'
-            : 'Masjid Terdekat',
+        titleList,
         style: blackTextStyle.copyWith(
             fontSize: 16, fontWeight: bold, height: 0.6),
       ),
@@ -185,7 +202,8 @@ class _ListCardState extends State<ListCard> {
       padding: const EdgeInsets.only(
         left: 18,
         right: 18,
-        top: 16,
+        top: 20,
+        bottom: 20,
       ),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -197,7 +215,7 @@ class _ListCardState extends State<ListCard> {
               },
               child: Chip(
                 label: Text(
-                  'Filtter',
+                  '',
                   style: blackTextStyle.copyWith(
                     fontSize: 12,
                     height: 0.75,
@@ -213,7 +231,7 @@ class _ListCardState extends State<ListCard> {
                   color: kBlackColor,
                 ),
                 padding: const EdgeInsets.only(
-                    left: 10, right: 10, top: 5, bottom: 5),
+                    left: 15, right: 0, top: 5, bottom: 5),
               ),
             ),
             const SizedBox(
@@ -271,24 +289,45 @@ class _ListCardState extends State<ListCard> {
     );
   }
 
+  Widget line() {
+    return Container(
+      width: double.infinity,
+      height: 1,
+      decoration: BoxDecoration(
+        color: const Color(0xFFC8C9CA),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFC8C9CA).withOpacity(0.3),
+            spreadRadius: 5,
+            blurRadius: 4,
+            offset: const Offset(0, 2), // changes position of shadow
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget chekBox() {
     return const CustomCheckBox();
   }
 
   Widget listCard() {
-    // final List<Map> myProducts =
-    //     List.generate(10, (index) => {"id": index, "name": "Product $index"})
-    //         .toList();
-
     return GetBuilder<HomeController>(builder: (place) {
-      var defaultList = widget.type == 'filterList_food'
-          ? place.nearbyFood
-          : place.nearbyMosque;
+      var defaultList = [];
+      void defaults() {
+        if (widget.type == 'filterList_resto') {
+          defaultList = place.nearbyFood;
+        } else if (widget.type == 'filterList_mosque') {
+          defaultList = place.nearbyMosque;
+        } else {
+          defaultList = place.nearbyFoodKategory;
+        }
+      }
+
+      defaults();
 
       if (place.filterType == 'default') {
-        defaultList = widget.type == 'filterList_food'
-            ? place.nearbyFood
-            : place.nearbyMosque;
+        defaults();
       } else if (place.filterType == 'rating') {
         defaultList = defaultList
             .where((a) => a.rating >= place.rate && a.rating <= place.rate + .9)
@@ -301,16 +340,18 @@ class _ListCardState extends State<ListCard> {
             .sort((a, b) => a.userRatingsTotal.compareTo(b.userRatingsTotal));
       }
 
-      return widget.type == 'filterList_food'
+      return widget.type == 'filterList_resto'
           ? card20(defaultList, place.isLoadedFood)
-          : card20(defaultList, place.isLoadedMosque);
+          : widget.type == 'filterList_mosque'
+              ? card20(defaultList, place.isLoadedMosque)
+              : card20(defaultList, place.isLoadedFoodKategory);
     });
   }
 
   Widget card20(defaultList, bool load) {
     return load
         ? Container(
-            padding: const EdgeInsets.only(top: 26, bottom: 26),
+            padding: const EdgeInsets.only(top: 30, bottom: 20),
             child: defaultList.isNotEmpty
                 ? GridView.builder(
                     padding: const EdgeInsets.only(left: 18, right: 18),
@@ -329,15 +370,15 @@ class _ListCardState extends State<ListCard> {
                           var homecontroller = Get.find<HomeController>();
 
                           homecontroller.placeDetail(item.placeId.toString());
-                          Get.offNamed(RouteHelper.getHomeDetailPage(
+                          Get.toNamed(RouteHelper.getHomeDetailPage(
                               item.placeId.toString(), item.name, widget.type));
                         },
                         child: RekomendasiCard(
                           name: item.name,
                           city: item.vicinity,
-                          // imgUrl: item.photos != null
-                          //     ? '${AppConstans.BASE_URL_GOOGLE}${AppConstans.PLACE_PHOTO}?maxwidth=400&photo_reference=${item.photos.first.photoReference}&key=${AppConstans.API_GKEY}'
-                          //     : 'none',
+                          imgUrl: item.photos != null
+                              ? '${AppConstans.PLACE_PHOTO}${item.photos.first.photoReference}'
+                              : 'none',
                           rating: item.rating,
                           ulasan: item.userRatingsTotal,
                           km: index.toDouble(),
@@ -393,6 +434,7 @@ class _ListCardState extends State<ListCard> {
           header(context),
           title(),
           filter(context),
+          line(),
           Expanded(child: listCard()),
           // chekBox(),
         ],

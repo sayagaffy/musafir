@@ -20,7 +20,7 @@ class TileCard extends StatelessWidget {
           Container(
             width: 88,
             height: 88,
-            margin: const EdgeInsets.only(bottom: 5),
+            margin: const EdgeInsets.only(bottom: 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
               image: DecorationImage(

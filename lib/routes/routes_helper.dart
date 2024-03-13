@@ -47,7 +47,8 @@ class RouteHelper {
   static String getHomeDetailPage(String pageId, String page, String from) =>
       '$homedetail?pageId=$pageId&page=$page&from=$from';
 
-  static String getHomeListPage(String type) => '$homelist?type=$type';
+  static String getHomeListPage(String type, String search) =>
+      '$homelist?type=$type&search=$search';
 
   static String getLocationPage() => '$setlocation';
 
@@ -107,7 +108,8 @@ class RouteHelper {
       name: homelist,
       page: () {
         var type = Get.parameters['type'];
-        return ListCard(type: type!);
+        var search = Get.parameters['search'];
+        return ListCard(type: type!, search: search!);
       },
       transition: Transition.fade,
     ),
