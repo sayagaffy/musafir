@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:musafir/data/dummies/dummy_authentication.dart';
-import 'package:musafir/data/dummies/dummy_user_repository.dart';
-import 'package:musafir/data/entities/result.dart';
-import 'package:musafir/data/firebase/firebase_authentication.dart';
-import 'package:musafir/data/firebase/firebase_user_repository.dart';
 import 'package:musafir/data/usecases/login/login.dart';
 import 'package:musafir/presentation/pages/main_page.dart';
-import 'package:musafir/presentation/providers/usecases/login_provider.dart';
+import 'package:musafir/presentation/providers/usecases/login/login_provider.dart';
 import 'package:musafir/presentation/widgets/custom_button.dart';
 import '../../shared/theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

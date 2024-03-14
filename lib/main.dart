@@ -30,7 +30,7 @@ class MainApp extends StatelessWidget {
         '/get-started': (context) => const GetStartedPage(),
         '/sign-up': (context) => const SignUpPage(),
         '/main': (context) => const MainPage(
-              user: User(uid: "", email: "", name: ""),
+              user: User(uid: "", email: "", firstName: "", lastName: ""),
             ),
       },
     );

@@ -9,7 +9,8 @@ class DummyUserRepository implements UserRepository {
   Future<Result<User>> createUser(
       {required String uid,
       required String email,
-      required String name,
+      required String firstName,
+      required String lastName,
       String? photoUrl}) {
     // TODO: implement createUser
     throw UnimplementedError();

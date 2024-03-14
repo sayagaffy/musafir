@@ -17,14 +17,16 @@ class FirebaseUserRepository implements UserRepository {
   Future<Result<User>> createUser(
       {required String uid,
       required String email,
-      required String name,
+      required String firstName,
+      required String lastName,
       String? photoUrl}) async {
     CollectionReference<Map<String, dynamic>> users =
         _firebaseFirestore.collection('users');
     await users.doc(uid).set({
       'uid': uid,
       'email': email,
-      'name': name,
+      'firstName': firstName,
+      'lastName': lastName,
       'photoUrl': photoUrl,
     });
 
