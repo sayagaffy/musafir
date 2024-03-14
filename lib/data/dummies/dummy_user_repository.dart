@@ -12,27 +12,27 @@ class DummyUserRepository implements UserRepository {
       required String firstName,
       required String lastName,
       String? photoUrl}) {
-    // TODO: implement createUser
     throw UnimplementedError();
   }
 
   @override
   Future<Result<User>> getUser({required String uid}) async {
     await Future.delayed(const Duration(seconds: 1));
-    return Result.success(
-        User(uid: uid, email: 'dummy@dummy.com', name: 'dummy'));
+    return Result.success(User(
+        uid: uid,
+        email: 'dummy@dummy.com',
+        firstName: 'dummy',
+        lastName: 'billy'));
   }
 
   @override
   Future<Result<User>> updateUser({required User user}) {
-    // TODO: implement updateUser
     throw UnimplementedError();
   }
 
   @override
   Future<Result<User>> uploadProfilePicture(
       {required User user, required File imageFile}) {
-    // TODO: implement uploadProfilePicture
     throw UnimplementedError();
   }
 }

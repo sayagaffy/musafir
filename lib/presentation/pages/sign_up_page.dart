@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:musafir/data/usecases/login/login.dart';
-import 'package:musafir/presentation/pages/main_page.dart';
-import 'package:musafir/presentation/providers/usecases/login/login_provider.dart';
+import 'package:musafir/presentation/providers/user_data/user_data_provider.dart';
 import 'package:musafir/presentation/widgets/custom_button.dart';
 import '../../shared/theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -63,21 +61,9 @@ class SignUpPage extends ConsumerWidget {
                     bottom: 80,
                   ),
                   onPressed: () {
-                    Login login = ref.watch(loginProvider);
-                    login(LoginParams(
-                            email: 'kitacoba@bisa.com', password: '123456'))
-                        .then((result) {
-                      if (result.isSuccess) {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>
-                              MainPage(user: result.resultValue!),
-                        ));
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(result.errorMessage!),
-                        ));
-                      }
-                    });
+                    ref
+                        .read(userDataProvider.notifier)
+                        .login(email: "kitacoba@bisa.com", password: "123456");
                   },
                 ),
                 Container(

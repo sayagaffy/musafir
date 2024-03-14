@@ -1,34 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:musafir/data/entities/user.dart';
-import 'package:musafir/shared/theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:musafir/data/usecases/logout/logout.dart';
+import 'package:musafir/presentation/providers/repositories/authentication/authentication_provider.dart';
+import 'package:musafir/presentation/providers/user_data/user_data_provider.dart';
+import 'package:musafir/presentation/widgets/custom_button.dart';
 
-class MainPage extends StatelessWidget {
-  final User user;
-  const MainPage({super.key, required this.user});
+class MainPage extends ConsumerStatefulWidget {
+  const MainPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    Widget helloWord() {
-      return SizedBox(
-        width: double.infinity,
-        height: double.infinity,
-        child: Center(
-          child: Text(
-            (user.toString()),
-            style: blackTextStyle.copyWith(
-              fontSize: 24,
-              fontWeight: semiBold,
-            ),
-          ),
-        ),
-      );
-    }
+  ConsumerState<MainPage> createState() => _MainpageState();
+}
 
+class _MainpageState extends ConsumerState<MainPage> {
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kBackgroundColor,
-      body: Stack(
+      appBar: AppBar(
+        title: const Text('Main  Page'),
+      ),
+      body: Column(
         children: [
-          helloWord(),
+          Text(ref.watch(userDataProvider).when(
+              data: (data) => data.toString(),
+              error: (error, stackTrace) => '',
+              loading: () => 'Loading')),
+          CustomButton(
+              title: 'Logout',
+              onPressed: () {
+                ref.read(userDataProvider.notifier).logout();
+              })
         ],
       ),
     );
