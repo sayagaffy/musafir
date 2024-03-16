@@ -149,6 +149,7 @@ class _SplashPageState extends State<SplashPage> {
 
     locationController.setPermision(serviceEnabled, permission);
 
+    // ignore: avoid_print
     print('sasasa');
 
     return await Geolocator.getCurrentPosition();

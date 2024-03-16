@@ -24,6 +24,7 @@ Color kUnavailableColor = const Color(0xffEBECF1);
 Color kWarningMain = const Color(0xffEB8625);
 Color kSuccessSurface = const Color(0xffD4EFDF);
 Color kSuccessHover = const Color(0xff209150);
+Color kSuccessMain = const Color(0xff27AE60);
 
 Color kBlueColor = const Color(0xff4789CE);
 Color kBlueSurface = const Color(0xffDAE7F5);

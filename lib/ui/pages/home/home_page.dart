@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:musafir/controllers/auth_controller.dart';
 import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
@@ -31,14 +32,30 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Assalamualaikum, Habib',
-            style: blackTextStyle.copyWith(
-              fontWeight: extraBold,
-              fontSize: 20,
-              height: 0.7,
-              color: kBlueColorHover,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Assalamualaikum, Habib',
+                style: blackTextStyle.copyWith(
+                  fontWeight: extraBold,
+                  fontSize: 20,
+                  height: 0.7,
+                  color: kBlueColorHover,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  var authC = Get.find<AuthController>();
+                  authC.logout();
+                },
+                child: Icon(
+                  Icons.logout_rounded,
+                  size: 20,
+                  color: kWarningMain,
+                ),
+              ),
+            ],
           ),
           Container(
               margin: const EdgeInsets.only(

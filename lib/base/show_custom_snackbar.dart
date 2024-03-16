@@ -13,7 +13,7 @@ void showCustomSnackBar(
     message,
     titleText: Text(
       title,
-      style: blackTextStyle,
+      style: whiteTextStyle,
     ),
     messageText: Text(message, style: const TextStyle(color: Colors.white)),
     colorText: Colors.white,

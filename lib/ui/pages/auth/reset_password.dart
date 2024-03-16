@@ -6,87 +6,34 @@ import 'package:flutter/material.dart';
 import 'package:musafir/base/custom_loader.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
 import 'package:musafir/controllers/auth_controller.dart';
-import 'package:musafir/controllers/location_controller.dart';
-import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/pages/auth/sign_up_page.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
 import 'package:musafir/ui/widgets/text_field_custom.dart';
 
-class SignInPage1 extends StatefulWidget {
-  const SignInPage1({super.key});
+class ResetPassword extends StatefulWidget {
+  const ResetPassword({super.key});
 
   @override
-  State<SignInPage1> createState() => _SignInPage1State();
+  State<ResetPassword> createState() => _ResetPasswordState();
 }
 
-class _SignInPage1State extends State<SignInPage1> {
+class _ResetPasswordState extends State<ResetPassword> {
   @override
-  void initState() {
-    var locationController = Get.find<LocationController>();
-    locationController.startedPosition();
-
-    print(locationController.serviceEnabled);
-    print(locationController.latlng);
-    print(locationController.permission);
-
-    super.initState();
-  }
-
+  // ignore: override_on_non_overriding_member
   var emailController = TextEditingController(text: 'testlog@gmail.com');
-  var passwordController = TextEditingController(text: 'qwerty');
 
   // ignore: no_leading_underscores_for_local_identifiers
-  void _login(AuthController _authController) {
+  void _reset(AuthController _authController) {
     String email = emailController.text.trim();
-    String password = passwordController.text.trim();
 
-    if (password.isEmpty) {
-      showCustomSnackBar("type in your password", title: 'Password');
-    } else if (email.isEmpty) {
+    if (email.isEmpty) {
       showCustomSnackBar("type in your email address", title: 'Email Address');
     } else if (!GetUtils.isEmail(email)) {
       showCustomSnackBar("type in a valid email address",
           title: 'Valid email address');
-    } else if (password.length < 6) {
-      showCustomSnackBar("Password can not  be less  than six characters",
-          title: 'Password');
     } else {
-      // _authController.login(email, password).then((status) {
-      //   if (status.isSuccess) {
-      //     Get.toNamed(RouteHelper.getInitial());
-      //   } else {
-      //     showCustomSnackBar(status.message);
-      //   }
-      // });
-
-      // var homeController = Get.find<HomeController>();
-
-      // var locationController = Get.find<LocationController>();
-
-      // String latLang =
-      //     '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}';
-
-      // if (homeController.isLoadedFood == false) {
-      //   homeController.getNearbyPlace(
-      //     keyword: 'food',
-      //     rankby: 'distance',
-      //     type: 'restaurant',
-      //     location: latLang,
-      //   );
-      // }
-
-      // if (homeController.isLoadedMosque == false) {
-      //   homeController.getNearbyPlace(
-      //     keyword: 'masjid',
-      //     rankby: 'distance',
-      //     type: 'mosque',
-      //     location: latLang,
-      //   );
-      // }
-
-      // Get.offNamed(RouteHelper.getInitial());
-      _authController.logins(email, password);
+      _authController.resetPassword(email);
     }
   }
 
@@ -123,7 +70,7 @@ class _SignInPage1State extends State<SignInPage1> {
                         height: 30,
                       ),
                       Text(
-                        'Sign into your account',
+                        'Reset your password login',
                         style: greyTextStyle.copyWith(
                           fontSize: 16,
                         ),
@@ -136,32 +83,15 @@ class _SignInPage1State extends State<SignInPage1> {
                         hintText: 'Email',
                         icon: Icons.email,
                       ),
-                      TextFieldCustom(
-                        textController: passwordController,
-                        hintText: 'Password',
-                        icon: Icons.password_rounded,
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            Get.toNamed(RouteHelper.getResetPasswordPage());
-                          },
-                          child: Text(
-                            'lupa password ?',
-                            style: greyTextStyle,
-                          ),
-                        ),
-                      ),
                       const SizedBox(
                         height: 50,
                       ),
                       SizedBox(
                         width: 200,
                         child: CustomButton(
-                            title: 'Sign in',
+                            title: 'Reset Password',
                             onPressed: () {
-                              _login(authController);
+                              _reset(authController);
                             }),
                       ),
                       const SizedBox(
@@ -169,7 +99,7 @@ class _SignInPage1State extends State<SignInPage1> {
                       ),
                       RichText(
                         text: TextSpan(
-                          text: "Don't have an Account ? ",
+                          text: "have an Account ? ",
                           style: blackTextStyle.copyWith(
                             color: kGreyColor,
                             fontSize: 14,
@@ -182,7 +112,7 @@ class _SignInPage1State extends State<SignInPage1> {
                                       duration:
                                           const Duration(milliseconds: 300),
                                     ),
-                              text: " Create",
+                              text: " Sign In",
                               style: blackTextStyle.copyWith(
                                   color: kBlackColor,
                                   fontSize: 14,

@@ -4,7 +4,6 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/data/repository/google_repo.dart';
 import 'package:musafir/models/geocode_model.dart';
 import 'package:musafir/models/getplaces_model.dart';
@@ -173,9 +172,6 @@ class GoogleController extends GetxController {
 }
 
 void setAddressAndLatlng(String address, double lat, double lang) {
-  var locationController = Get.find<LocationController>();
-  double latitude = lat;
-  double longitude = lang;
   // locationController.setAddress(address);
   // locationController.setLatlang(latitude, longitude);
 

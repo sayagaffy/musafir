@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "302306254082",
+    "project_id": "demoflutter-65620",
+    "storage_bucket": "demoflutter-65620.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:302306254082:android:20f41be12506312faa761b",
+        "android_client_info": {
+          "package_name": "com.example.musafir_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvJ7IM90OzTf7u3Nw1ZnOAI-wjqGio7Gw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

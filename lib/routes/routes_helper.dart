@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_string_interpolations
 
 import 'package:get/get.dart';
+import 'package:musafir/ui/pages/auth/reset_password.dart';
 import 'package:musafir/ui/pages/auth/sign_in_page.dart';
 import 'package:musafir/ui/pages/auth/sign_up_page.dart';
 import 'package:musafir/ui/pages/explore/explore_pages.dart';
@@ -18,6 +19,7 @@ class RouteHelper {
   static const String splashPage = "/splash-page";
   static const String sigIn = "/sign-in";
   static const String sigUp = "/sign-up";
+  static const String resetPassword = "/resetpassword";
   static const String initial = "/main";
   static const String search = "/search";
   static const String explore = "/explore";
@@ -35,6 +37,8 @@ class RouteHelper {
   static String getsigInPage() => '$sigIn';
 
   static String getsignUpPage() => '$sigUp';
+
+  static String getResetPasswordPage() => '$resetPassword';
 
   static String getExplorePage() => '$explore';
 
@@ -67,6 +71,11 @@ class RouteHelper {
     GetPage(
       name: sigIn,
       page: () => const SignInPage1(),
+      transition: Transition.fade,
+    ),
+    GetPage(
+      name: resetPassword,
+      page: () => const ResetPassword(),
       transition: Transition.fade,
     ),
     GetPage(

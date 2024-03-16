@@ -1,9 +1,7 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
 import 'package:musafir/controllers/auth_controller.dart';
-import 'package:musafir/models/signup_body_model.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
@@ -14,8 +12,8 @@ class SignUpPage1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var emailController = TextEditingController();
-    var passwordController = TextEditingController();
+    var emailController = TextEditingController(text: 'testlog@gmail.com');
+    var passwordController = TextEditingController(text: 'qwerty');
     // var nameController = TextEditingController();
     // var phoneController = TextEditingController();
 
@@ -43,22 +41,23 @@ class SignUpPage1 extends StatelessWidget {
         showCustomSnackBar("Password can not be less than six characters",
             title: "Password");
       } else {
-        SignUpBody signUpBody = SignUpBody(
-          // name: name,
-          // phone: phone,
-          email: email,
-          password: password,
-        );
+        // SignUpBody signUpBody = SignUpBody(
+        //   // name: name,
+        //   // phone: phone,
+        //   email: email,
+        //   password: password,
+        // );
 
-        authController.registration(signUpBody).then((status) {
-          if (status.isSuccess) {
-            showCustomSnackBar('Success Registrasi',
-                title: 'Success', backgroundColor: kBlueColor);
-            Get.offNamed(RouteHelper.getInitial());
-          } else {
-            showCustomSnackBar(status.message);
-          }
-        });
+        // authController.registration(signUpBody).then((status) {
+        //   if (status.isSuccess) {
+        //     showCustomSnackBar('Success Registrasi',
+        //         title: 'Success', backgroundColor: kBlueColor);
+        //     Get.offNamed(RouteHelper.getInitial());
+        //   } else {
+        //     showCustomSnackBar(status.message);
+        //   }
+        // });
+        authController.signUp(email, password);
       }
     }
 
@@ -115,7 +114,7 @@ class SignUpPage1 extends StatelessWidget {
             SizedBox(
               width: 200,
               child: CustomButton(
-                  title: 'Sign UP',
+                  title: 'Sign up',
                   onPressed: () {
                     _registration();
                   }),
@@ -123,10 +122,12 @@ class SignUpPage1 extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            RichText(
-              text: TextSpan(
-                recognizer: TapGestureRecognizer()..onTap = () => Get.back(),
-                text: "Have an Account Alredy ?",
+            GestureDetector(
+              onTap: () {
+                Get.toNamed(RouteHelper.getsigInPage());
+              },
+              child: Text(
+                "Have an Account Alredy ?",
                 style: blackTextStyle.copyWith(
                   color: kGreyColor,
                   fontSize: 14,
