@@ -53,9 +53,9 @@ dependencies:
   geolocator_apple: 2.1.1+1
   skeletonizer: ^1.0.1
   flutter_rating_bar: ^4.0.1
-  firebase_core: ^2.27.0
-  firebase_auth: ^4.17.8
-  # cloud_firestore: ^4.15.8
+  firebase_core: 2.27.0
+  firebase_auth: 4.17.8
+  cloud_firestore: 4.15.8
 
 
 

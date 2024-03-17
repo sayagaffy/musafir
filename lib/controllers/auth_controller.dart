@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
 import 'package:musafir/data/repository/auth_repo.dart';
@@ -17,6 +18,7 @@ class AuthController extends GetxController implements GetxService {
   });
 
   FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -113,6 +115,11 @@ class AuthController extends GetxController implements GetxService {
         password: password,
       );
       await myUser.user!.sendEmailVerification();
+
+      firestore
+          .collection("users")
+          .doc(myUser.user!.email)
+          .set({'username': emailAddress.split('@')[0], 'bio': 'empty bio..'});
 
       showCustomSnackBar(
         'Kami telah mengirimkan email verifikasi ke $emailAddress . ',
