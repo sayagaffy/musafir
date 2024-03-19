@@ -141,9 +141,11 @@ class LocationController extends GetxController implements GetxService {
   }
 
   ///[FUNCTION SET PERMISION FROM GEOLOCATOR]
-  void setPermision(bool serviceE, LocationPermission permis) {
+  void setPermision(
+      bool serviceE, LocationPermission permis, Position position) {
     _serviceEnabled = serviceE;
     _permission = permis;
+    _latLng = LatLng(position.latitude, position.longitude);
   }
 }
 

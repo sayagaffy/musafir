@@ -1,6 +1,6 @@
 // ignore_for_file: avoid_print
-
 import 'package:flutter/gestures.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:musafir/base/custom_loader.dart';
@@ -11,7 +11,9 @@ import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/pages/auth/sign_up_page.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
-import 'package:musafir/ui/widgets/text_field_custom.dart';
+import 'package:musafir/ui/widgets/custom_button_sosial.dart';
+import 'package:musafir/ui/widgets/text_field_password.dart';
+import 'package:musafir/ui/widgets/text_field_text.dart';
 
 class SignInPage1 extends StatefulWidget {
   const SignInPage1({super.key});
@@ -23,17 +25,12 @@ class SignInPage1 extends StatefulWidget {
 class _SignInPage1State extends State<SignInPage1> {
   @override
   void initState() {
-    var locationController = Get.find<LocationController>();
-    locationController.startedPosition();
-
-    print(locationController.serviceEnabled);
-    print(locationController.latlng);
-    print(locationController.permission);
-
+    _determinePosition();
     super.initState();
   }
 
-  var emailController = TextEditingController(text: 'testlog@gmail.com');
+  var emailController =
+      TextEditingController(text: 'developer.adhikari.1@gmail.com');
   var passwordController = TextEditingController(text: 'qwerty');
 
   // ignore: no_leading_underscores_for_local_identifiers
@@ -52,40 +49,6 @@ class _SignInPage1State extends State<SignInPage1> {
       showCustomSnackBar("Password can not  be less  than six characters",
           title: 'Password');
     } else {
-      // _authController.login(email, password).then((status) {
-      //   if (status.isSuccess) {
-      //     Get.toNamed(RouteHelper.getInitial());
-      //   } else {
-      //     showCustomSnackBar(status.message);
-      //   }
-      // });
-
-      // var homeController = Get.find<HomeController>();
-
-      // var locationController = Get.find<LocationController>();
-
-      // String latLang =
-      //     '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}';
-
-      // if (homeController.isLoadedFood == false) {
-      //   homeController.getNearbyPlace(
-      //     keyword: 'food',
-      //     rankby: 'distance',
-      //     type: 'restaurant',
-      //     location: latLang,
-      //   );
-      // }
-
-      // if (homeController.isLoadedMosque == false) {
-      //   homeController.getNearbyPlace(
-      //     keyword: 'masjid',
-      //     rankby: 'distance',
-      //     type: 'mosque',
-      //     location: latLang,
-      //   );
-      // }
-
-      // Get.offNamed(RouteHelper.getInitial());
       _authController.logins(email, password);
     }
   }
@@ -100,46 +63,87 @@ class _SignInPage1State extends State<SignInPage1> {
               ? SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: 70),
-                        child: Center(
-                          child: ClipOval(
-                            child: SizedBox(
-                              height: 100,
-                              width: 100,
-                              child: Image.asset(
-                                'assets/icon_musafir_icon.png',
-                                width: 100.0,
-                                height: 100.0,
-                                fit: BoxFit.contain,
-                                color: kBlackColor,
+                      SafeArea(
+                        child: Container(
+                          padding: const EdgeInsets.only(
+                            left: 18,
+                            right: 18,
+                            top: 20,
+                            bottom: 25,
+                          ),
+                          child: Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Get.back();
+                                },
+                                child: Icon(
+                                  Icons.west_rounded,
+                                  size: 20,
+                                  color: kBlackColor,
+                                ),
                               ),
-                            ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                'Masuk',
+                                style: blackTextStyle.copyWith(
+                                  height: 1.5,
+                                  fontSize: 16,
+                                  fontWeight: bold,
+                                ),
+                              )
+                            ],
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      Text(
-                        'Sign into your account',
-                        style: greyTextStyle.copyWith(
-                          fontSize: 16,
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 18,
+                          right: 18,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Assalamualaikum!',
+                              style: blackTextStyle.copyWith(
+                                height: 1.4,
+                                fontSize: 20,
+                                fontWeight: extraBold,
+                              ),
+                            ),
+                            Text(
+                              'Yuk, lanjutin jelajah kuliner halal tujuanmu.',
+                              style: noColorTextStyle.copyWith(
+                                height: 1.3,
+                                fontSize: 12,
+                                color: kNeutral70,
+                              ),
+                            )
+                          ],
                         ),
                       ),
                       const SizedBox(
-                        height: 10,
+                        height: 20,
                       ),
-                      TextFieldCustom(
+                      TextFieldText(
                         textController: emailController,
-                        hintText: 'Email',
+                        hintText: 'contoh: abe@gmailcom',
                         icon: Icons.email,
+                        label: 'Email',
                       ),
-                      TextFieldCustom(
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      TextFieldPassword(
                         textController: passwordController,
-                        hintText: 'Password',
-                        icon: Icons.password_rounded,
+                        label: 'Password',
+                        hintText: 'password',
                       ),
                       Align(
                         alignment: Alignment.centerRight,
@@ -148,47 +152,131 @@ class _SignInPage1State extends State<SignInPage1> {
                             Get.toNamed(RouteHelper.getResetPasswordPage());
                           },
                           child: Text(
-                            'lupa password ?',
+                            'lupa kata sandi ?',
                             style: greyTextStyle,
                           ),
                         ),
                       ),
                       const SizedBox(
-                        height: 50,
+                        height: 30,
                       ),
-                      SizedBox(
-                        width: 200,
-                        child: CustomButton(
-                            title: 'Sign in',
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: CustomButton(
+                            title: 'Masuk',
                             onPressed: () {
                               _login(authController);
-                            }),
+                            },
+                          ),
+                        ),
                       ),
                       const SizedBox(
-                        height: 20,
+                        height: 23,
                       ),
-                      RichText(
-                        text: TextSpan(
-                          text: "Don't have an Account ? ",
-                          style: blackTextStyle.copyWith(
-                            color: kGreyColor,
-                            fontSize: 14,
-                          ),
+                      SizedBox(
+                        child: Row(
                           children: [
-                            TextSpan(
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () => Get.to(
-                                      () => const SignUpPage1(),
-                                      duration:
-                                          const Duration(milliseconds: 300),
-                                    ),
-                              text: " Create",
-                              style: blackTextStyle.copyWith(
-                                  color: kBlackColor,
-                                  fontSize: 14,
-                                  fontWeight: extraBold),
-                            )
+                            Expanded(
+                              child: Container(
+                                margin: const EdgeInsets.only(
+                                  left: 18.0,
+                                  right: 18,
+                                ),
+                                child: Divider(
+                                  color: kNeutral70,
+                                  height: 36,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              'atau masuk dengan',
+                              style: noColorTextStyle.copyWith(
+                                color: kNeutral70,
+                                fontSize: 12,
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                margin: const EdgeInsets.only(
+                                  left: 18.0,
+                                  right: 18,
+                                ),
+                                child: Divider(
+                                  color: kNeutral70,
+                                  height: 36,
+                                ),
+                              ),
+                            ),
                           ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18),
+                        child: Column(
+                          children: [
+                            CustomButtonSosial(
+                              title: 'Masuk lewat Google',
+                              onPressed: () {
+                                var authController = Get.find<AuthController>();
+                                authController.signInWithGoogle();
+                              },
+                              icon: "assets/icon_google.png",
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            CustomButtonSosial(
+                              title: 'Masuk lewat Facebook',
+                              onPressed: () {
+                                var authController = Get.find<AuthController>();
+                                authController.signInWithFacebook();
+                              },
+                              icon: "assets/icon_facebook.png",
+                            ),
+                            // const SizedBox(
+                            //   height: 15,
+                            // ),
+                            // CustomButtonSosial(
+                            //   title: 'Masuk lewat Apple',
+                            //   onPressed: () {},
+                            //   icon: "assets/icon_apple.png",
+                            // ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 60,
+                      ),
+                      Center(
+                        child: RichText(
+                          text: TextSpan(
+                            text: "Belum punya akun ? ",
+                            style: blackTextStyle.copyWith(
+                              color: kGreyColor,
+                              fontSize: 14,
+                            ),
+                            children: [
+                              TextSpan(
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () => Get.to(
+                                        () => const SignUpPage1(),
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                      ),
+                                text: " Daftar",
+                                style: noColorTextStyle.copyWith(
+                                  color: kBlueColor,
+                                  fontSize: 14,
+                                  fontWeight: extraBold,
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -198,5 +286,47 @@ class _SignInPage1State extends State<SignInPage1> {
         },
       ),
     );
+  }
+
+  void _determinePosition() async {
+    var locationController = Get.find<LocationController>();
+
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+
+    Position position = await Geolocator.getCurrentPosition();
+    locationController.setPermision(serviceEnabled, permission, position);
+    locationController.startedPosition();
   }
 }

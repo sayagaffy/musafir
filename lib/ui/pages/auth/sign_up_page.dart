@@ -1,3 +1,6 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
@@ -5,32 +8,42 @@ import 'package:musafir/controllers/auth_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
-import 'package:musafir/ui/widgets/text_field_custom.dart';
+
+import 'package:musafir/ui/widgets/text_field_password.dart';
+import 'package:musafir/ui/widgets/text_field_text.dart';
 
 class SignUpPage1 extends StatelessWidget {
   const SignUpPage1({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var emailController = TextEditingController(text: 'testlog@gmail.com');
-    var passwordController = TextEditingController(text: 'qwerty');
-    // var nameController = TextEditingController();
-    // var phoneController = TextEditingController();
+    var emailController =
+        TextEditingController(text: 'developer.adhikari.1@gmail.com');
 
-    // ignore: no_leading_underscores_for_local_identifiers
+    var namaDepanController = TextEditingController();
+    var namaBelakangController = TextEditingController();
+    var nomorHpController = TextEditingController();
+    var passwordController = TextEditingController();
+    var passwordKonfirmController = TextEditingController();
+
     void _registration() {
       var authController = Get.find<AuthController>();
-      // String name = nameController.text.trim();
-      // String phone = phoneController.text.trim();
+      String nameDepan = namaDepanController.text.trim();
+      String nameBelakang = namaBelakangController.text.trim();
+      String phone = nomorHpController.text.trim();
       String email = emailController.text.trim();
       String password = passwordController.text.trim();
+      String passwordKonfirm = passwordKonfirmController.text.trim();
 
-      // if (name.isEmpty) {
-      //   showCustomSnackBar("Type in your name", title: "Name");
-      // } else if (phone.isEmpty) {
-      //   showCustomSnackBar("Type in phone name", title: "Phone numer");
-      // }
-      if (email.isEmpty) {
+      if (nameDepan.isEmpty) {
+        showCustomSnackBar("Nama depan tidak boleh kosong",
+            title: "Nama Depan");
+      } else if (nameBelakang.isEmpty) {
+        showCustomSnackBar("Nama Belakang tidak boleh kosong",
+            title: "Nama Belakang");
+      } else if (phone.isEmpty) {
+        showCustomSnackBar("Nomor HP tidak boleh kosong", title: "Nomot HP");
+      } else if (email.isEmpty) {
         showCustomSnackBar("Type in your email adress", title: "Email adress");
       } else if (!GetUtils.isEmail(email)) {
         showCustomSnackBar("Type in a valid email adress",
@@ -40,24 +53,24 @@ class SignUpPage1 extends StatelessWidget {
       } else if (password.length < 6) {
         showCustomSnackBar("Password can not be less than six characters",
             title: "Password");
+      } else if (passwordKonfirm.isEmpty) {
+        showCustomSnackBar("Type in your password",
+            title: "Konfirmasi Password");
+      } else if (passwordKonfirm.length < 6) {
+        showCustomSnackBar("Password can not be less than six characters",
+            title: "Konfirmasi Password");
+      } else if (passwordKonfirm != password) {
+        showCustomSnackBar("Konfirmasi Password Harus sama dengan Password",
+            title: "Konfirmasi Password");
       } else {
-        // SignUpBody signUpBody = SignUpBody(
-        //   // name: name,
-        //   // phone: phone,
-        //   email: email,
-        //   password: password,
-        // );
-
-        // authController.registration(signUpBody).then((status) {
-        //   if (status.isSuccess) {
-        //     showCustomSnackBar('Success Registrasi',
-        //         title: 'Success', backgroundColor: kBlueColor);
-        //     Get.offNamed(RouteHelper.getInitial());
-        //   } else {
-        //     showCustomSnackBar(status.message);
-        //   }
-        // });
-        authController.signUp(email, password);
+        authController.signUp(
+          email,
+          password,
+          nameDepan,
+          nameBelakang,
+          phone,
+          passwordKonfirm,
+        );
       }
     }
 
@@ -66,71 +79,163 @@ class SignUpPage1 extends StatelessWidget {
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              margin: const EdgeInsets.only(top: 70),
-              child: Center(
-                child: ClipOval(
-                  child: SizedBox(
-                    height: 100,
-                    width: 100,
-                    child: Image.asset(
-                      'assets/icon_musafir_icon.png',
-                      width: 100.0,
-                      height: 100.0,
-                      fit: BoxFit.contain,
-                      color: kBlackColor,
+            SafeArea(
+              child: Container(
+                padding: const EdgeInsets.only(
+                  left: 18,
+                  right: 18,
+                  top: 20,
+                  bottom: 25,
+                ),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: Icon(
+                        Icons.west_rounded,
+                        size: 20,
+                        color: kBlackColor,
+                      ),
                     ),
-                  ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      'Daftar',
+                      style: blackTextStyle.copyWith(
+                        height: 1.5,
+                        fontSize: 16,
+                        fontWeight: bold,
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
-            const SizedBox(
-              height: 30,
-            ),
-            TextFieldCustom(
-              textController: emailController,
-              hintText: 'Email',
-              icon: Icons.email,
-            ),
-            TextFieldCustom(
-              textController: passwordController,
-              hintText: 'Password',
-              icon: Icons.password_rounded,
-            ),
-            // TextFieldCustom(
-            //   textController: nameController,
-            //   hintText: 'Name',
-            //   icon: Icons.phone_android_rounded,
-            // ),
-            // TextFieldCustom(
-            //   textController: phoneController,
-            //   hintText: 'Phone',
-            //   icon: Icons.person_rounded,
-            // ),
-            const SizedBox(
-              height: 40,
-            ),
-            SizedBox(
-              width: 200,
-              child: CustomButton(
-                  title: 'Sign up',
-                  onPressed: () {
-                    _registration();
-                  }),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 18,
+                right: 18,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Silakan isi data dirimu!',
+                    style: blackTextStyle.copyWith(
+                      height: 1.4,
+                      fontSize: 20,
+                      fontWeight: extraBold,
+                    ),
+                  ),
+                  Text(
+                    'Awali petualangan kuliner di seluruh dunia.',
+                    style: noColorTextStyle.copyWith(
+                      height: 1.3,
+                      fontSize: 12,
+                      color: kNeutral70,
+                    ),
+                  )
+                ],
+              ),
             ),
             const SizedBox(
               height: 20,
             ),
-            GestureDetector(
-              onTap: () {
-                Get.toNamed(RouteHelper.getsigInPage());
-              },
-              child: Text(
-                "Have an Account Alredy ?",
-                style: blackTextStyle.copyWith(
-                  color: kGreyColor,
-                  fontSize: 14,
+            TextFieldText(
+              textController: emailController,
+              hintText: 'contoh: abe@gmailcom',
+              icon: Icons.email,
+              label: 'Email',
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextFieldText(
+              textController: namaDepanController,
+              hintText: 'contoh: Andi',
+              icon: Icons.email,
+              label: 'Nama Depan',
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextFieldText(
+              textController: namaBelakangController,
+              hintText: 'contoh: Ginting',
+              icon: Icons.email,
+              label: 'Nama Belakang',
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextFieldText(
+              textController: nomorHpController,
+              hintText: 'contoh: 081222199912',
+              icon: Icons.email,
+              label: 'Nomor HP',
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextFieldPassword(
+              textController: passwordController,
+              label: 'Kata sandi',
+              hintText: 'password',
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextFieldPassword(
+              textController: passwordKonfirmController,
+              label: 'Konfirmasi kata sandi',
+              hintText: 'password',
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18),
+              child: SizedBox(
+                width: double.infinity,
+                child: CustomButton(
+                  title: 'Lanjut',
+                  onPressed: () {
+                    _registration();
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            Center(
+              child: RichText(
+                text: TextSpan(
+                  text: "Sudah punya akun ? ",
+                  style: blackTextStyle.copyWith(
+                    color: kGreyColor,
+                    fontSize: 14,
+                  ),
+                  children: [
+                    TextSpan(
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () => Get.toNamed(
+                              RouteHelper.getsigInPage(),
+                            ),
+                      text: " Masuk",
+                      style: noColorTextStyle.copyWith(
+                        color: kBlueColor,
+                        fontSize: 14,
+                        fontWeight: extraBold,
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),

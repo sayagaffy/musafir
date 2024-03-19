@@ -1,5 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/widgets.dart';
+
 import 'package:get/get.dart';
 import 'package:musafir/controllers/auth_controller.dart';
+
 import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
@@ -19,6 +23,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final user = FirebaseAuth.instance.currentUser;
+
   Widget header() {
     var locationController = Get.find<LocationController>();
 
@@ -33,15 +39,24 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Assalamualaikum, Habib',
-                style: blackTextStyle.copyWith(
-                  fontWeight: extraBold,
-                  fontSize: 20,
-                  height: 0.7,
-                  color: kBlueColorHover,
+              SizedBox(
+                width: 300,
+                height: 20,
+                child: FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Text(
+                    'Assalamualaikum ${user?.email!.split('@')[0]}',
+                    style: blackTextStyle.copyWith(
+                      fontWeight: extraBold,
+                      fontSize: 20,
+                      height: 0.7,
+                      color: kBlueColorHover,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ),
               GestureDetector(
@@ -54,7 +69,7 @@ class _HomePageState extends State<HomePage> {
                   size: 20,
                   color: kWarningMain,
                 ),
-              ),
+              )
             ],
           ),
           Container(
@@ -475,18 +490,24 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        children: [
-          header(),
-          titleRekomendasi(),
-          rekomendasi(),
-          line(),
-          titleKategoriMakanan(),
-          kategoriMakanan(),
-          line(),
-          titleRekomendasiMasjid(),
-          rekomendasiMasjid(),
-        ],
+      body: RefreshIndicator(
+        onRefresh: () async {
+          var homeController = Get.find<HomeController>();
+          homeController.refreshHome();
+        },
+        child: ListView(
+          children: [
+            header(),
+            titleRekomendasi(),
+            rekomendasi(),
+            line(),
+            titleKategoriMakanan(),
+            kategoriMakanan(),
+            line(),
+            titleRekomendasiMasjid(),
+            rekomendasiMasjid(),
+          ],
+        ),
       ),
     );
   }

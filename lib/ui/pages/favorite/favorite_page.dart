@@ -66,8 +66,7 @@ class _FavoritePage1State extends State<FavoritePage1> {
 
   Future<void> _getAddressFromLatLng(Position position) async {
     await placemarkFromCoordinates(
-            _currentPosition!.latitude, _currentPosition!.longitude,
-            localeIdentifier: "en")
+            _currentPosition!.latitude, _currentPosition!.longitude)
         .then((List<Placemark> placemarks) {
       Placemark place = placemarks[0];
       // ignore: avoid_print

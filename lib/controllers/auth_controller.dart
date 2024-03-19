@@ -1,8 +1,12 @@
 // ignore_for_file: avoid_print
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
+import 'package:musafir/controllers/home_controller.dart';
+import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/data/repository/auth_repo.dart';
 import 'package:musafir/models/response_model.dart';
 import 'package:musafir/models/signup_body_model.dart';
@@ -76,6 +80,33 @@ class AuthController extends GetxController implements GetxService {
     return authRepo.clearShared();
   }
 
+  void getGoogleApi() {
+    var homeController = Get.find<HomeController>();
+
+    var locationController = Get.find<LocationController>();
+
+    String latLang =
+        '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}';
+
+    if (homeController.isLoadedFood == false) {
+      homeController.getNearbyPlace(
+        keyword: 'food',
+        rankby: 'distance',
+        type: 'restaurant',
+        location: latLang,
+      );
+    }
+
+    if (homeController.isLoadedMosque == false) {
+      homeController.getNearbyPlace(
+        keyword: 'masjid',
+        rankby: 'distance',
+        type: 'mosque',
+        location: latLang,
+      );
+    }
+  }
+
   void logins(String emailAddress, String password) async {
     try {
       UserCredential myUser = await auth.signInWithEmailAndPassword(
@@ -83,6 +114,7 @@ class AuthController extends GetxController implements GetxService {
         password: password.toString(),
       );
       if (myUser.user!.emailVerified) {
+        getGoogleApi();
         Get.offNamed(RouteHelper.getInitial());
       } else {
         Get.defaultDialog(
@@ -108,25 +140,100 @@ class AuthController extends GetxController implements GetxService {
     }
   }
 
-  void signUp(String emailAddress, String password) async {
+  void signInWithGoogle() async {
     try {
-      UserCredential myUser = await auth.createUserWithEmailAndPassword(
+      GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      // Obtain the auth details from the request
+      GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+      // Create a new credential
+      OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      UserCredential userCredential =
+          await auth.signInWithCredential(credential);
+
+      User? user = userCredential.user;
+      if (user != null) {
+        if (userCredential.additionalUserInfo!.isNewUser) {
+          firestore.collection("users").doc(user.email).set({
+            'username': user.email?.split('@')[0],
+            'bio': 'empty bio..',
+            'profilePhoto': user.photoURL,
+            'namaDepan': '',
+            'namaBelakang': '',
+            'phone': '',
+            'provider': 'Google'
+          });
+        }
+        getGoogleApi();
+        Get.offNamed(RouteHelper.getInitial());
+      }
+    } catch (e) {
+      showCustomSnackBar(e.toString());
+    }
+  }
+
+  void signInWithFacebook() async {
+    try {
+      // Trigger the sign-in flow
+      LoginResult loginResult = await FacebookAuth.instance.login();
+
+      // Create a credential from the access token
+      OAuthCredential facebookAuthCredential =
+          FacebookAuthProvider.credential(loginResult.accessToken!.token);
+
+      // Once signed in, return the UserCredential
+      UserCredential userCredential =
+          await auth.signInWithCredential(facebookAuthCredential);
+
+      User? user = userCredential.user;
+      if (user != null) {
+        if (userCredential.additionalUserInfo!.isNewUser) {
+          firestore.collection("users").doc(user.email).set({
+            'username': user.email?.split('@')[0],
+            'bio': 'empty bio..',
+            'profilePhoto': user.photoURL
+          });
+        }
+
+        Get.offNamed(RouteHelper.getInitial());
+      }
+    } catch (e) {
+      showCustomSnackBar(e.toString());
+    }
+  }
+
+  void signUp(String emailAddress, String password, String namaDepan,
+      String namaBelakang, String phone, String passwordKonfrim) async {
+    try {
+      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
         email: emailAddress,
         password: password,
       );
-      await myUser.user!.sendEmailVerification();
 
-      firestore
-          .collection("users")
-          .doc(myUser.user!.email)
-          .set({'username': emailAddress.split('@')[0], 'bio': 'empty bio..'});
+      if (userCredential.additionalUserInfo!.isNewUser) {
+        firestore.collection("users").doc(userCredential.user!.email).set({
+          'username': emailAddress.split('@')[0],
+          'bio': 'empty bio..',
+          'profilePhoto': 'none',
+          'namaDepan': namaDepan,
+          'namaBelakang': namaBelakang,
+          'phone': phone,
+          'provider': 'email'
+        });
 
-      showCustomSnackBar(
-        'Kami telah mengirimkan email verifikasi ke $emailAddress . ',
-        isError: false,
-        title: 'Success Registrasi',
-        backgroundColor: kSuccessMain,
-      );
+        await userCredential.user!.sendEmailVerification();
+        showCustomSnackBar(
+          'Kami telah mengirimkan email verifikasi ke $emailAddress . ',
+          isError: false,
+          title: 'Success Registrasi',
+          backgroundColor: kSuccessMain,
+        );
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         showCustomSnackBar('the password provided is too weak');
@@ -141,8 +248,17 @@ class AuthController extends GetxController implements GetxService {
   }
 
   void logout() async {
-    await FirebaseAuth.instance.signOut();
-    Get.offNamed(RouteHelper.getsigInPage());
+    Get.defaultDialog(
+      title: "Logout ",
+      middleText: "Apakah kamu ingin keluar ?",
+      onConfirm: () async {
+        await FirebaseAuth.instance.signOut();
+        Get.back();
+        Get.offNamed(RouteHelper.getsigInPage());
+      },
+      textConfirm: "Sign out",
+      textCancel: "Cancel",
+    );
   }
 
   void resetPassword(String emailAddress) async {

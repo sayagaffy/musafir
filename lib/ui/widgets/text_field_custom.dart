@@ -7,6 +7,7 @@ class TextFieldCustom extends StatelessWidget {
   final String hintText;
   final IconData icon;
   bool isObscure;
+  bool password;
 
   TextFieldCustom({
     super.key,
@@ -14,6 +15,7 @@ class TextFieldCustom extends StatelessWidget {
     required this.hintText,
     required this.icon,
     this.isObscure = false,
+    this.password = false,
   });
 
   @override
@@ -26,7 +28,7 @@ class TextFieldCustom extends StatelessWidget {
         right: defaultMargin,
       ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(90.0),
+        borderRadius: BorderRadius.circular(6.0),
         color: kWhiteColor,
         boxShadow: [
           BoxShadow(
@@ -41,8 +43,11 @@ class TextFieldCustom extends StatelessWidget {
         obscureText: isObscure,
         controller: textController,
         decoration: InputDecoration(
-          prefixIcon: Icon(
-            icon,
+          suffixIcon: IconButton(
+            onPressed: () {
+              isObscure = true;
+            },
+            icon: Icon(isObscure ? Icons.visibility_off : Icons.visibility),
             color: kBlackColor,
           ),
           focusedBorder: OutlineInputBorder(

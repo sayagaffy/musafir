@@ -37,7 +37,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   google_fonts: ^6.1.0
-  persistent_bottom_nav_bar_v2: any
+  persistent_bottom_nav_bar_v2: 4.2.8
   google_maps_flutter: ^2.5.3
   location: ^5.0.0
   http: ^1.2.0
@@ -46,16 +46,16 @@ dependencies:
   shared_preferences: ^2.2.2
   flex_list: any
   omni_datetime_picker: ^1.0.9
-  geocoding: ^2.1.1
-  # geolocator: ^11.0.0
-  # geolocator_apple: ^2.3.0
+  geocoding: ^3.0.0
   geolocator: ^10.0.1
   geolocator_apple: 2.1.1+1
   skeletonizer: ^1.0.1
   flutter_rating_bar: ^4.0.1
-  firebase_core: 2.27.0
-  firebase_auth: 4.17.8
-  cloud_firestore: 4.15.8
+  firebase_core: ^2.27.1
+  firebase_auth: ^4.17.9
+  cloud_firestore: ^4.15.9
+  google_sign_in: ^6.2.1
+  flutter_facebook_auth: ^6.1.1
 
 
 

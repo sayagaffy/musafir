@@ -33,6 +33,7 @@ Color kBlueColorHover = const Color(0xff3B72AB);
 
 Color kNeutral20 = const Color(0xffF6F6F6);
 Color kNeutral40 = const Color(0xffE3E4E5);
+Color kNeutral50 = const Color(0xffC8C9CA);
 Color kNeutral70 = const Color(0xff838588);
 
 TextStyle blackTextStyle = GoogleFonts.manrope(
@@ -54,6 +55,8 @@ TextStyle redTextStyle = GoogleFonts.manrope(
 TextStyle purpleTextStyle = GoogleFonts.manrope(
   color: kPrimaryColor,
 );
+
+TextStyle noColorTextStyle = GoogleFonts.manrope();
 
 FontWeight light = FontWeight.w300;
 FontWeight regular = FontWeight.w400;

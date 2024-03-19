@@ -1,5 +1,6 @@
 // ignore_for_file: unused_field, prefer_final_fields, unnecessary_brace_in_string_interps, avoid_print
 import 'package:get/get.dart';
+import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/data/repository/google_repo.dart';
 import 'package:musafir/models/nearby_model.dart';
 import 'package:musafir/models/place_detail_model.dart';
@@ -130,6 +131,32 @@ class HomeController extends GetxController implements GetxService {
 
       _loading = true;
       update();
+    }
+  }
+
+  Future<void> refreshHome() async {
+    var locationController = Get.find<LocationController>();
+
+    String latLang =
+        '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}';
+
+    try {
+      await getNearbyPlace(
+        keyword: 'food',
+        rankby: 'distance',
+        type: 'restaurant',
+        location: latLang,
+      );
+
+      await getNearbyPlace(
+        keyword: 'masjid',
+        rankby: 'distance',
+        type: 'mosque',
+        location: latLang,
+      );
+    } catch (e) {
+      print(e);
+      rethrow;
     }
   }
 }
