@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:musafir/data/usecases/logout/logout.dart';
-import 'package:musafir/presentation/providers/repositories/authentication/authentication_provider.dart';
 import 'package:musafir/presentation/providers/router/router_provider.dart';
 import 'package:musafir/presentation/providers/user_data/user_data_provider.dart';
 import 'package:musafir/presentation/widgets/custom_button.dart';
