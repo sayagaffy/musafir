@@ -4,18 +4,37 @@ import 'package:google_fonts/google_fonts.dart';
 double defaultMargin = 18.0;
 double defaultRadius = 25.0;
 
+Color kPrimarySurface = const Color(0xffDAE7F5);
 Color kPrimaryColor = const Color(0xffFDB82C);
+Color kSecondaryMain = const Color(0xffFFC43A);
+Color kRedMain = const Color(0xffD03131);
+Color kGreenHover = const Color(0xff209150);
 Color kBlackColor = const Color(0xff191D23);
 Color kWhiteColor = const Color(0xffFFFFFF);
 Color kGreyColor = const Color(0xff7B7B7B);
 Color kGreenColor = const Color(0xff0EC3AE);
 Color kRedColor = const Color(0xffEB70A5);
-Color kBlueColor = const Color(0xff4789CE);
+
 Color kBackgroundColor = const Color(0xffFAFAFA);
 Color kInactiveColor = const Color(0xffDBD7EC);
 Color kTransparentColor = Colors.transparent;
 Color kAvailableColor = const Color(0xffE0D9FF);
 Color kUnavailableColor = const Color(0xffEBECF1);
+
+Color kWarningMain = const Color(0xffEB8625);
+Color kSuccessSurface = const Color(0xffD4EFDF);
+Color kSuccessHover = const Color(0xff209150);
+Color kSuccessMain = const Color(0xff27AE60);
+
+Color kBlueColor = const Color(0xff4789CE);
+Color kBlueSurface = const Color(0xffDAE7F5);
+Color kBluePressed = const Color(0xff234467);
+Color kBlueColorHover = const Color(0xff3B72AB);
+
+Color kNeutral20 = const Color(0xffF6F6F6);
+Color kNeutral40 = const Color(0xffE3E4E5);
+Color kNeutral50 = const Color(0xffC8C9CA);
+Color kNeutral70 = const Color(0xff838588);
 
 TextStyle blackTextStyle = GoogleFonts.manrope(
   color: kBlackColor,
@@ -36,6 +55,8 @@ TextStyle redTextStyle = GoogleFonts.manrope(
 TextStyle purpleTextStyle = GoogleFonts.manrope(
   color: kPrimaryColor,
 );
+
+TextStyle noColorTextStyle = GoogleFonts.manrope();
 
 FontWeight light = FontWeight.w300;
 FontWeight regular = FontWeight.w400;

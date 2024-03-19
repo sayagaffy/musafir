@@ -1,31 +1,51 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:musafir/ui/pages/get_started_page.dart';
+import 'package:get/get.dart';
+import 'package:musafir/controllers/auth_controller.dart';
+import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/ui/pages/main_page.dart';
-import 'package:musafir/ui/pages/sign_up_page.dart';
-import 'package:musafir/ui/pages/splash_widget.dart';
-// import 'package:device_preview/device_preview.dart';
+import 'help/depedencies.dart' as dep;
+import 'firebase_options.dart';
 
-void main() {
-  // runApp(DevicePreview(
-  //   enabled: true,
-  //   builder: (BuildContext context) => const MainApp(),
-  // ));
-
-  runApp(const MainApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await dep.init();
+  runApp(MainApp());
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  final authC = Get.put(AuthController(authRepo: Get.find()), permanent: true);
+  MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      routes: {
-        '/': (context) => const SplashPage(),
-        '/get-started': (context) => const GetStartedPage(),
-        '/sign-up': (context) => const SignUpPage(),
-        '/main': (context) => const MainPage(),
+    return StreamBuilder<User?>(
+      stream: authC.streamAuthStatus,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.active) {
+          // ignore: avoid_print
+          print(snapshot.data);
+          return GetMaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: const MainPage(),
+            initialRoute: snapshot.data != null && snapshot.data!.emailVerified
+                ? RouteHelper.getInitial()
+                : RouteHelper.getSplashPage(),
+            getPages: RouteHelper.routes,
+          );
+        }
+
+        return const MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
+        );
       },
     );
   }

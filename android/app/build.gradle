@@ -2,6 +2,7 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+    id 'com.google.gms.google-services'
 }
 
 def localProperties = new Properties()
@@ -23,8 +24,10 @@ if (flutterVersionName == null) {
 }
 
 android {
+    compileSdkVersion 34
+
     namespace "com.example.musafir_app"
-    compileSdkVersion flutter.compileSdkVersion
+    // compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -49,6 +52,7 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -64,4 +68,12 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+     // Import the Firebase BoM
+  implementation platform('com.google.firebase:firebase-bom:32.7.4')
+  implementation 'com.android.support:multidex:1.0.3'
+  implementation 'com.facebook.android:facebook-login:latest.release'
+
+}
+
+apply plugin: 'com.google.gms.google-services'

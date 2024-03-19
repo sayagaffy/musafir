@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:musafir/ui/pages/main_page.dart';
-import 'package:musafir/ui/pages/sign_up_page.dart';
-import 'package:musafir/ui/widgets/custom_page_route.dart';
+import 'package:get/get.dart';
+import 'package:musafir/ui/pages/auth/sign_in_page.dart';
+import 'package:musafir/ui/pages/auth/sign_up_page.dart';
 import '../../shared/theme.dart';
 
 class SplashPage extends StatefulWidget {
@@ -12,30 +12,24 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  @override
-  void initState() {
-    // Timer(const Duration(seconds: 3), () {
-    //   Navigator.pushNamed(context, '/get-started');
-    // });
-    super.initState();
-  }
-
   // ignore: annotate_overrides
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kPrimaryColor,
+      backgroundColor: kBlueColor,
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Container(
-              width: 300,
-              height: 300,
-              margin: const EdgeInsets.only(bottom: 50),
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                    'assets/icon_musafir.png',
+            Expanded(
+              child: Container(
+                width: 210,
+                height: 50,
+                margin: const EdgeInsets.only(bottom: 50),
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(
+                      'assets/icon_musafir.png',
+                    ),
                   ),
                 ),
               ),
@@ -45,55 +39,62 @@ class _SplashPageState extends State<SplashPage> {
               height: 44,
               child: TextButton(
                 style: TextButton.styleFrom(
-                  backgroundColor: kBackgroundColor,
+                  backgroundColor: kBlueSurface,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(defaultRadius),
                   ),
                 ),
                 onPressed: () {
-                  Navigator.of(context).push(CustomPageRoute(
-                    child: const MainPage(),
-                    direction: AxisDirection.left,
-                  ));
+                  Get.to(
+                    () => const SignInPage1(),
+                    transition: Transition.fadeIn,
+                    duration: const Duration(milliseconds: 300),
+                  );
                 },
                 child: Text(
                   'Masuk',
                   style: blackTextStyle.copyWith(
-                    fontSize: 12,
-                    fontWeight: semiBold,
-                    letterSpacing: 1,
+                    fontSize: 16,
+                    fontWeight: bold,
+                    color: kBluePressed,
+                    height: 0.6,
                   ),
                 ),
               ),
             ),
             const SizedBox(
-              height: 10,
+              height: 20,
             ),
             SizedBox(
               width: 339,
               height: 44,
               child: TextButton(
                 style: TextButton.styleFrom(
-                  backgroundColor: kBlueColor,
+                  backgroundColor: kBlueSurface,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(defaultRadius),
                   ),
                 ),
                 onPressed: () {
-                  Navigator.of(context).push(CustomPageRoute(
-                    child: const SignUpPage(),
-                    direction: AxisDirection.up,
-                  ));
+                  Get.to(
+                    () => const SignUpPage1(),
+                    transition: Transition.fadeIn,
+                    duration: const Duration(milliseconds: 300),
+                  );
                 },
                 child: Text(
                   'Daftar',
                   style: whiteTextStyle.copyWith(
-                    fontSize: 12,
-                    fontWeight: semiBold,
-                    letterSpacing: 1,
+                    fontSize: 16,
+                    fontWeight: bold,
+                    color: kBluePressed,
+                    height: 0.6,
                   ),
                 ),
               ),
+            ),
+            const SizedBox(
+              height: 60,
             ),
           ],
         ),
