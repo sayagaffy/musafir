@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:musafir/presentation/pages/login_page/login_page.dart';
 import 'package:musafir/presentation/pages/main_page.dart';
+import 'package:musafir/presentation/pages/profile_page/profile_page.dart';
 import 'package:musafir/presentation/pages/register_page/register_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -22,5 +23,10 @@ Raw<GoRouter> router(RouterRef ref) => GoRouter(routes: [
         path: '/register',
         name: 'register',
         builder: (context, state) => const RegisterPage(),
-      )
+      ),
+      GoRoute(
+        path: '/profile',
+        name: 'profile',
+        builder: (context, state) => const ProfilePage(),
+      ),
     ], initialLocation: '/login', debugLogDiagnostics: false);

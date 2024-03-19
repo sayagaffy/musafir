@@ -6,6 +6,7 @@ import 'package:musafir/presentation/providers/router/router_provider.dart';
 import 'package:musafir/presentation/providers/user_data/user_data_provider.dart';
 import 'package:musafir/presentation/widgets/custom_button.dart';
 import 'package:musafir/shared/build_context_extensions.dart';
+import 'package:musafir/shared/methods.dart';
 
 class MainPage extends ConsumerStatefulWidget {
   const MainPage({super.key});
@@ -35,11 +36,18 @@ class _MainpageState extends ConsumerState<MainPage> {
               data: (data) => data.toString(),
               error: (error, stackTrace) => '',
               loading: () => 'Loading')),
+          verticalSpace(15),
           CustomButton(
               title: 'Logout',
               onPressed: () {
                 ref.read(userDataProvider.notifier).logout();
-              })
+              }),
+          verticalSpace(15),
+          CustomButton(
+              title: 'Profile Page',
+              onPressed: () {
+                ref.read(routerProvider).goNamed('profile');
+              }),
         ],
       ),
     );
