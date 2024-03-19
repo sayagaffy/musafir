@@ -19,7 +19,13 @@ class MusafirTextField extends StatelessWidget {
       obscureText: obscureText,
       decoration: InputDecoration(
           labelText: labelText,
-          labelStyle: const TextStyle(color: kWhiteColor)),
+          labelStyle: const TextStyle(color: kBlackColor),
+          enabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: kGreyBorderColor),
+          ),
+          focusedBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: kPrimaryColor),
+          )),
     );
   }
 }
