@@ -7,9 +7,9 @@ import 'package:musafir/base/custom_loader.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
 import 'package:musafir/controllers/auth_controller.dart';
 import 'package:musafir/shared/theme.dart';
-import 'package:musafir/ui/pages/auth/sign_up_page.dart';
+import 'package:musafir/ui/pages/auth/sign_in_page.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
-import 'package:musafir/ui/widgets/text_field_custom.dart';
+import 'package:musafir/ui/widgets/text_field_text.dart';
 
 class ResetPassword extends StatefulWidget {
   const ResetPassword({super.key});
@@ -21,10 +21,10 @@ class ResetPassword extends StatefulWidget {
 class _ResetPasswordState extends State<ResetPassword> {
   @override
   // ignore: override_on_non_overriding_member
-  var emailController = TextEditingController(text: 'testlog@gmail.com');
+  var emailController = TextEditingController();
 
   // ignore: no_leading_underscores_for_local_identifiers
-  void _reset(AuthController _authController) {
+  void _reset(AuthController _authController, context) {
     String email = emailController.text.trim();
 
     if (email.isEmpty) {
@@ -33,7 +33,7 @@ class _ResetPasswordState extends State<ResetPassword> {
       showCustomSnackBar("type in a valid email address",
           title: 'Valid email address');
     } else {
-      _authController.resetPassword(email);
+      _authController.resetPassword(email, context);
     }
   }
 
@@ -56,11 +56,10 @@ class _ResetPasswordState extends State<ResetPassword> {
                               height: 100,
                               width: 100,
                               child: Image.asset(
-                                'assets/icon_musafir_icon.png',
+                                'assets/brandBlue.png',
                                 width: 100.0,
                                 height: 100.0,
                                 fit: BoxFit.contain,
-                                color: kBlackColor,
                               ),
                             ),
                           ),
@@ -70,7 +69,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                         height: 30,
                       ),
                       Text(
-                        'Reset your password login',
+                        'Reset password login kamu',
                         style: greyTextStyle.copyWith(
                           fontSize: 16,
                         ),
@@ -78,28 +77,33 @@ class _ResetPasswordState extends State<ResetPassword> {
                       const SizedBox(
                         height: 10,
                       ),
-                      TextFieldCustom(
+                      TextFieldText(
                         textController: emailController,
-                        hintText: 'Email',
+                        hintText: 'contoh: abe@gmailcom',
                         icon: Icons.email,
+                        label: 'Email',
                       ),
                       const SizedBox(
                         height: 50,
                       ),
-                      SizedBox(
-                        width: 200,
-                        child: CustomButton(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: CustomButton(
                             title: 'Reset Password',
                             onPressed: () {
-                              _reset(authController);
-                            }),
+                              _reset(authController, context);
+                            },
+                          ),
+                        ),
                       ),
                       const SizedBox(
                         height: 20,
                       ),
                       RichText(
                         text: TextSpan(
-                          text: "have an Account ? ",
+                          text: "Sudah punya akun ? ",
                           style: blackTextStyle.copyWith(
                             color: kGreyColor,
                             fontSize: 14,
@@ -108,15 +112,16 @@ class _ResetPasswordState extends State<ResetPassword> {
                             TextSpan(
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () => Get.to(
-                                      () => const SignUpPage1(),
+                                      () => const SignInPage1(),
                                       duration:
                                           const Duration(milliseconds: 300),
                                     ),
-                              text: " Sign In",
-                              style: blackTextStyle.copyWith(
-                                  color: kBlackColor,
-                                  fontSize: 14,
-                                  fontWeight: extraBold),
+                              text: " Masuk",
+                              style: noColorTextStyle.copyWith(
+                                color: kBlueColor,
+                                fontSize: 14,
+                                fontWeight: extraBold,
+                              ),
                             )
                           ],
                         ),

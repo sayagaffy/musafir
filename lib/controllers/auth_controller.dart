@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -107,16 +108,36 @@ class AuthController extends GetxController implements GetxService {
     }
   }
 
-  void logins(String emailAddress, String password) async {
+  void showLoading(context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Center(
+            child: CircularProgressIndicator(
+          color: kBlueColor,
+        ));
+      },
+    );
+  }
+
+  void logins(
+      String emailAddress, String password, BuildContext context) async {
     try {
+      showLoading(context);
+
       UserCredential myUser = await auth.signInWithEmailAndPassword(
         email: emailAddress.toString(),
         password: password.toString(),
       );
       if (myUser.user!.emailVerified) {
         getGoogleApi();
+
+        ///[turn off loading indicator]
+        Get.back(closeOverlays: true);
         Get.offNamed(RouteHelper.getInitial());
       } else {
+        ///[turn off loading indicator]
+        Get.back(closeOverlays: true);
         Get.defaultDialog(
           title: "Verifikasi Email",
           middleText:
@@ -130,18 +151,27 @@ class AuthController extends GetxController implements GetxService {
         );
       }
     } on FirebaseAuthException catch (e) {
+      ///[turn off loading indicator]
+      Get.back(closeOverlays: true);
+
+      //Show message
       if (e.code == 'user-not-found') {
-        showCustomSnackBar("No user found for that email.");
+        showCustomSnackBar("No user found for that email.",
+            title: 'gagal untuk masuk');
       } else if (e.code == 'wrong-password') {
-        showCustomSnackBar("Wrong password provided for that user.");
+        showCustomSnackBar("Wrong password provided for that user.",
+            title: 'gagal untuk masuk');
+      } else if (e.code == 'invalid-credential') {
+        showCustomSnackBar("User tidak di temukan", title: 'gagal untuk masuk');
       } else {
-        showCustomSnackBar(e.code);
+        showCustomSnackBar(e.code, title: 'Gagal untuk masuk');
       }
     }
   }
 
-  void signInWithGoogle() async {
+  void signInWithGoogle(context) async {
     try {
+      showLoading(context);
       GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       // Obtain the auth details from the request
@@ -161,7 +191,7 @@ class AuthController extends GetxController implements GetxService {
         if (userCredential.additionalUserInfo!.isNewUser) {
           firestore.collection("users").doc(user.email).set({
             'username': user.email?.split('@')[0],
-            'bio': 'empty bio..',
+            'bio': '',
             'profilePhoto': user.photoURL,
             'namaDepan': '',
             'namaBelakang': '',
@@ -172,6 +202,9 @@ class AuthController extends GetxController implements GetxService {
           });
         }
         getGoogleApi();
+
+        ///[turn off loading indicator]
+        Get.back(closeOverlays: true);
         Get.offNamed(RouteHelper.getInitial());
       }
     } catch (e) {
@@ -197,7 +230,7 @@ class AuthController extends GetxController implements GetxService {
         if (userCredential.additionalUserInfo!.isNewUser) {
           firestore.collection("users").doc(user.email).set({
             'username': user.email?.split('@')[0],
-            'bio': 'empty bio..',
+            'bio': '',
             'profilePhoto': user.photoURL,
             'namaDepan': '',
             'namaBelakang': '',
@@ -215,19 +248,30 @@ class AuthController extends GetxController implements GetxService {
     }
   }
 
-  void signUp(String emailAddress, String password, String namaDepan,
-      String namaBelakang, String phone, String passwordKonfrim) async {
+  void signUp(
+      String emailAddress,
+      String password,
+      String namaDepan,
+      String namaBelakang,
+      String phone,
+      String passwordKonfrim,
+      context) async {
     try {
+      showLoading(context);
+
       UserCredential userCredential = await auth.createUserWithEmailAndPassword(
         email: emailAddress,
         password: password,
       );
 
+      ///[turn off loading indicator]
+      Get.back(closeOverlays: true);
+
       if (userCredential.additionalUserInfo!.isNewUser) {
         firestore.collection("users").doc(userCredential.user!.email).set({
           'username': emailAddress.split('@')[0],
-          'bio': 'empty bio..',
-          'profilePhoto': 'none',
+          'bio': '',
+          'profilePhoto': '',
           'namaDepan': namaDepan,
           'namaBelakang': namaBelakang,
           'phone': phone,
@@ -245,6 +289,10 @@ class AuthController extends GetxController implements GetxService {
         );
       }
     } on FirebaseAuthException catch (e) {
+      ///[turn off loading indicator]
+      Get.back(closeOverlays: true);
+
+      //show message error
       if (e.code == 'weak-password') {
         showCustomSnackBar('the password provided is too weak');
       } else if (e.code == 'email-already-in-use') {
@@ -271,9 +319,13 @@ class AuthController extends GetxController implements GetxService {
     );
   }
 
-  void resetPassword(String emailAddress) async {
+  void resetPassword(String emailAddress, context) async {
     try {
+      showLoading(context);
       await auth.sendPasswordResetEmail(email: emailAddress);
+
+      ///[turn off loading indicator]
+      Get.back(closeOverlays: true);
 
       showCustomSnackBar(
         'Kami telah mengirimkan reset password ke $emailAddress . ',
@@ -282,6 +334,9 @@ class AuthController extends GetxController implements GetxService {
         backgroundColor: kSuccessMain,
       );
     } catch (e) {
+      ///[turn off loading indicator]
+      Get.back(closeOverlays: true);
+
       showCustomSnackBar(
         "Terjadi kesalahan, tidak dapat mengirimkan reset password",
       );

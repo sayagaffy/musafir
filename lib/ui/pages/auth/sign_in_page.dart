@@ -34,7 +34,7 @@ class _SignInPage1State extends State<SignInPage1> {
   var passwordController = TextEditingController(text: 'qwerty');
 
   // ignore: no_leading_underscores_for_local_identifiers
-  void _login(AuthController _authController) {
+  void _login(AuthController _authController, context) {
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
 
@@ -49,7 +49,7 @@ class _SignInPage1State extends State<SignInPage1> {
       showCustomSnackBar("Password can not  be less  than six characters",
           title: 'Password');
     } else {
-      _authController.logins(email, password);
+      _authController.logins(email, password, context);
     }
   }
 
@@ -167,7 +167,7 @@ class _SignInPage1State extends State<SignInPage1> {
                           child: CustomButton(
                             title: 'Masuk',
                             onPressed: () {
-                              _login(authController);
+                              _login(authController, context);
                             },
                           ),
                         ),
@@ -223,7 +223,7 @@ class _SignInPage1State extends State<SignInPage1> {
                               title: 'Masuk lewat Google',
                               onPressed: () {
                                 var authController = Get.find<AuthController>();
-                                authController.signInWithGoogle();
+                                authController.signInWithGoogle(context);
                               },
                               icon: "assets/icon_google.png",
                             ),
