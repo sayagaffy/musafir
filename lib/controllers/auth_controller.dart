@@ -166,7 +166,9 @@ class AuthController extends GetxController implements GetxService {
             'namaDepan': '',
             'namaBelakang': '',
             'phone': '',
-            'provider': 'Google'
+            'provider': 'Google',
+            'address': '',
+            'latlang': ''
           });
         }
         getGoogleApi();
@@ -196,7 +198,13 @@ class AuthController extends GetxController implements GetxService {
           firestore.collection("users").doc(user.email).set({
             'username': user.email?.split('@')[0],
             'bio': 'empty bio..',
-            'profilePhoto': user.photoURL
+            'profilePhoto': user.photoURL,
+            'namaDepan': '',
+            'namaBelakang': '',
+            'phone': '',
+            'provider': 'facebook',
+            'address': '',
+            'latlang': ''
           });
         }
 
@@ -223,7 +231,9 @@ class AuthController extends GetxController implements GetxService {
           'namaDepan': namaDepan,
           'namaBelakang': namaBelakang,
           'phone': phone,
-          'provider': 'email'
+          'provider': 'email',
+          'address': '',
+          'latlang': ''
         });
 
         await userCredential.user!.sendEmailVerification();
