@@ -4,14 +4,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
 
-class FavoritePage1 extends StatefulWidget {
-  const FavoritePage1({super.key});
+class FavoritePage extends StatefulWidget {
+  const FavoritePage({super.key});
 
   @override
-  State<FavoritePage1> createState() => _FavoritePage1State();
+  State<FavoritePage> createState() => _FavoritePage1State();
 }
 
-class _FavoritePage1State extends State<FavoritePage1> {
+class _FavoritePage1State extends State<FavoritePage> {
   String? _currentAddress;
   Position? _currentPosition;
 

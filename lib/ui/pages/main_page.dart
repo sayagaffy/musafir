@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:musafir/shared/theme.dart';
-import 'package:musafir/ui/pages/account_page.dart';
-import 'package:musafir/ui/pages/community_page.dart';
+import 'package:musafir/ui/pages/account/account_page.dart';
+import 'package:musafir/ui/pages/community/community_page.dart';
+
 import 'package:musafir/ui/pages/explore/explore_pages.dart';
 import 'package:musafir/ui/pages/favorite/favorite_page.dart';
 import 'package:musafir/ui/pages/home/home_page.dart';
@@ -12,8 +13,7 @@ List<Widget> _buildScreens() {
   return [
     const HomePage(),
     const ExplorePage(),
-    // const MapPage(),
-    const FavoritePage1(),
+    const FavoritePage(),
     const CommunityPage(),
     const AccountPage()
   ];
