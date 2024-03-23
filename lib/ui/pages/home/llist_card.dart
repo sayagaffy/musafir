@@ -1,9 +1,11 @@
 // ignore_for_file: avoid_print
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
+import 'package:musafir/data/firestore/users.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/pages/home/widgets/checkbox.dart';
@@ -24,8 +26,10 @@ class ListCard extends StatefulWidget {
 }
 
 class _ListCardState extends State<ListCard> {
+  final user = FirebaseAuth.instance.currentUser;
   var homeController = Get.find<HomeController>();
   var locationController = Get.find<LocationController>();
+  String? latlang;
 
   List<String> ratings = [
     'Rating',
@@ -53,7 +57,7 @@ class _ListCardState extends State<ListCard> {
       rankby: 'prominence',
       type: type,
       radius: jarak,
-      location:
+      location: latlang ??
           '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
     );
   }
@@ -82,7 +86,7 @@ class _ListCardState extends State<ListCard> {
         keyword: 'food',
         rankby: 'distance',
         type: 'restaurant',
-        location:
+        location: latlang ??
             '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
       );
     }
@@ -96,7 +100,7 @@ class _ListCardState extends State<ListCard> {
         keyword: 'masjid',
         rankby: 'distance',
         type: 'mosque',
-        location:
+        location: latlang ??
             '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
       );
     }
@@ -110,7 +114,7 @@ class _ListCardState extends State<ListCard> {
         keyword: '${widget.search}+food',
         rankby: 'distance',
         type: 'food',
-        location:
+        location: latlang ??
             '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
       );
     }
@@ -135,7 +139,7 @@ class _ListCardState extends State<ListCard> {
           keyword: 'food',
           rankby: 'distance',
           type: 'restaurant',
-          location:
+          location: latlang ??
               '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
         );
       } else if (widget.type == 'filterList_mosque') {
@@ -143,7 +147,7 @@ class _ListCardState extends State<ListCard> {
           keyword: 'masjid',
           rankby: 'distance',
           type: 'mosque',
-          location:
+          location: latlang ??
               '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
         );
       } else if (widget.type == 'filterList_food') {
@@ -151,7 +155,7 @@ class _ListCardState extends State<ListCard> {
           keyword: '${widget.search}+food',
           rankby: 'distance',
           type: 'food',
-          location:
+          location: latlang ??
               '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}',
         );
       }
@@ -165,6 +169,13 @@ class _ListCardState extends State<ListCard> {
   }
 
   Widget header(BuildContext context) {
+    DbUsers().getUserDetail(user!.email.toString()).then((val) {
+      setState(() {
+        latlang = val.data()['lat'] != null
+            ? '${val.data()['lat']},${val.data()['long']}'
+            : locationController.latlng.toString();
+      });
+    });
     return TextfieldGoogle(
         hintText: 'Cari resto atau ruang shalat di Musafir',
         onTap: () {

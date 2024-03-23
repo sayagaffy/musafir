@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
 import 'package:musafir/controllers/home_controller.dart';
-import 'package:musafir/controllers/location_controller.dart';
+import 'package:musafir/data/firestore/users.dart';
 import 'package:musafir/data/repository/auth_repo.dart';
 import 'package:musafir/models/response_model.dart';
 import 'package:musafir/models/signup_body_model.dart';
@@ -22,13 +22,17 @@ class AuthController extends GetxController implements GetxService {
     required this.authRepo,
   });
 
-  FirebaseAuth auth = FirebaseAuth.instance;
+  static AuthController instance = Get.find();
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseAuth get auth => _auth;
+
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  Stream<User?> get streamAuthStatus => auth.authStateChanges();
+  Stream<User?> get streamAuthStatus => _auth.authStateChanges();
 
   Future<ResponseModel> registration(SignUpBody signUpBody) async {
     _isLoading = true;
@@ -81,33 +85,6 @@ class AuthController extends GetxController implements GetxService {
     return authRepo.clearShared();
   }
 
-  void getGoogleApi() {
-    var homeController = Get.find<HomeController>();
-
-    var locationController = Get.find<LocationController>();
-
-    String latLang =
-        '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}';
-
-    if (homeController.isLoadedFood == false) {
-      homeController.getNearbyPlace(
-        keyword: 'food',
-        rankby: 'distance',
-        type: 'restaurant',
-        location: latLang,
-      );
-    }
-
-    if (homeController.isLoadedMosque == false) {
-      homeController.getNearbyPlace(
-        keyword: 'masjid',
-        rankby: 'distance',
-        type: 'mosque',
-        location: latLang,
-      );
-    }
-  }
-
   void showLoading(context) {
     showDialog(
       context: context,
@@ -125,12 +102,13 @@ class AuthController extends GetxController implements GetxService {
     try {
       showLoading(context);
 
-      UserCredential myUser = await auth.signInWithEmailAndPassword(
+      UserCredential myUser = await _auth.signInWithEmailAndPassword(
         email: emailAddress.toString(),
         password: password.toString(),
       );
       if (myUser.user!.emailVerified) {
-        getGoogleApi();
+        var homeController = Get.find<HomeController>();
+        homeController.refreshHome();
 
         ///[turn off loading indicator]
         Get.back(closeOverlays: true);
@@ -184,24 +162,20 @@ class AuthController extends GetxController implements GetxService {
       );
 
       UserCredential userCredential =
-          await auth.signInWithCredential(credential);
+          await _auth.signInWithCredential(credential);
 
       User? user = userCredential.user;
       if (user != null) {
         if (userCredential.additionalUserInfo!.isNewUser) {
-          firestore.collection("users").doc(user.email).set({
-            'username': user.email?.split('@')[0],
-            'bio': '',
-            'profilePhoto': user.photoURL,
-            'namaDepan': '',
-            'namaBelakang': '',
-            'phone': '',
-            'provider': 'Google',
-            'address': '',
-            'latlang': ''
-          });
+          await DbUsers().createUser(
+            userCredential.user!.email.toString(),
+            username: user.email?.split('@')[0],
+            provider: 'Google',
+            photoURL: user.photoURL,
+          );
         }
-        getGoogleApi();
+        var homeController = Get.find<HomeController>();
+        homeController.refreshHome();
 
         ///[turn off loading indicator]
         Get.back(closeOverlays: true);
@@ -223,22 +197,17 @@ class AuthController extends GetxController implements GetxService {
 
       // Once signed in, return the UserCredential
       UserCredential userCredential =
-          await auth.signInWithCredential(facebookAuthCredential);
+          await _auth.signInWithCredential(facebookAuthCredential);
 
       User? user = userCredential.user;
       if (user != null) {
         if (userCredential.additionalUserInfo!.isNewUser) {
-          firestore.collection("users").doc(user.email).set({
-            'username': user.email?.split('@')[0],
-            'bio': '',
-            'profilePhoto': user.photoURL,
-            'namaDepan': '',
-            'namaBelakang': '',
-            'phone': '',
-            'provider': 'facebook',
-            'address': '',
-            'latlang': ''
-          });
+          //Save user if new
+          await DbUsers().createUser(
+            user.email.toString(),
+            username: user.email?.split('@')[0],
+            provider: 'facebook',
+          );
         }
 
         Get.offNamed(RouteHelper.getInitial());
@@ -249,17 +218,18 @@ class AuthController extends GetxController implements GetxService {
   }
 
   void signUp(
-      String emailAddress,
-      String password,
-      String namaDepan,
-      String namaBelakang,
-      String phone,
-      String passwordKonfrim,
-      context) async {
+    String emailAddress,
+    String password,
+    String namaDepan,
+    String namaBelakang,
+    String phone,
+    context,
+  ) async {
     try {
       showLoading(context);
 
-      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: emailAddress,
         password: password,
       );
@@ -268,19 +238,19 @@ class AuthController extends GetxController implements GetxService {
       Get.back(closeOverlays: true);
 
       if (userCredential.additionalUserInfo!.isNewUser) {
-        firestore.collection("users").doc(userCredential.user!.email).set({
-          'username': emailAddress.split('@')[0],
-          'bio': '',
-          'profilePhoto': '',
-          'namaDepan': namaDepan,
-          'namaBelakang': namaBelakang,
-          'phone': phone,
-          'provider': 'email',
-          'address': '',
-          'latlang': ''
-        });
+        //Save user if new
+        await DbUsers().createUser(
+          userCredential.user!.email.toString(),
+          username: emailAddress.split('@')[0],
+          firstName: namaDepan,
+          lastName: namaBelakang,
+          phone: phone,
+          provider: 'email',
+        );
 
+        //Send email verivication
         await userCredential.user!.sendEmailVerification();
+
         showCustomSnackBar(
           'Kami telah mengirimkan email verifikasi ke $emailAddress . ',
           isError: false,
@@ -322,7 +292,7 @@ class AuthController extends GetxController implements GetxService {
   void resetPassword(String emailAddress, context) async {
     try {
       showLoading(context);
-      await auth.sendPasswordResetEmail(email: emailAddress);
+      await _auth.sendPasswordResetEmail(email: emailAddress);
 
       ///[turn off loading indicator]
       Get.back(closeOverlays: true);

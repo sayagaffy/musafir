@@ -69,7 +69,6 @@ class SignUpPage1 extends StatelessWidget {
           nameDepan,
           nameBelakang,
           phone,
-          passwordKonfirm,
           context,
         );
       }

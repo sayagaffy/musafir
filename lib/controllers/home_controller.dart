@@ -1,13 +1,25 @@
 // ignore_for_file: unused_field, prefer_final_fields, unnecessary_brace_in_string_interps, avoid_print
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:musafir/base/show_custom_snackbar.dart';
+import 'package:musafir/controllers/auth_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
+import 'package:musafir/data/firestore/users.dart';
 import 'package:musafir/data/repository/google_repo.dart';
+import 'package:musafir/models/geocode_model.dart';
 import 'package:musafir/models/nearby_model.dart';
 import 'package:musafir/models/place_detail_model.dart';
+import 'package:musafir/routes/routes_helper.dart';
+import 'package:musafir/shared/theme.dart';
 
 class HomeController extends GetxController implements GetxService {
   GoogleRepo googleRepo;
   HomeController({required this.googleRepo});
+
+  FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   bool _loading = false;
   bool get loading => _loading;
@@ -68,6 +80,13 @@ class HomeController extends GetxController implements GetxService {
     _rate = value;
     update();
   }
+
+  ///['Search by address]
+  List<dynamic> _addressCollection = [];
+  List<dynamic> get addressCollection => _addressCollection;
+
+  bool _isLoadAddress = false;
+  bool get isLoadAddress => _isLoadedFood;
 
   ///['FUNCTION GET NEARBY PLACE']
   Future<void> getNearbyPlace({
@@ -134,12 +153,72 @@ class HomeController extends GetxController implements GetxService {
     }
   }
 
+  ///[FUNCTION GEO CODE BY TEXT SEARCH]
+  Future<void> getGeoCodeAddress(String address, String type) async {
+    var authController = Get.find<AuthController>();
+    final user = authController.auth.currentUser;
+
+    Response response = await googleRepo.getGeocodeAddress(address);
+
+    if (response.statusCode == 200) {
+      _addressCollection = [];
+      _addressCollection.addAll(Geocode.fromJson(response.body).results);
+
+      if (type == 'setLoc') {
+        var usersUpdate = {
+          'address': addressCollection[0].formattedAddress,
+          'lat': addressCollection[0].geometry.location.lat.toString(),
+          'long': addressCollection[0].geometry.location.lng.toString()
+        };
+
+        try {
+          await DbUsers().updateUserData(user!.email.toString(), usersUpdate);
+          showCustomSnackBar(
+            isError: false,
+            'Berhasil Mengubah Lokasi',
+            title: 'Succsess',
+            backgroundColor: kGreenHover,
+          );
+          refreshNearbyPlace('${usersUpdate['lat']},${usersUpdate['long']}');
+          Get.toNamed(RouteHelper.getInitial());
+        } catch (e) {
+          showCustomSnackBar(e.toString());
+        }
+      }
+    }
+  }
+
   Future<void> refreshHome() async {
     var locationController = Get.find<LocationController>();
+    final user = FirebaseAuth.instance.currentUser;
 
-    String latLang =
-        '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}';
+    try {
+      DbUsers().getUserDetail(user!.email.toString()).then((val) async {
+        String latlang = val.data()['lat'] != null
+            ? '${val.data()['lat']},${val.data()['long']}'
+            : locationController.latlng.toString();
+        print(latlang);
+        await getNearbyPlace(
+          keyword: 'food',
+          rankby: 'distance',
+          type: 'restaurant',
+          location: latlang,
+        );
 
+        await getNearbyPlace(
+          keyword: 'masjid',
+          rankby: 'distance',
+          type: 'mosque',
+          location: latlang,
+        );
+      });
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
+  Future<void> refreshNearbyPlace(String latLang) async {
     try {
       await getNearbyPlace(
         keyword: 'food',
@@ -156,7 +235,51 @@ class HomeController extends GetxController implements GetxService {
       );
     } catch (e) {
       print(e);
-      rethrow;
     }
+  }
+
+  void filter() async {
+    final results = await firestore
+        .collection('users')
+        .where('namaDepan', isEqualTo: 'Andi')
+        .get();
+    if (results.docs.isNotEmpty) {
+      print(results.docs.length);
+      // ignore: avoid_function_literals_in_foreach_calls
+      results.docs.forEach((element) {
+        var id = element.id;
+        var data = element.data();
+
+        print('id : $id');
+        print('data : $data');
+        print(element);
+      });
+    } else {
+      print(results.docs.length);
+    }
+
+    final test =
+        await firestore.collection('users').doc(auth.currentUser!.email).get();
+
+    print(test.data());
+  }
+
+  Future getCustomDataUsers(documenId, query) async {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    return FutureBuilder(
+      future: users.doc(documenId).get(),
+      builder: ((context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          Map<String, dynamic> data =
+              snapshot.data!.data() as Map<String, dynamic>;
+
+          return Text(
+            data[query],
+          );
+        }
+        return const Text('loading..');
+      }),
+    );
   }
 }

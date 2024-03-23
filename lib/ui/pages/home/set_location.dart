@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:musafir/base/show_custom_snackbar.dart';
 import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/pages/home/widgets/current_location.dart';
+import 'package:musafir/ui/pages/home/widgets/current_set_location.dart';
 import 'package:musafir/ui/widgets/location_list_tile.dart';
 
 class SetLoaction extends StatefulWidget {
@@ -17,27 +17,6 @@ class SetLoaction extends StatefulWidget {
 
 class _SetLoactionState extends State<SetLoaction> {
   var locationController = Get.find<LocationController>();
-
-  void refreshNearbyPlace() {
-    var homeController = Get.find<HomeController>();
-
-    String latLang =
-        '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}';
-
-    homeController.getNearbyPlace(
-      keyword: 'food',
-      rankby: 'distance',
-      type: 'restaurant',
-      location: latLang,
-    );
-
-    homeController.getNearbyPlace(
-      keyword: 'masjid',
-      rankby: 'distance',
-      type: 'mosque',
-      location: latLang,
-    );
-  }
 
   Widget header() {
     return Container(
@@ -64,8 +43,7 @@ class _SetLoactionState extends State<SetLoaction> {
             children: [
               GestureDetector(
                   onTap: () {
-                    refreshNearbyPlace();
-                    Get.offNamed(RouteHelper.getInitial());
+                    Get.toNamed(RouteHelper.getInitial());
                   },
                   child: const Icon(Icons.keyboard_backspace_rounded)),
               const SizedBox(
@@ -129,6 +107,19 @@ class _SetLoactionState extends State<SetLoaction> {
     );
   }
 
+  Widget currentSet() {
+    return Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: Color.fromARGB(105, 120, 127, 132),
+              width: 0.8,
+            ),
+          ),
+        ),
+        child: const CurrentSetLocation());
+  }
+
   Widget listDataSearch() {
     return Container(
       margin: const EdgeInsets.only(
@@ -139,33 +130,40 @@ class _SetLoactionState extends State<SetLoaction> {
         children: [
           GetBuilder<LocationController>(builder: (place) {
             return place.isLoaded
-                ? ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: place.getPlaces.length,
-                    itemBuilder: (BuildContext context, int index) =>
-                        LocationListTile(
-                      press: () {
-                        place.getGeoCodeAddress(
-                            place.getPlaces[index].description);
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            top: 20,
+                            left: 18,
+                            right: 18,
+                          ),
+                          child: Text(
+                            'Pencarian Terakhir',
+                            style: greyTextStyle.copyWith(fontSize: 14),
+                          ),
+                        ),
+                      ),
+                      ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: place.getPlaces.length,
+                        itemBuilder: (BuildContext context, int index) =>
+                            LocationListTile(
+                          press: () {
+                            var homeController = Get.find<HomeController>();
 
-                        showCustomSnackBar(
-                          isError: false,
-                          'Berhasil Mengubah Lokasi',
-                          title: 'Succsess',
-                          backgroundColor: kGreenHover,
-                        );
-                      },
-                      location: place.getPlaces[index].description,
-                    ),
+                            homeController.getGeoCodeAddress(
+                                place.getPlaces[index].description, 'setLoc');
+                          },
+                          location: place.getPlaces[index].description,
+                        ),
+                      ),
+                    ],
                   )
-                : Padding(
-                    padding: const EdgeInsets.only(top: 20),
-                    child: Text(
-                      'Perbaharui Lokasimu',
-                      style: greyTextStyle.copyWith(fontSize: 12),
-                    ),
-                  );
+                : const SizedBox();
           })
         ],
       ),
@@ -179,6 +177,7 @@ class _SetLoactionState extends State<SetLoaction> {
         children: [
           header(),
           currentList(),
+          currentSet(),
           listDataSearch(),
         ],
       ),

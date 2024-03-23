@@ -1,10 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:get/get.dart';
 import 'package:musafir/controllers/auth_controller.dart';
-
 import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
+import 'package:musafir/data/firestore/users.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:flutter/material.dart';
@@ -23,9 +22,22 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final user = FirebaseAuth.instance.currentUser;
+  String? name;
+  String? address;
+  String? latlang;
 
   Widget header() {
     var locationController = Get.find<LocationController>();
+
+    DbUsers().getUserDetail(user!.email.toString()).then((val) {
+      setState(() {
+        name = val.data()['firstName'] ?? val.data()['username'];
+        address = val.data()['address'] ?? 'none';
+        latlang = val.data()['lat'] != null
+            ? '${val.data()['lat']},${val.data()['long']}'
+            : locationController.latlng.toString();
+      });
+    });
 
     return Container(
       width: double.infinity,
@@ -46,15 +58,19 @@ class _HomePageState extends State<HomePage> {
                 height: 20,
                 child: FittedBox(
                   fit: BoxFit.fitWidth,
-                  child: Text(
-                    'Assalamualaikum ${user?.email!.split('@')[0]}',
-                    style: blackTextStyle.copyWith(
-                      fontWeight: extraBold,
-                      fontSize: 20,
-                      height: 0.7,
-                      color: kBlueColorHover,
-                    ),
-                    overflow: TextOverflow.ellipsis,
+                  child: Row(
+                    children: [
+                      Text(
+                        'Assalamualaikum $name',
+                        style: blackTextStyle.copyWith(
+                          fontWeight: extraBold,
+                          fontSize: 20,
+                          height: 0.7,
+                          color: kBlueColorHover,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -68,7 +84,17 @@ class _HomePageState extends State<HomePage> {
                   size: 20,
                   color: kWarningMain,
                 ),
-              )
+              ),
+              // GestureDetector(
+              //   onTap: () async {
+              //     print('object');
+              //   },
+              //   child: Icon(
+              //     Icons.filter,
+              //     size: 20,
+              //     color: kBlackColor,
+              //   ),
+              // )
             ],
           ),
           Container(
@@ -76,7 +102,7 @@ class _HomePageState extends State<HomePage> {
                 top: 5,
                 bottom: 15,
               ),
-              child: locationController.address != "none"
+              child: address != "none"
                   ? Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -101,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                               SizedBox(
                                 width: 180,
                                 child: Text(
-                                  ' ${locationController.address}',
+                                  ' $address',
                                   style: blackTextStyle.copyWith(
                                     fontSize: 12,
                                     fontWeight: bold,
@@ -219,7 +245,7 @@ class _HomePageState extends State<HomePage> {
                     scrollDirection: Axis.horizontal,
                     clipBehavior: Clip.none,
                     shrinkWrap: true,
-                    itemCount: 5,
+                    itemCount: place.nearbyFood.isNotEmpty ? 5 : 0,
                     itemBuilder: (BuildContext context, int index) {
                       final item = place.nearbyFood[index];
 
@@ -292,7 +318,7 @@ class _HomePageState extends State<HomePage> {
   Widget kategoriMakanan() {
     var homeController = Get.find<HomeController>();
     var locationController = Get.find<LocationController>();
-    String latLang =
+    String latLang = latlang ??
         '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}';
     return Container(
       padding: EdgeInsets.only(left: defaultMargin, bottom: 20),
@@ -427,7 +453,7 @@ class _HomePageState extends State<HomePage> {
                     scrollDirection: Axis.horizontal,
                     clipBehavior: Clip.none,
                     shrinkWrap: true,
-                    itemCount: 5,
+                    itemCount: place.nearbyMosque.isNotEmpty ? 5 : 0,
                     itemBuilder: (BuildContext context, int index) {
                       final item = place.nearbyMosque[index];
 
@@ -477,11 +503,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
     super.dispose();
   }
@@ -492,7 +513,7 @@ class _HomePageState extends State<HomePage> {
       body: RefreshIndicator(
         onRefresh: () async {
           var homeController = Get.find<HomeController>();
-          homeController.refreshHome();
+          homeController.refreshNearbyPlace(latlang!);
         },
         child: ListView(
           children: [
