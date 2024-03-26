@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
+import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/pages/home/widgets/current_location.dart';
@@ -16,7 +17,22 @@ class SetLoaction extends StatefulWidget {
 }
 
 class _SetLoactionState extends State<SetLoaction> {
+  String? address;
   var locationController = Get.find<LocationController>();
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
+  void getData() async {
+    UserStore().getUserDetail().then((value) {
+      setState(() {
+        address = value['address'] ?? 'none';
+      });
+    });
+  }
 
   Widget header() {
     return Container(
@@ -108,16 +124,25 @@ class _SetLoactionState extends State<SetLoaction> {
   }
 
   Widget currentSet() {
+    if (address == locationController.address) {
+      return const SizedBox();
+    } else if (address == 'none') {
+      return const SizedBox();
+    }
+
     return Container(
-        decoration: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: Color.fromARGB(105, 120, 127, 132),
-              width: 0.8,
-            ),
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Color.fromARGB(105, 120, 127, 132),
+            width: 0.8,
           ),
         ),
-        child: const CurrentSetLocation());
+      ),
+      child: CurrentSetLocation(
+        activeAddress: address.toString(),
+      ),
+    );
   }
 
   Widget listDataSearch() {

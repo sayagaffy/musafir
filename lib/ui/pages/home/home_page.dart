@@ -1,9 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:musafir/controllers/auth_controller.dart';
 import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
-import 'package:musafir/data/firestore/users.dart';
+import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:flutter/material.dart';
@@ -21,24 +20,30 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final user = FirebaseAuth.instance.currentUser;
   String? name;
   String? address;
   String? latlang;
 
-  Widget header() {
-    var locationController = Get.find<LocationController>();
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
 
-    DbUsers().getUserDetail(user!.email.toString()).then((val) {
+  void getData() async {
+    var locationController = Get.find<LocationController>();
+    UserStore().getUserDetail().then((value) {
       setState(() {
-        name = val.data()['firstName'] ?? val.data()['username'];
-        address = val.data()['address'] ?? 'none';
-        latlang = val.data()['lat'] != null
-            ? '${val.data()['lat']},${val.data()['long']}'
+        name = value['firstName'] ?? value['username'];
+        address = value['address'] ?? 'none';
+        latlang = value['lat'] != null
+            ? '${value['lat']},${value['long']}'
             : locationController.latlng.toString();
       });
     });
+  }
 
+  Widget header() {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(
@@ -85,16 +90,22 @@ class _HomePageState extends State<HomePage> {
                   color: kWarningMain,
                 ),
               ),
-              // GestureDetector(
-              //   onTap: () async {
-              //     print('object');
-              //   },
-              //   child: Icon(
-              //     Icons.filter,
-              //     size: 20,
-              //     color: kBlackColor,
-              //   ),
-              // )
+              GestureDetector(
+                onTap: () async {
+                  // var loC = Get.find<LocationController>();
+
+                  // print('${loC.latlng!.latitude},${loC.latlng!.longitude}');
+                  // print(latlang);
+
+                  // print(loC.address);
+                  // print(address);
+                },
+                child: Icon(
+                  Icons.filter,
+                  size: 20,
+                  color: kBlackColor,
+                ),
+              )
             ],
           ),
           Container(
@@ -510,24 +521,18 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: () async {
-          var homeController = Get.find<HomeController>();
-          homeController.refreshNearbyPlace(latlang!);
-        },
-        child: ListView(
-          children: [
-            header(),
-            titleRekomendasi(),
-            rekomendasi(),
-            line(),
-            titleKategoriMakanan(),
-            kategoriMakanan(),
-            line(),
-            titleRekomendasiMasjid(),
-            rekomendasiMasjid(),
-          ],
-        ),
+      body: ListView(
+        children: [
+          header(),
+          titleRekomendasi(),
+          rekomendasi(),
+          line(),
+          titleKategoriMakanan(),
+          kategoriMakanan(),
+          line(),
+          titleRekomendasiMasjid(),
+          rekomendasiMasjid(),
+        ],
       ),
     );
   }

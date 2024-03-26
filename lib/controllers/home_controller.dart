@@ -4,9 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
-import 'package:musafir/controllers/auth_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
-import 'package:musafir/data/firestore/users.dart';
+import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/data/repository/google_repo.dart';
 import 'package:musafir/models/geocode_model.dart';
 import 'package:musafir/models/nearby_model.dart';
@@ -88,6 +87,31 @@ class HomeController extends GetxController implements GetxService {
   bool _isLoadAddress = false;
   bool get isLoadAddress => _isLoadedFood;
 
+  @override
+  void onInit() {
+    // Get called when controller is created
+    print('on init');
+    super.onInit();
+  }
+
+  @override
+  void onReady() {
+    // Get called after widget is rendered on the screen
+    print('on ready');
+
+    if (_isLoadedFood == false) {
+      refreshHome();
+    }
+    super.onReady();
+  }
+
+  @override
+  void onClose() {
+    //Get called when controller is removed from memory
+    print('on close');
+    super.onClose();
+  }
+
   ///['FUNCTION GET NEARBY PLACE']
   Future<void> getNearbyPlace({
     String? keyword,
@@ -155,9 +179,6 @@ class HomeController extends GetxController implements GetxService {
 
   ///[FUNCTION GEO CODE BY TEXT SEARCH]
   Future<void> getGeoCodeAddress(String address, String type) async {
-    var authController = Get.find<AuthController>();
-    final user = authController.auth.currentUser;
-
     Response response = await googleRepo.getGeocodeAddress(address);
 
     if (response.statusCode == 200) {
@@ -172,14 +193,16 @@ class HomeController extends GetxController implements GetxService {
         };
 
         try {
-          await DbUsers().updateUserData(user!.email.toString(), usersUpdate);
+          await UserStore().updateUserData(usersUpdate);
+
           showCustomSnackBar(
             isError: false,
             'Berhasil Mengubah Lokasi',
             title: 'Succsess',
             backgroundColor: kGreenHover,
           );
-          refreshNearbyPlace('${usersUpdate['lat']},${usersUpdate['long']}');
+          refreshHome();
+          update();
           Get.toNamed(RouteHelper.getInitial());
         } catch (e) {
           showCustomSnackBar(e.toString());
@@ -190,10 +213,8 @@ class HomeController extends GetxController implements GetxService {
 
   Future<void> refreshHome() async {
     var locationController = Get.find<LocationController>();
-    final user = FirebaseAuth.instance.currentUser;
-
     try {
-      DbUsers().getUserDetail(user!.email.toString()).then((val) async {
+      UserStore().getUserDetail().then((val) async {
         String latlang = val.data()['lat'] != null
             ? '${val.data()['lat']},${val.data()['long']}'
             : locationController.latlng.toString();
@@ -215,26 +236,6 @@ class HomeController extends GetxController implements GetxService {
     } catch (e) {
       print(e);
       rethrow;
-    }
-  }
-
-  Future<void> refreshNearbyPlace(String latLang) async {
-    try {
-      await getNearbyPlace(
-        keyword: 'food',
-        rankby: 'distance',
-        type: 'restaurant',
-        location: latLang,
-      );
-
-      await getNearbyPlace(
-        keyword: 'masjid',
-        rankby: 'distance',
-        type: 'mosque',
-        location: latLang,
-      );
-    } catch (e) {
-      print(e);
     }
   }
 

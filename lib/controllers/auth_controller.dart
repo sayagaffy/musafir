@@ -1,16 +1,12 @@
 // ignore_for_file: avoid_print
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
-import 'package:musafir/controllers/home_controller.dart';
-import 'package:musafir/data/firestore/users.dart';
+import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/data/repository/auth_repo.dart';
-import 'package:musafir/models/response_model.dart';
-import 'package:musafir/models/signup_body_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
@@ -22,68 +18,15 @@ class AuthController extends GetxController implements GetxService {
     required this.authRepo,
   });
 
-  static AuthController instance = Get.find();
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseAuth get auth => _auth;
+
+  Stream<User?> get streamAuthStatus => _auth.authStateChanges();
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
-
-  Stream<User?> get streamAuthStatus => _auth.authStateChanges();
-
-  Future<ResponseModel> registration(SignUpBody signUpBody) async {
-    _isLoading = true;
-    update();
-
-    Response response = await authRepo.registration(signUpBody);
-    late ResponseModel responseModel;
-    if (response.statusCode == 200) {
-      authRepo.saveUserToken(response.body["token"]);
-      responseModel = ResponseModel(true, response.body["token"]);
-    } else {
-      responseModel = ResponseModel(false, response.statusText!);
-    }
-    _isLoading = true;
-    update();
-    return responseModel;
-  }
-
-  Future<ResponseModel> login(String email, String password) async {
-    // print("Getting token");
-    // authRepo.getUserToken();
-    // print(authRepo.getUserToken().toString());
-    _isLoading = true;
-    update();
-    Response response = await authRepo.login(email, password);
-    late ResponseModel responseModel;
-
-    if (response.statusCode == 200) {
-      // print("Backend token");
-      authRepo.saveUserToken(response.body["token"]);
-      // print(response.body["token"].toString());
-      responseModel = ResponseModel(true, response.body["token"]);
-    } else {
-      responseModel = ResponseModel(false, response.statusText!);
-    }
-    _isLoading = false;
-    update();
-    return responseModel;
-  }
-
-  void svaeUserNumerNadPassword(String numer, String password) {
-    authRepo.svaeUserNumerNadPassword(numer, password);
-  }
-
-  bool userLoggedIn() {
-    return authRepo.userLoggedIn();
-  }
-
-  bool clearSharedDate() {
-    return authRepo.clearShared();
-  }
 
   void showLoading(context) {
     showDialog(
@@ -107,9 +50,6 @@ class AuthController extends GetxController implements GetxService {
         password: password.toString(),
       );
       if (myUser.user!.emailVerified) {
-        var homeController = Get.find<HomeController>();
-        homeController.refreshHome();
-
         ///[turn off loading indicator]
         Get.back(closeOverlays: true);
         Get.offNamed(RouteHelper.getInitial());
@@ -167,15 +107,12 @@ class AuthController extends GetxController implements GetxService {
       User? user = userCredential.user;
       if (user != null) {
         if (userCredential.additionalUserInfo!.isNewUser) {
-          await DbUsers().createUser(
-            userCredential.user!.email.toString(),
+          await UserStore().createUser(
             username: user.email?.split('@')[0],
             provider: 'Google',
             photoURL: user.photoURL,
           );
         }
-        var homeController = Get.find<HomeController>();
-        homeController.refreshHome();
 
         ///[turn off loading indicator]
         Get.back(closeOverlays: true);
@@ -203,11 +140,8 @@ class AuthController extends GetxController implements GetxService {
       if (user != null) {
         if (userCredential.additionalUserInfo!.isNewUser) {
           //Save user if new
-          await DbUsers().createUser(
-            user.email.toString(),
-            username: user.email?.split('@')[0],
-            provider: 'facebook',
-          );
+          await UserStore().createUser(
+              username: user.email?.split('@')[0], provider: 'facebook');
         }
 
         Get.offNamed(RouteHelper.getInitial());
@@ -239,8 +173,8 @@ class AuthController extends GetxController implements GetxService {
 
       if (userCredential.additionalUserInfo!.isNewUser) {
         //Save user if new
-        await DbUsers().createUser(
-          userCredential.user!.email.toString(),
+
+        await UserStore().createUser(
           username: emailAddress.split('@')[0],
           firstName: namaDepan,
           lastName: namaBelakang,

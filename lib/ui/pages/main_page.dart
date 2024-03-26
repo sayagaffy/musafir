@@ -25,7 +25,8 @@ class MainPage extends StatelessWidget {
             controller: _controller,
             navBarBuilder: (navBarConfig) => Style4BottomNavBar(
               navBarConfig: navBarConfig,
-              navBarDecoration: const NavBarDecoration(),
+              navBarDecoration:
+                  const NavBarDecoration(padding: EdgeInsets.only(bottom: 5)),
             ),
             tabs: [
               PersistentTabConfig(

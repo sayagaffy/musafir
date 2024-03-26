@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
-import 'package:musafir/data/firestore/users.dart';
+import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/pages/home/widgets/checkbox.dart';
@@ -30,6 +30,23 @@ class _ListCardState extends State<ListCard> {
   var homeController = Get.find<HomeController>();
   var locationController = Get.find<LocationController>();
   String? latlang;
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
+  void getData() async {
+    var locationController = Get.find<LocationController>();
+    UserStore().getUserDetail().then((value) {
+      setState(() {
+        latlang = value['lat'] != null
+            ? '${value['lat']},${value['long']}'
+            : locationController.latlng.toString();
+      });
+    });
+  }
 
   List<String> ratings = [
     'Rating',
@@ -169,13 +186,6 @@ class _ListCardState extends State<ListCard> {
   }
 
   Widget header(BuildContext context) {
-    DbUsers().getUserDetail(user!.email.toString()).then((val) {
-      setState(() {
-        latlang = val.data()['lat'] != null
-            ? '${val.data()['lat']},${val.data()['long']}'
-            : locationController.latlng.toString();
-      });
-    });
     return TextfieldGoogle(
         hintText: 'Cari resto atau ruang shalat di Musafir',
         onTap: () {

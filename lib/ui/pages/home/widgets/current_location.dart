@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
-import 'package:musafir/controllers/auth_controller.dart';
 import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
-import 'package:musafir/data/firestore/users.dart';
+import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 
@@ -20,12 +19,9 @@ class CurrentLocation extends StatelessWidget {
       children: [
         GetBuilder<LocationController>(builder: (location) {
           return ListTile(
-            onTap: () {
-              var authController = Get.find<AuthController>();
+            onTap: () async {
               var homeController = Get.find<HomeController>();
-              final user = authController.auth.currentUser;
-
-              locationController.getCurrentPosition();
+              await locationController.getCurrentPosition();
 
               var usersUpdate = {
                 'address': location.address,
@@ -33,22 +29,22 @@ class CurrentLocation extends StatelessWidget {
                 'long': location.latlng!.longitude.toString()
               };
 
-              DbUsers()
-                  .updateUserData(user!.email.toString(), usersUpdate)
-                  .then((value) {
+              try {
+                await UserStore().updateUserData(usersUpdate);
+
+                homeController.refreshHome();
+
                 showCustomSnackBar(
                   isError: false,
                   'Berhasil Mengubah Lokasi',
                   title: 'Succsess',
                   backgroundColor: kGreenHover,
                 );
-                String latlang =
-                    '${usersUpdate['lat'].toString()},${usersUpdate['lang'].toString()}';
-
-                homeController.refreshNearbyPlace(latlang);
 
                 Get.toNamed(RouteHelper.getInitial());
-              });
+              } catch (e) {
+                showCustomSnackBar(e.toString());
+              }
             },
             contentPadding: const EdgeInsets.only(left: 15, right: 15),
             horizontalTitleGap: 8,

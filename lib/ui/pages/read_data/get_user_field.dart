@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 class GetUserField extends StatelessWidget {
   final String documenId;
   final String queryField;
-  final TextStyle textStyle;
 
-  const GetUserField(
-      {super.key,
-      required this.documenId,
-      required this.queryField,
-      required this.textStyle});
+  const GetUserField({
+    super.key,
+    required this.documenId,
+    required this.queryField,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +23,7 @@ class GetUserField extends StatelessWidget {
           Map<String, dynamic> data =
               snapshot.data!.data() as Map<String, dynamic>;
 
-          return Text('${data[queryField]}', style: textStyle);
+          return Text('${data[queryField]}');
         }
         return const Text('loading..');
       }),
