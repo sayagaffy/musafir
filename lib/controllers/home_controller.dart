@@ -213,12 +213,13 @@ class HomeController extends GetxController implements GetxService {
 
   Future<void> refreshHome() async {
     var locationController = Get.find<LocationController>();
+
     try {
       UserStore().getUserDetail().then((val) async {
-        String latlang = val.data()['lat'] != null
-            ? '${val.data()['lat']},${val.data()['long']}'
+        String latlang = val['lat'] != null
+            ? '${val['lat']},${val['long']}'
             : locationController.latlng.toString();
-        print(latlang);
+
         await getNearbyPlace(
           keyword: 'food',
           rankby: 'distance',
