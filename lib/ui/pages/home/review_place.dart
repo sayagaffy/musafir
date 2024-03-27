@@ -1,10 +1,73 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:get/get.dart';
+import 'package:musafir/base/show_custom_snackbar.dart';
+import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
-import 'package:musafir/ui/widgets/star_display_widget.dart';
 
-class ReviewRatePage extends StatelessWidget {
-  const ReviewRatePage({super.key});
+class ReviewPlace extends StatefulWidget {
+  final String pageId;
+  final String placeName;
+  final String latlng;
+  final String from;
+  const ReviewPlace({
+    super.key,
+    required this.pageId,
+    required this.placeName,
+    required this.latlng,
+    required this.from,
+  });
+
+  @override
+  State<ReviewPlace> createState() => _ReviewPlaceState();
+}
+
+class _ReviewPlaceState extends State<ReviewPlace> {
+  String? name;
+  String? authorPhotoUrl;
+  String rate = '0';
+  String? authorEmail;
+  var reviewController = TextEditingController();
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
+  void getData() async {
+    UserStore().getUserDetail().then((value) {
+      setState(() {
+        name = value['firstName'] ?? value['username'];
+        authorPhotoUrl = value['profilePhoto'] ?? 'none';
+        authorEmail = UserStore().auth.currentUser!.email;
+      });
+    });
+  }
+
+  void _posting() {
+    String review = reviewController.text.trim();
+
+    if (review.isEmpty) {
+      showCustomSnackBar("text review tidak boleh kosong", title: 'Review');
+    } else if (review.length < 6) {
+      showCustomSnackBar("text review  can not  be less  than six characters",
+          title: 'Review');
+    } else {
+      UserStore().postingReview(
+        widget.pageId,
+        widget.latlng,
+        name.toString(),
+        authorEmail.toString(),
+        authorPhotoUrl.toString(),
+        rate.toString(),
+        review,
+        widget.placeName,
+        widget.from,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +86,7 @@ class ReviewRatePage extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  Navigator.of(context).pop();
+                  Get.back();
                 },
                 child: const Icon(
                   Icons.keyboard_backspace_rounded,
@@ -32,7 +95,7 @@ class ReviewRatePage extends StatelessWidget {
               ),
               Expanded(
                 child: Text(
-                  'Halal Guys',
+                  widget.placeName,
                   style: blackTextStyle.copyWith(
                     fontSize: 16,
                     fontWeight: bold,
@@ -64,10 +127,10 @@ class ReviewRatePage extends StatelessWidget {
                       width: 15,
                     ),
                     Text(
-                      'Dewantara',
+                      name.toString(),
                       style: blackTextStyle.copyWith(
                         fontWeight: bold,
-                        fontSize: 12,
+                        fontSize: 14,
                       ),
                     ),
                   ],
@@ -75,18 +138,38 @@ class ReviewRatePage extends StatelessWidget {
                 const SizedBox(
                   height: 18,
                 ),
-                const StarDisplayWidget(
-                  value: 2,
-                  filledStar: Icon(
-                    Icons.star_rounded,
-                    color: Color.fromARGB(255, 255, 209, 59),
-                    size: 32,
-                  ),
-                  unfilledStar: Icon(
-                    Icons.star_border_rounded,
-                    color: Colors.grey,
-                    size: 32,
-                  ),
+                Row(
+                  children: [
+                    RatingBar.builder(
+                      initialRating: 0,
+                      minRating: 1,
+                      unratedColor: kNeutral40,
+                      direction: Axis.horizontal,
+                      allowHalfRating: true,
+                      itemCount: 5,
+                      itemSize: 40,
+                      itemPadding: const EdgeInsets.symmetric(horizontal: 3),
+                      itemBuilder: (context, _) => const Icon(
+                        Icons.star_rounded,
+                        color: Colors.amber,
+                      ),
+                      onRatingUpdate: (rating) {
+                        setState(() {
+                          rate = rating.toString();
+                        });
+                      },
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Text(
+                      rate,
+                      style: blackTextStyle.copyWith(
+                        fontSize: 16,
+                        fontWeight: bold,
+                      ),
+                    )
+                  ],
                 ),
                 const SizedBox(
                   height: 18,
@@ -95,6 +178,8 @@ class ReviewRatePage extends StatelessWidget {
                   height: 100,
                   width: double.infinity,
                   child: TextField(
+                    controller: reviewController,
+                    textInputAction: TextInputAction.done,
                     maxLines: null,
                     expands: true,
                     decoration: InputDecoration(
@@ -149,7 +234,9 @@ class ReviewRatePage extends StatelessWidget {
                 ),
                 CustomButton(
                   title: 'Posting',
-                  onPressed: () {},
+                  onPressed: () {
+                    _posting();
+                  },
                   margin: const EdgeInsets.only(top: 150),
                 )
               ],

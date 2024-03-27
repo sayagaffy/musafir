@@ -6,9 +6,6 @@ class CustomLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: avoid_print, prefer_interpolation_to_compose_strings
-    // print("I am orintting laoding state " +
-    //     Get.find<AuthController>().isLoading.toString());
     return Center(
       child: Container(
         height: 100,
@@ -18,7 +15,7 @@ class CustomLoader extends StatelessWidget {
           color: kBlueColor,
         ),
         alignment: Alignment.center,
-        child: const CircularProgressIndicator(color: Colors.white),
+        child: const CircularProgressIndicator(color: Colors.red),
       ),
     );
   }

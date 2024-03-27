@@ -10,64 +10,90 @@ import 'package:musafir/ui/pages/home/detail_card.dart';
 import 'package:musafir/ui/pages/home/home_page.dart';
 import 'package:musafir/ui/pages/home/home_search.dart';
 import 'package:musafir/ui/pages/home/llist_card.dart';
+import 'package:musafir/ui/pages/home/review_place.dart';
 import 'package:musafir/ui/pages/home/set_location.dart';
 import 'package:musafir/ui/pages/main_page.dart';
 import 'package:musafir/ui/pages/search/textfield_search_google.dart';
 import 'package:musafir/ui/pages/splash_widget.dart';
 
 class RouteHelper {
+  ///INITIAL
+
+  ///[MAIN]
+  static const String initial = "/main";
+
+  ///[SPLASH SCREEN]
   static const String splashPage = "/splash-page";
+
+  ///[AUTH]
   static const String sigIn = "/sign-in";
   static const String sigUp = "/sign-up";
   static const String resetPassword = "/resetpassword";
-  static const String initial = "/main";
+
+  ///[SEARCH]
   static const String search = "/search";
-  static const String explore = "/explore";
-  static const String rencana = "/explore-rencana";
+
+  ///[HOME]
   static const String home = "/home";
   static const String homedetail = "/home-detail";
   static const String homelist = "/home-list";
   static const String setlocation = "/setlocation";
   static const String homeSearch = "/home-search";
+  static const String homeReview = "/home-review";
 
-  static String getSplashPage() => '$splashPage';
+  ///[EXPLORE]
+  static const String explore = "/explore";
+  static const String rencana = "/explore-rencana";
 
+  ///INITIAL PARAM
+
+  ///[MAIN]
   static String getInitial() => '$initial';
 
+  ///[SPLASH SCREEN]
+  static String getSplashPage() => '$splashPage';
+
+  ///[AUTH]
   static String getsigInPage() => '$sigIn';
-
   static String getsignUpPage() => '$sigUp';
-
   static String getResetPasswordPage() => '$resetPassword';
 
-  static String getExplorePage() => '$explore';
-
-  static String getRencanaPage() => '$rencana';
-
+  ///[SEARCH]
   static String getSearchPage() => '$search';
 
+  ///[HOME]
   static String getHomePage() => '$home';
-
   static String getHomeDetailPage(String pageId, String page, String from) =>
       '$homedetail?pageId=$pageId&page=$page&from=$from';
-
   static String getHomeListPage(String type, String search) =>
       '$homelist?type=$type&search=$search';
-
   static String getLocationPage() => '$setlocation';
-
   static String getHomeSearchPage() => '$homeSearch';
+  static String getHomeReview(
+          String pageId, String placeName, String latlng, String from) =>
+      '$homeReview?pageId=$pageId&placeName=$placeName&latlng=$latlng&from=$from';
+
+  ///[EXPLORE]
+  static String getExplorePage() => '$explore';
+  static String getRencanaPage() => '$rencana';
+
+  ///[SET SCREEN AND SET PARAM]
 
   static List<GetPage> routes = [
-    GetPage(
-      name: splashPage,
-      page: () => const SplashPage(),
-    ),
+    ///[MAIN]
     GetPage(
       name: initial,
       page: () => const MainPage(),
       transition: Transition.fade,
     ),
+
+    ///[SPLASH SCREEN]
+    GetPage(
+      name: splashPage,
+      page: () => const SplashPage(),
+    ),
+
+    ///[AUTH]
     GetPage(
       name: sigIn,
       page: () => const SignInPage1(),
@@ -83,21 +109,15 @@ class RouteHelper {
       page: () => const SignUpPage1(),
       transition: Transition.fade,
     ),
-    GetPage(
-      name: explore,
-      page: () => const ExplorePage(),
-      transition: Transition.leftToRight,
-    ),
-    GetPage(
-      name: rencana,
-      page: () => const RencanaPage(),
-      transition: Transition.rightToLeft,
-    ),
+
+    ///[SEARCH]
     GetPage(
       name: search,
       page: () => const TextfieldSearchGoogle(),
       transition: Transition.leftToRight,
     ),
+
+    ///[HOME]
     GetPage(
       name: home,
       page: () => const HomePage(),
@@ -131,6 +151,34 @@ class RouteHelper {
       name: homeSearch,
       page: () => const HomeSearch(),
       transition: Transition.fade,
+    ),
+    GetPage(
+      name: homeReview,
+      page: () {
+        var pageId = Get.parameters['pageId'];
+        var placeName = Get.parameters['placeName'];
+        var latlng = Get.parameters['latlng'];
+        var from = Get.parameters['from'];
+        return ReviewPlace(
+          pageId: pageId!,
+          placeName: placeName!,
+          latlng: latlng!,
+          from: from!,
+        );
+      },
+      transition: Transition.fade,
+    ),
+
+    ///[EXPLORE]
+    GetPage(
+      name: explore,
+      page: () => const ExplorePage(),
+      transition: Transition.leftToRight,
+    ),
+    GetPage(
+      name: rencana,
+      page: () => const RencanaPage(),
+      transition: Transition.rightToLeft,
     ),
   ];
 }

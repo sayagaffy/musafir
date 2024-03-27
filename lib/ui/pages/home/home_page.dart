@@ -99,6 +99,10 @@ class _HomePageState extends State<HomePage> {
 
                   // print(loC.address);
                   // print(address);
+
+                  UserStore()
+                      .checkUserReview('ChIJJSghMcIBsMTARjx8sjfYilZc')
+                      .then((value) => print(value));
                 },
                 child: Icon(
                   Icons.filter,

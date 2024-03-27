@@ -1,12 +1,19 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
+import 'package:musafir/base/dialog_helper.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
+import 'package:musafir/routes/routes_helper.dart';
+import 'package:musafir/shared/theme.dart';
 
 class UserStore {
   final FirebaseAuth auth = FirebaseAuth.instance;
   // collection reference
   final CollectionReference dbUsers =
       FirebaseFirestore.instance.collection('users');
+  final CollectionReference dbReviews =
+      FirebaseFirestore.instance.collection('reviews');
 
   Future createUser({
     String? username,
@@ -58,6 +65,59 @@ class UserStore {
       showCustomSnackBar(error.toString());
       throw 'failed';
     }
+  }
+
+  Future postingReview(
+    String placeid,
+    String latlang,
+    String authorName,
+    String authorEmail,
+    String authorPhotoUrl,
+    String rating,
+    String review,
+    String page,
+    String from,
+  ) async {
+    DialogHelper.showLoading('Posting Review..');
+
+    return await dbReviews.doc().set({
+      'place_id': placeid,
+      'latlang': latlang,
+      'author_name': authorName,
+      'author_email': authorEmail,
+      'profile_photo_url': authorPhotoUrl,
+      'rating': rating,
+      'text': review,
+      'creatAt': DateTime.now(),
+    }).then((value) {
+      DialogHelper.hideLoading();
+
+      DialogHelper.showSnackBar(
+        'Berhasil posting reviews',
+        title: 'Successfuly',
+        backgroundColor: kSuccessMain,
+      );
+
+      Timer(const Duration(seconds: 5), () {
+        if (from == 'homePage') Get.toNamed(RouteHelper.getInitial());
+      });
+    }).catchError((error) {
+      DialogHelper.showErroDialog(description: error.toString());
+    });
+  }
+
+  Future checkUserReview(String placeId) async {
+    dynamic review;
+    await dbReviews
+        .where("place_id", isEqualTo: placeId)
+        .where('author_email', isEqualTo: auth.currentUser!.email)
+        .get()
+        .then(
+          (QuerySnapshot docs) => {
+            for (var element in docs.docs) {review = element.data()},
+          },
+        );
+    return review;
   }
 
   ///[Expample void]

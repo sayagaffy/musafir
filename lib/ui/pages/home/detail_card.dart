@@ -1,16 +1,13 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:musafir/controllers/home_controller.dart';
+import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
-import 'package:musafir/ui/pages/review_rate_page.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
-import 'package:musafir/ui/widgets/custom_page_route.dart';
-
 import 'package:musafir/ui/widgets/custom_title.dart';
 import 'package:musafir/utilitis/apps_constants.dart';
 // ignore: depend_on_referenced_packages
@@ -34,6 +31,21 @@ class DetailCard extends StatefulWidget {
 }
 
 class _DetailCardState extends State<DetailCard> {
+  bool alreadyReview = false;
+  dynamic reviewPlace;
+
+  @override
+  void initState() {
+    UserStore().checkUserReview(widget.pageId).then((value) {
+      if (value != null) {
+        reviewPlace = value;
+        alreadyReview = true;
+      }
+    });
+
+    super.initState();
+  }
+
   Widget backgroundImage(BuildContext context, home) {
     return Stack(
       children: [
@@ -125,7 +137,7 @@ class _DetailCardState extends State<DetailCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      home.placeDtl.name ?? 'no name',
+                      home.placeDtl.name ?? widget.page,
                       style: whiteTextStyle.copyWith(
                         fontSize: 20,
                         fontWeight: bold,
@@ -561,93 +573,84 @@ class _DetailCardState extends State<DetailCard> {
         : const SizedBox();
   }
 
-  Widget rating(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(
-        left: 25,
-      ),
-      margin: const EdgeInsets.only(top: 30, bottom: 30),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Beri rating dan ulasan',
-            style: blackTextStyle.copyWith(
-              fontSize: 16,
-              height: 1.5,
-              fontWeight: bold,
+  Widget rating(BuildContext context, home) {
+    return alreadyReview == false
+        ? Container(
+            padding: const EdgeInsets.only(
+              left: 25,
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                width: 1,
-                color: kNeutral40,
-              ),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-            height: 62,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
+            margin: const EdgeInsets.only(top: 30, bottom: 30),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  height: 31,
-                  width: 31,
-                  margin: const EdgeInsets.only(right: 5),
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: AssetImage('assets/image_destination1.png'),
-                      fit: BoxFit.cover,
-                    ),
+                Text(
+                  'Beri rating dan ulasan',
+                  style: blackTextStyle.copyWith(
+                    fontSize: 16,
+                    height: 1.5,
+                    fontWeight: bold,
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      CustomPageRoute(
-                        child: const ReviewRatePage(),
-                        direction: AxisDirection.up,
-                      ),
-                    );
-                  },
-                  child: RatingBar.builder(
-                    initialRating: 0,
-                    minRating: 1,
-                    direction: Axis.horizontal,
-                    allowHalfRating: true,
-                    itemCount: 5,
-                    itemSize: 30,
-                    itemPadding: const EdgeInsets.symmetric(horizontal: 0),
-                    itemBuilder: (context, _) => const Icon(
-                      Icons.star_rounded,
-                      color: Colors.amber,
+                const SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      width: 1,
+                      color: kNeutral40,
                     ),
-                    onRatingUpdate: (rating) {},
-                    ignoreGestures: true,
                   ),
-                )
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                  height: 62,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 31,
+                        width: 31,
+                        margin: const EdgeInsets.only(right: 5),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: AssetImage('assets/image_destination1.png'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          String latlng =
+                              '${home.placeDtl.geometry.location.lat},${home.placeDtl.geometry.location.lng}';
+                          Get.toNamed(RouteHelper.getHomeReview(
+                              widget.pageId, widget.page, latlng, widget.from));
+                        },
+                        child: RatingBar.builder(
+                          initialRating: 0,
+                          minRating: 1,
+                          unratedColor: kNeutral40,
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          itemCount: 5,
+                          itemSize: 30,
+                          itemPadding:
+                              const EdgeInsets.symmetric(horizontal: 0),
+                          itemBuilder: (context, _) => const Icon(
+                            Icons.star_rounded,
+                            color: Colors.amber,
+                          ),
+                          onRatingUpdate: (rating) {},
+                          ignoreGestures: true,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget titleUlasan(home) {
-    return home.placeDtl.reviews != null
-        ? Container(
-            margin: const EdgeInsets.only(
-              bottom: 11,
-            ),
-            padding: const EdgeInsets.only(left: 25, right: 23),
-            child: const CustomTitle(title: 'Ulasan'),
           )
         : const SizedBox();
   }
@@ -655,13 +658,25 @@ class _DetailCardState extends State<DetailCard> {
   Widget ulasan(home) {
     return home.placeDtl.reviews != null
         ? Container(
-            padding: const EdgeInsets.only(
+            padding: EdgeInsets.only(
               left: 25,
               right: 23,
-              bottom: 50,
+              top: alreadyReview ? 20 : 0,
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  'Ulasan',
+                  style: blackTextStyle.copyWith(
+                    fontSize: 16,
+                    height: 1.5,
+                    fontWeight: bold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
                 Row(
                   children: [
                     RatingBar.builder(
@@ -716,19 +731,12 @@ class _DetailCardState extends State<DetailCard> {
                     )
                   ],
                 ),
-                SizedBox(
-                    height: 350,
-                    child: ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemCount: home.placeDtl.reviews.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        var date = DateTime.fromMillisecondsSinceEpoch(
-                            home.placeDtl.reviews[index].time * 1000);
-
-                        String dtFormat =
-                            DateFormat('dd-MMM-yyy hh:mm').format(date);
-
-                        return Column(
+                const SizedBox(
+                  height: 10,
+                ),
+                alreadyReview
+                    ? SizedBox(
+                        child: Column(
                           children: [
                             Container(
                               margin: const EdgeInsets.only(
@@ -737,6 +745,13 @@ class _DetailCardState extends State<DetailCard> {
                               ),
                               child: Column(
                                 children: [
+                                  Divider(
+                                    height: 0.5,
+                                    color: kNeutral40,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
                                   Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -748,7 +763,12 @@ class _DetailCardState extends State<DetailCard> {
                                           shape: BoxShape.circle,
                                           image: DecorationImage(
                                             image: NetworkImage(
-                                                '${home.placeDtl.reviews[index].profilePhotoUrl}'),
+                                              reviewPlace['profile_photo_url'] ==
+                                                      'none'
+                                                  ? 'https://lh3.googleusercontent.com/a-/AOh14GhGGmTmvtD34HiRgwHdXVJUTzVbxpsk5_JnNKM5MA=s128-c0x00000000-cc-rp-mo'
+                                                  : reviewPlace[
+                                                      'profile_photo_url'],
+                                            ),
                                             fit: BoxFit.cover,
                                           ),
                                         ),
@@ -757,7 +777,7 @@ class _DetailCardState extends State<DetailCard> {
                                         width: 15,
                                       ),
                                       Text(
-                                        home.placeDtl.reviews[index].authorName,
+                                        reviewPlace['author_name'],
                                         style: blackTextStyle.copyWith(
                                           fontWeight: bold,
                                           fontSize: 12,
@@ -769,14 +789,13 @@ class _DetailCardState extends State<DetailCard> {
                               ),
                             ),
                             Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     RatingBar.builder(
-                                      initialRating:
-                                          home.placeDtl.reviews[index].rating ??
-                                              0,
+                                      initialRating: 5,
                                       minRating: 1,
                                       direction: Axis.horizontal,
                                       allowHalfRating: true,
@@ -795,7 +814,10 @@ class _DetailCardState extends State<DetailCard> {
                                       width: 12,
                                     ),
                                     Text(
-                                      dtFormat,
+                                      DateFormat('dd-MMM-yyy hh:mm')
+                                          .format(
+                                              reviewPlace['creatAt'].toDate())
+                                          .toString(),
                                       style:
                                           blackTextStyle.copyWith(fontSize: 11),
                                     )
@@ -805,25 +827,153 @@ class _DetailCardState extends State<DetailCard> {
                                   margin: const EdgeInsets.only(top: 15),
                                   padding: const EdgeInsets.only(bottom: 5),
                                   child: Text(
-                                    home.placeDtl.reviews[index].text,
+                                    reviewPlace['text'],
                                     style:
                                         blackTextStyle.copyWith(fontSize: 12),
                                     textAlign: TextAlign.start,
                                   ),
                                 ),
-                                const SizedBox(
-                                  height: 7,
-                                ),
-                                const Divider(
-                                  height: 1,
-                                  color: Color(0xFFD9D9D9),
-                                ),
                               ],
                             ),
                           ],
-                        );
-                      },
-                    )),
+                        ),
+                      )
+                    : const SizedBox(),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height - 120,
+                  child: ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: home.placeDtl.reviews.length >= 4
+                        ? 4
+                        : home.placeDtl.reviews.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      var date = DateTime.fromMillisecondsSinceEpoch(
+                          home.placeDtl.reviews[index].time * 1000);
+
+                      String dtFormat =
+                          DateFormat('dd-MMM-yyy hh:mm').format(date);
+
+                      return Column(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(
+                              top: 18,
+                              bottom: 11,
+                            ),
+                            child: Column(
+                              children: [
+                                Divider(
+                                  height: 0.5,
+                                  color: kNeutral40,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      height: 31,
+                                      width: 31,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: DecorationImage(
+                                          image: NetworkImage(
+                                              '${home.placeDtl.reviews[index].profilePhotoUrl}'),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 15,
+                                    ),
+                                    Text(
+                                      home.placeDtl.reviews[index].authorName,
+                                      style: blackTextStyle.copyWith(
+                                        fontWeight: bold,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  RatingBar.builder(
+                                    initialRating:
+                                        home.placeDtl.reviews[index].rating ??
+                                            0,
+                                    minRating: 1,
+                                    direction: Axis.horizontal,
+                                    allowHalfRating: true,
+                                    itemCount: 5,
+                                    itemSize: 15,
+                                    itemPadding: const EdgeInsets.symmetric(
+                                        horizontal: 0),
+                                    itemBuilder: (context, _) => const Icon(
+                                      Icons.star_rounded,
+                                      color: Colors.amber,
+                                    ),
+                                    onRatingUpdate: (rating) {},
+                                    ignoreGestures: true,
+                                  ),
+                                  const SizedBox(
+                                    width: 12,
+                                  ),
+                                  Text(
+                                    dtFormat,
+                                    style:
+                                        blackTextStyle.copyWith(fontSize: 11),
+                                  )
+                                ],
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(top: 15),
+                                padding: const EdgeInsets.only(bottom: 5),
+                                child: Text(
+                                  home.placeDtl.reviews[index].text,
+                                  style: blackTextStyle.copyWith(fontSize: 12),
+                                  textAlign: TextAlign.start,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsetsDirectional.symmetric(vertical: 12),
+                  margin: const EdgeInsets.only(bottom: 30),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(
+                        color: kNeutral40,
+                        width: 1.0,
+                      ),
+                      bottom: BorderSide(
+                        color: kNeutral40,
+                        width: 1.0,
+                      ),
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Lihat Semua Ulasan',
+                      style: noColorTextStyle.copyWith(
+                          color: kBlueColor, fontSize: 14, fontWeight: bold),
+                    ),
+                  ),
+                ),
               ],
             ),
           )
@@ -833,7 +983,6 @@ class _DetailCardState extends State<DetailCard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
       backgroundColor: kBackgroundColor,
       body: GetBuilder<HomeController>(builder: (home) {
         return home.loading
@@ -846,8 +995,7 @@ class _DetailCardState extends State<DetailCard> {
                   mapLocation(home),
                   titleRekomendasi(home),
                   foto(home),
-                  rating(context),
-                  titleUlasan(home),
+                  rating(context, home),
                   ulasan(home),
                 ]),
               )
