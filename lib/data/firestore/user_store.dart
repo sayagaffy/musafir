@@ -14,6 +14,8 @@ class UserStore {
       FirebaseFirestore.instance.collection('users');
   final CollectionReference dbReviews =
       FirebaseFirestore.instance.collection('reviews');
+  final CollectionReference dbBookmark =
+      FirebaseFirestore.instance.collection('bookmark');
 
   Future createUser({
     String? username,
@@ -99,7 +101,7 @@ class UserStore {
       );
 
       Timer(const Duration(seconds: 5), () {
-        if (from == 'homePage') Get.toNamed(RouteHelper.getInitial());
+        Get.toNamed(RouteHelper.getHomeDetailPage(placeid, page, from));
       });
     }).catchError((error) {
       DialogHelper.showErroDialog(description: error.toString());
@@ -120,30 +122,95 @@ class UserStore {
     return review;
   }
 
-  ///[Expample void]
-  // void getDataUser() async {
-  //   var locationController = Get.find<LocationController>();
+  Future bookmarkPlace(
+    String placeid,
+    String latlang,
+    String page,
+    String from,
+  ) async {
+    DialogHelper.showLoading('Bookmark Place..');
+    final collection = dbBookmark.doc(auth.currentUser!.email);
+    final docSnap = await collection.get();
+    Map<String, dynamic> payload = {
+      "place_id": placeid,
+      "latlang": latlang,
+      'place_name': page,
+      'creatAt': DateTime.now(),
+    };
 
-  //   var authC = Get.find<AuthController>();
-  //   FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(authC.auth.currentUser!.email)
-  //       .get()
-  //       .then((DocumentSnapshot documentSnapshot) {
-  //     if (documentSnapshot.exists) {
-  //       Map<String, dynamic> data =
-  //           documentSnapshot.data() as Map<String, dynamic>;
+    return await collection
+        .get()
+        .then((DocumentSnapshot documentSnapshot) async {
+      if (documentSnapshot.exists) {
+        List cart = docSnap.get('place');
+        List item = cart
+            .where((element) => element['place_id'].contains(placeid))
+            .toList();
+        if (item.isEmpty) {
+          ///[Update bookmark]
+          dbBookmark.doc(auth.currentUser!.email).update({
+            'place': FieldValue.arrayUnion([payload]),
+          }).then((value) {
+            DialogHelper.hideLoading();
+            DialogHelper.showSnackBar(
+              'Berhasil  bookmark tempat',
+              title: 'Successfuly',
+              backgroundColor: kSuccessMain,
+            );
+          }).catchError((error) {
+            DialogHelper.showErroDialog(description: error.toString());
+          });
+        } else {
+          ///[Remove bookmark]
+          collection
+              .update({'place': FieldValue.arrayRemove(item)}).then((value) {
+            DialogHelper.hideLoading();
+            DialogHelper.showSnackBar(
+              'Berhasil Hapus bookmark tempat',
+              title: 'Successfuly',
+              backgroundColor: kSuccessMain,
+            );
+          }).catchError((error) {
+            DialogHelper.showErroDialog(description: error.toString());
+          });
+        }
+      } else {
+        ///[Create if colection not ready yet]
+        dbBookmark.doc(auth.currentUser!.email).set({
+          'place': FieldValue.arrayUnion([payload]),
+        }).then((value) {
+          DialogHelper.hideLoading();
+          DialogHelper.showSnackBar(
+            'Berhasil bookmark tempat',
+            title: 'Successfuly',
+            backgroundColor: kSuccessMain,
+          );
+        }).catchError((error) {
+          DialogHelper.showErroDialog(description: error.toString());
+        });
+      }
+    });
+  }
 
-  //       setState(() {
-  //         name = data['firstName'];
-  //         address = data['address'];
-  //         latlang = data['lat'] != null
-  //             ? '${data['lat']},${data['long']}'
-  //             : locationController.latlng.toString();
-  //       });
-  //     } else {
-  //       return ('Document does not exist on the database');
-  //     }
-  //   });
-  // }
+  Future checkBookmark(String placeid) async {
+    final collection = dbBookmark.doc(auth.currentUser!.email);
+    final docSnap = await collection.get();
+    return await collection
+        .get()
+        .then((DocumentSnapshot documentSnapshot) async {
+      if (documentSnapshot.exists) {
+        List cart = docSnap.get('place');
+        List item = cart
+            .where((element) => element['place_id'].contains(placeid))
+            .toList();
+        if (item.isEmpty) {
+          return false;
+        } else {
+          return true;
+        }
+      } else {
+        return false;
+      }
+    });
+  }
 }
