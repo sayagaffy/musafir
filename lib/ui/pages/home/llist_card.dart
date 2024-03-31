@@ -389,10 +389,16 @@ class _ListCardState extends State<ListCard> {
                       return GestureDetector(
                         onTap: () {
                           var homecontroller = Get.find<HomeController>();
-
+                          var type = widget.type == 'filterList_food' ||
+                                  widget.type == 'filterList_resto'
+                              ? 'food'
+                              : 'mosque';
                           homecontroller.placeDetail(item.placeId.toString());
                           Get.toNamed(RouteHelper.getHomeDetailPage(
-                              item.placeId.toString(), item.name, widget.type));
+                              item.placeId.toString(),
+                              item.name,
+                              widget.type,
+                              type));
                         },
                         child: RekomendasiCard(
                           name: item.name,

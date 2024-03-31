@@ -92,17 +92,7 @@ class _HomePageState extends State<HomePage> {
               ),
               GestureDetector(
                 onTap: () async {
-                  // var loC = Get.find<LocationController>();
-
-                  // print('${loC.latlng!.latitude},${loC.latlng!.longitude}');
-                  // print(latlang);
-
-                  // print(loC.address);
-                  // print(address);
-
-                  // UserStore()
-                  //     .checkUserReview('ChIJJSghMcIBsMTARjx8sjfYilZc')
-                  //     .then((value) => print(value));
+                  Get.toNamed(RouteHelper.getFavoritePage());
                 },
                 child: Icon(
                   Icons.filter,
@@ -270,7 +260,10 @@ class _HomePageState extends State<HomePage> {
                           homecontroller.placeDetail(item.placeId.toString());
 
                           Get.toNamed(RouteHelper.getHomeDetailPage(
-                              item.placeId.toString(), item.name, 'homePage'));
+                              item.placeId.toString(),
+                              item.name,
+                              'homePage',
+                              'food'));
                         },
                         child: RekomendasiCard(
                           name: item.name,
@@ -478,7 +471,10 @@ class _HomePageState extends State<HomePage> {
                           homecontroller.placeDetail(item.placeId.toString());
 
                           Get.toNamed(RouteHelper.getHomeDetailPage(
-                              item.placeId.toString(), item.name, 'homePage'));
+                              item.placeId.toString(),
+                              item.name,
+                              'homePage',
+                              'mosque'));
                         },
                         child: RekomendasiCard(
                           name: item.name,

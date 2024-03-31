@@ -20,12 +20,14 @@ class DetailCard extends StatefulWidget {
   final String pageId;
   final String page;
   final String from;
+  final String type;
 
   const DetailCard({
     super.key,
     required this.pageId,
     required this.page,
     required this.from,
+    required this.type,
   });
 
   @override
@@ -34,11 +36,34 @@ class DetailCard extends StatefulWidget {
 
 class _DetailCardState extends State<DetailCard> {
   bool statusBookmark = false;
+  String addressCom = '';
   @override
   void initState() {
     super.initState();
 
     // WidgetsBinding.instance.addPostFrameCallback((_) => yourFunction());
+  }
+
+  void addressComponent(home) {
+    var area4 = '';
+    var area2 = '';
+    var area3 = '';
+
+    for (var i in home.placeDtl.addressComponents) {
+      if (i.types.first == "administrative_area_level_2") {
+        area2 = i.longName;
+      }
+      if (i.types.first == "administrative_area_level_3") {
+        area3 = i.longName;
+      }
+      if (i.types.first == "administrative_area_level_4") {
+        area4 = i.longName;
+      }
+    }
+
+    addressCom = '$area4, $area3, $area2';
+
+    print(addressCom);
   }
 
   @override
@@ -77,6 +102,7 @@ class _DetailCardState extends State<DetailCard> {
   }
 
   Widget backgroundImage(BuildContext context, home) {
+    addressComponent(home);
     return Stack(
       children: [
         Container(
@@ -199,8 +225,12 @@ class _DetailCardState extends State<DetailCard> {
                 onTap: () {
                   String latlng =
                       '${home.placeDtl.geometry.location.lat},${home.placeDtl.geometry.location.lng}';
-                  UserStore().bookmarkPlace(
-                      widget.pageId, latlng, widget.page, widget.from);
+                  String photo =
+                      '${home.placeDtl.photos != null ? home.placeDtl.photos.first.photoReference : 'none'}';
+
+                  UserStore().bookmarkPlace(widget.pageId, latlng, widget.page,
+                      widget.from, addressCom, 'frendly', widget.type, photo);
+
                   UserStore().checkBookmark(widget.pageId).then((value) => {
                         setState(() {
                           statusBookmark = value;

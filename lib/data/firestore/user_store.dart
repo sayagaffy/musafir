@@ -101,7 +101,7 @@ class UserStore {
       );
 
       Timer(const Duration(seconds: 5), () {
-        Get.toNamed(RouteHelper.getHomeDetailPage(placeid, page, from));
+        Get.toNamed(RouteHelper.getHomeDetailPage(placeid, page, from, 'NONE'));
       });
     }).catchError((error) {
       DialogHelper.showErroDialog(description: error.toString());
@@ -122,12 +122,8 @@ class UserStore {
     return review;
   }
 
-  Future bookmarkPlace(
-    String placeid,
-    String latlang,
-    String page,
-    String from,
-  ) async {
+  Future bookmarkPlace(String placeid, String latlang, String page, String from,
+      String address, String halalStatus, String type, String photoUrl) async {
     DialogHelper.showLoading('Bookmark Place..');
     final collection = dbBookmark.doc(auth.currentUser!.email);
     final docSnap = await collection.get();
@@ -135,6 +131,10 @@ class UserStore {
       "place_id": placeid,
       "latlang": latlang,
       'place_name': page,
+      'address': address,
+      'halal': halalStatus,
+      'type': type,
+      'photo': photoUrl,
       'creatAt': DateTime.now(),
     };
 
@@ -210,6 +210,22 @@ class UserStore {
         }
       } else {
         return false;
+      }
+    });
+  }
+
+  Future bookmarkList() async {
+    return await dbBookmark
+        .doc(auth.currentUser!.email)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        Map<String, dynamic> data =
+            documentSnapshot.data() as Map<String, dynamic>;
+
+        return data;
+      } else {
+        return ('Document does not exist on the database');
       }
     });
   }

@@ -1,115 +1,122 @@
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
+import 'package:musafir/controllers/home_controller.dart';
+import 'package:musafir/data/firestore/user_store.dart';
+import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
-import 'package:musafir/ui/widgets/custom_button.dart';
+import 'package:musafir/ui/widgets/favoriteCard.dart';
+import 'package:musafir/utilitis/apps_constants.dart';
 
 class FavoritePage extends StatefulWidget {
   const FavoritePage({super.key});
 
   @override
-  State<FavoritePage> createState() => _FavoritePage1State();
+  State<FavoritePage> createState() => _FavoritePageState();
 }
 
-class _FavoritePage1State extends State<FavoritePage> {
-  String? _currentAddress;
-  Position? _currentPosition;
+class _FavoritePageState extends State<FavoritePage> {
+  List dataBookmark = [];
 
-  Future<bool> _handleLocationPermission() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-
-    if (!serviceEnabled) {
-      // ignore: use_build_context_synchronously
-
-      return Future.error('Location services are disabled.');
-    }
-
-    if (serviceEnabled) {
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: const Text('Location services are Enable'),
-          backgroundColor: kGreenHover));
-      return true;
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // ignore: use_build_context_synchronously
-        return Future.error('Location permissions are denied');
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      // ignore: use_build_context_synchronously
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-    return true;
+  @override
+  void initState() {
+    getData();
+    super.initState();
   }
 
-  Future<void> _getCurrentPosition() async {
-    final hasPermission = await _handleLocationPermission();
-
-    if (!hasPermission) return;
-    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-        .then((Position position) {
-      setState(() => _currentPosition = position);
-      _getAddressFromLatLng(_currentPosition!);
-    }).catchError((e) {
-      debugPrint(e);
-    });
-  }
-
-  Future<void> _getAddressFromLatLng(Position position) async {
-    await placemarkFromCoordinates(
-            _currentPosition!.latitude, _currentPosition!.longitude)
-        .then((List<Placemark> placemarks) {
-      Placemark place = placemarks[0];
-      // ignore: avoid_print
-      print(placemarks);
+  void getData() async {
+    UserStore().bookmarkList().then((value) {
       setState(() {
-        _currentAddress =
-            '${place.street}, ${place.subLocality}, ${place.subAdministrativeArea}, ${place.postalCode}';
+        dataBookmark = value['place'];
       });
-    }).catchError((e) {
-      debugPrint(e);
     });
+  }
+
+  Widget header() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 30, bottom: 30),
+      child: Container(
+        margin: const EdgeInsets.only(top: 21),
+        width: double.infinity,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
+              child: Text(
+                'Favorite',
+                style: blackTextStyle.copyWith(
+                  fontSize: 16,
+                  fontWeight: extraBold,
+                ),
+              ),
+            ),
+            // GestureDetector(
+            //   onTap: () {},
+            //   child: const Icon(Icons.safety_check),
+            // )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget listCard() {
+    return dataBookmark.isNotEmpty
+        ? Expanded(
+            child: Container(
+                padding: const EdgeInsets.only(bottom: 40),
+                child: GridView.builder(
+                  padding:
+                      const EdgeInsets.only(left: 18, right: 18, bottom: 70),
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 206,
+                    mainAxisExtent: 206,
+                    crossAxisSpacing: 15,
+                    mainAxisSpacing: 15,
+                  ),
+                  itemCount: dataBookmark.length,
+                  itemBuilder: (BuildContext ctx, index) {
+                    final item = dataBookmark[index];
+                    return GestureDetector(
+                      onTap: () {
+                        var homecontroller = Get.find<HomeController>();
+                        homecontroller.placeDetail(item['place_id']);
+
+                        Get.toNamed(RouteHelper.getHomeDetailPage(
+                          item['place_id'],
+                          item['place_name'],
+                          'favorite',
+                          item['type'],
+                        ));
+                      },
+                      child: FavoriteCard(
+                        name: item['place_name'],
+                        city: item['address'],
+                        imgUrl: '${AppConstans.PLACE_PHOTO}${item['photo']}',
+                        km: index.toDouble(),
+                        margin: const EdgeInsets.only(right: 0),
+                        isMasjid: item['type'] == 'mosque' ? true : false,
+                      ),
+                    );
+                  },
+                )),
+          )
+        : Center(
+            child: Text(
+              'Kamu belum memiliki favorite place',
+              style: blackTextStyle.copyWith(
+                fontSize: 12,
+              ),
+            ),
+          );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
+      body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 50),
-            child: Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('LAT: ${_currentPosition?.latitude ?? ""}'),
-                  Text('LNG: ${_currentPosition?.longitude ?? ""}'),
-                  Text('ADDRESS: ${_currentAddress ?? ""}'),
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 40),
-            child: Center(
-              child: CustomButton(
-                title: 'Get My Location',
-                onPressed: () {
-                  _getCurrentPosition();
-                },
-                width: 200,
-              ),
-            ),
-          ),
+          header(),
+          listCard(),
         ],
       ),
     );

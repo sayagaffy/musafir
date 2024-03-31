@@ -6,6 +6,7 @@ import 'package:musafir/ui/pages/auth/sign_in_page.dart';
 import 'package:musafir/ui/pages/auth/sign_up_page.dart';
 import 'package:musafir/ui/pages/explore/explore_pages.dart';
 import 'package:musafir/ui/pages/explore/rencana_page.dart';
+import 'package:musafir/ui/pages/favorite/favorite_page.dart';
 import 'package:musafir/ui/pages/home/detail_card.dart';
 import 'package:musafir/ui/pages/home/home_page.dart';
 import 'package:musafir/ui/pages/home/home_search.dart';
@@ -45,6 +46,9 @@ class RouteHelper {
   static const String explore = "/explore";
   static const String rencana = "/explore-rencana";
 
+  ///[FAVORITE]
+  static const String favorite = "/favorite";
+
   ///INITIAL PARAM
 
   ///[MAIN]
@@ -63,8 +67,9 @@ class RouteHelper {
 
   ///[HOME]
   static String getHomePage() => '$home';
-  static String getHomeDetailPage(String pageId, String page, String from) =>
-      '$homedetail?pageId=$pageId&page=$page&from=$from';
+  static String getHomeDetailPage(
+          String pageId, String page, String from, String type) =>
+      '$homedetail?pageId=$pageId&page=$page&from=$from&type=$type';
   static String getHomeListPage(String type, String search) =>
       '$homelist?type=$type&search=$search';
   static String getLocationPage() => '$setlocation';
@@ -76,6 +81,9 @@ class RouteHelper {
   ///[EXPLORE]
   static String getExplorePage() => '$explore';
   static String getRencanaPage() => '$rencana';
+
+  ///[FAVORITE]
+  static String getFavoritePage() => '$favorite';
 
   ///[SET SCREEN AND SET PARAM]
 
@@ -129,7 +137,9 @@ class RouteHelper {
         var pageId = Get.parameters['pageId'];
         var page = Get.parameters['page'];
         var from = Get.parameters['from'];
-        return DetailCard(pageId: pageId!, page: page!, from: from!);
+        var type = Get.parameters['type'];
+        return DetailCard(
+            pageId: pageId!, page: page!, from: from!, type: type!);
       },
       transition: Transition.fade,
     ),
@@ -179,6 +189,13 @@ class RouteHelper {
       name: rencana,
       page: () => const RencanaPage(),
       transition: Transition.rightToLeft,
+    ),
+
+    ///[FAVORITE]
+    GetPage(
+      name: favorite,
+      page: () => const FavoritePage(),
+      transition: Transition.fade,
     ),
   ];
 }

@@ -186,7 +186,10 @@ class _HomeSearchState extends State<HomeSearch> {
                           homecontroller.placeDetail(item.placeId.toString());
 
                           Get.offNamed(RouteHelper.getHomeDetailPage(
-                              item.placeId.toString(), item.name, 'homePage'));
+                              item.placeId.toString(),
+                              item.name,
+                              'homePage',
+                              'NONES'));
                         },
                         //'${AppConstans.BASE_URL_GOOGLE}${AppConstans.PLACE_PHOTO}?maxwidth=400&photo_reference=${item.photos.first.photoReference,}&key=${AppConstans.API_GKEY}',
                         child: RekomendasiCard(
