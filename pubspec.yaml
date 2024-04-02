@@ -39,12 +39,10 @@ dependencies:
   google_fonts: ^6.1.0
   persistent_bottom_nav_bar_v2: ^5.0.0
   google_maps_flutter: ^2.5.3
-  location: ^5.0.0
   http: ^1.2.0
   device_preview: ^1.1.0
   get: ^4.6.6
   shared_preferences: ^2.2.2
-  flex_list: any
   omni_datetime_picker: ^1.0.9
   geocoding: ^3.0.0
   geolocator: ^10.0.1
@@ -57,6 +55,7 @@ dependencies:
   google_sign_in: ^6.2.1
   flutter_facebook_auth: ^6.1.1
   flutter_launcher_icons: "^0.13.1"
+
 
 
 flutter_launcher_icons:

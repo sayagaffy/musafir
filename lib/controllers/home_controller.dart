@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'dart:async';
 import 'package:musafir/base/show_custom_snackbar.dart';
 import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/data/firestore/user_store.dart';
@@ -19,6 +20,9 @@ class HomeController extends GetxController implements GetxService {
 
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  ///[PARAMETER debouncer]
+  final Debouncer debouncer = Debouncer(duration: const Duration(seconds: 1));
 
   bool _loading = false;
   bool get loading => _loading;
@@ -86,6 +90,16 @@ class HomeController extends GetxController implements GetxService {
 
   bool _isLoadAddress = false;
   bool get isLoadAddress => _isLoadedFood;
+
+  ///['PARAMETER FOR NEARBY PLACE']
+  bool _isLoadedSearch = false;
+  bool get isLoadedSearch => _isLoadedSearch;
+
+  List<dynamic> _searchPlace = [];
+  List<dynamic> get searchPlace => _searchPlace;
+
+  late String _nextPageSearchPlace;
+  String get nextPageSearchPlace => _nextPageSearchPlace;
 
   @override
   void onInit() {
@@ -211,6 +225,31 @@ class HomeController extends GetxController implements GetxService {
     }
   }
 
+  ///['FUNCTION SEAARCH PLACE']
+  Future<void> getSearchPlace(
+    String textSearch,
+    String latlang,
+  ) async {
+    debouncer.run(() async {
+      Response response = await googleRepo.getTextSearch(latlang, textSearch);
+
+      if (response.statusCode == 200) {
+        _searchPlace = [];
+        _searchPlace.addAll(NearbyPlace.fromJson(response.body).results);
+        _nextPageSearchPlace = response.body['next_page_token'] ?? 'null';
+        _isLoadedSearch = true;
+
+        update();
+      }
+    });
+  }
+
+  void clearSearchPlace() {
+    if (_searchPlace.isNotEmpty) {
+      _searchPlace.clear();
+    }
+  }
+
   Future<void> refreshHome() async {
     var locationController = Get.find<LocationController>();
 
@@ -239,49 +278,21 @@ class HomeController extends GetxController implements GetxService {
       rethrow;
     }
   }
+}
 
-  void filter() async {
-    final results = await firestore
-        .collection('users')
-        .where('namaDepan', isEqualTo: 'Andi')
-        .get();
-    if (results.docs.isNotEmpty) {
-      print(results.docs.length);
-      // ignore: avoid_function_literals_in_foreach_calls
-      results.docs.forEach((element) {
-        var id = element.id;
-        var data = element.data();
+///[CLASS DELAY SEARCH]
+class Debouncer {
+  final Duration duration;
+  Debouncer({required this.duration});
 
-        print('id : $id');
-        print('data : $data');
-        print(element);
-      });
-    } else {
-      print(results.docs.length);
+  Timer? _timer;
+
+  void run(VoidCallback action) {
+    bool isActive = _timer?.isActive ?? false;
+
+    if (isActive) {
+      _timer?.cancel();
     }
-
-    final test =
-        await firestore.collection('users').doc(auth.currentUser!.email).get();
-
-    print(test.data());
-  }
-
-  Future getCustomDataUsers(documenId, query) async {
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-
-    return FutureBuilder(
-      future: users.doc(documenId).get(),
-      builder: ((context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          Map<String, dynamic> data =
-              snapshot.data!.data() as Map<String, dynamic>;
-
-          return Text(
-            data[query],
-          );
-        }
-        return const Text('loading..');
-      }),
-    );
+    _timer = Timer(duration, action);
   }
 }

@@ -25,6 +25,7 @@ class AuthController extends GetxController implements GetxService {
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+  // ignore: prefer_final_fields
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 

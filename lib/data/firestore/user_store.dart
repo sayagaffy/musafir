@@ -16,6 +16,8 @@ class UserStore {
       FirebaseFirestore.instance.collection('reviews');
   final CollectionReference dbBookmark =
       FirebaseFirestore.instance.collection('bookmark');
+  final CollectionReference dbExplore =
+      FirebaseFirestore.instance.collection('explore');
 
   Future createUser({
     String? username,
@@ -225,7 +227,81 @@ class UserStore {
 
         return data;
       } else {
-        return ('Document does not exist on the database');
+        return null;
+      }
+    });
+  }
+
+  Future explorePlan(
+      String placeId, String address, String startTime, String endTime) async {
+    final collection = dbExplore.doc(auth.currentUser!.email);
+    final docSnap = await collection.get();
+    Map<String, dynamic> payload = {
+      "place_id": placeId,
+      'place_name': address,
+      'start_time': startTime,
+      'end_time': endTime,
+      'creatAt': DateTime.now(),
+    };
+    return await collection
+        .get()
+        .then((DocumentSnapshot documentSnapshot) async {
+      if (documentSnapshot.exists) {
+        List cart = docSnap.get('plan');
+        List item = cart
+            .where((element) => element['place_id'].contains(placeId))
+            .toList();
+        if (item.isEmpty) {
+          ///[Update bookmark]
+          dbExplore.doc(auth.currentUser!.email).update({
+            'plan': FieldValue.arrayUnion([payload]),
+          }).then((value) {
+            DialogHelper.hideLoading();
+            DialogHelper.showSnackBar(
+              "Berhasil Membuat Rencana Perjalanan dan add event new di google kalender anda",
+              title: "Berhasil",
+              backgroundColor: kSuccessMain,
+            );
+            Get.toNamed(RouteHelper.getExplorePage());
+          }).catchError((error) {
+            DialogHelper.hideLoading();
+            DialogHelper.showErroDialog(description: error.toString());
+          });
+        }
+      } else {
+        ///[Create if colection not ready yet]
+        dbExplore.doc(auth.currentUser!.email).set({
+          'plan': FieldValue.arrayUnion([payload]),
+        }).then((value) {
+          DialogHelper.hideLoading();
+          DialogHelper.showSnackBar(
+            "Berhasil Membuat Rencana Perjalanan dan add event new di google kalender anda",
+            title: "Berhasil",
+            backgroundColor: kSuccessMain,
+          );
+          Get.toNamed(RouteHelper.getExplorePage());
+        }).catchError((error) {
+          DialogHelper.hideLoading();
+          DialogHelper.showErroDialog(description: error.toString());
+        });
+      }
+    });
+  }
+
+  Future exploreList() async {
+    return await dbExplore
+        .doc(auth.currentUser!.email)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        Map<String, dynamic> data =
+            documentSnapshot.data() as Map<String, dynamic>;
+
+        return data;
+      } else {
+        // ignore: avoid_print
+        print('Document does not exist on the database');
+        return null;
       }
     });
   }

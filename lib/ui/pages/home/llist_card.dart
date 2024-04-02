@@ -12,7 +12,6 @@ import 'package:musafir/ui/pages/home/widgets/checkbox.dart';
 import 'package:musafir/ui/pages/home/widgets/dropdown.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
 import 'package:musafir/ui/widgets/rekomendasi_card.dart';
-import 'package:musafir/ui/widgets/textfield_google.dart';
 import 'package:musafir/utilitis/apps_constants.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -38,7 +37,6 @@ class _ListCardState extends State<ListCard> {
   }
 
   void getData() async {
-    var locationController = Get.find<LocationController>();
     UserStore().getUserDetail().then((value) {
       setState(() {
         latlang = value['lat'] != null
@@ -185,17 +183,68 @@ class _ListCardState extends State<ListCard> {
     selectedUlasan = value;
   }
 
-  Widget header(BuildContext context) {
-    return TextfieldGoogle(
-        hintText: 'Cari resto atau ruang shalat di Musafir',
-        onTap: () {
-          if (widget.type == 'filterList_food') {
-            homeController.isLoadedFoodKategory = false;
-          }
-
-          homeController.setFilterType('default');
-          Get.toNamed(RouteHelper.getInitial());
-        });
+  Widget header() {
+    return SafeArea(
+      child: SizedBox(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 18,
+                right: 18,
+                top: 25,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: const Icon(Icons.keyboard_backspace_rounded)),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.toNamed(RouteHelper.getHomeSearchPage());
+                      },
+                      child: Container(
+                        height: 32,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 6,
+                          horizontal: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: kNeutral20,
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.search_rounded,
+                              size: 20,
+                            ),
+                            const SizedBox(
+                              width: 3,
+                            ),
+                            Text(
+                              'Cari resto atau ruang shalat di Musafir',
+                              style: greyTextStyle.copyWith(fontSize: 12),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget title() {
@@ -209,7 +258,7 @@ class _ListCardState extends State<ListCard> {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(left: 18, right: 18),
+      padding: const EdgeInsets.only(left: 18, right: 18, top: 20),
       child: Text(
         titleList,
         style: blackTextStyle.copyWith(
@@ -313,18 +362,8 @@ class _ListCardState extends State<ListCard> {
   Widget line() {
     return Container(
       width: double.infinity,
-      height: 1,
-      decoration: BoxDecoration(
-        color: const Color(0xFFC8C9CA),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFFC8C9CA).withOpacity(0.3),
-            spreadRadius: 5,
-            blurRadius: 4,
-            offset: const Offset(0, 2), // changes position of shadow
-          ),
-        ],
-      ),
+      height: 7,
+      decoration: const BoxDecoration(color: Color(0xFFF2F2F2)),
     );
   }
 
@@ -458,7 +497,7 @@ class _ListCardState extends State<ListCard> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          header(context),
+          header(),
           title(),
           filter(context),
           line(),

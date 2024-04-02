@@ -65,16 +65,19 @@ class _HomePageState extends State<HomePage> {
                   fit: BoxFit.fitWidth,
                   child: Row(
                     children: [
-                      Text(
-                        'Assalamualaikum $name',
-                        style: blackTextStyle.copyWith(
-                          fontWeight: extraBold,
-                          fontSize: 20,
-                          height: 0.7,
-                          color: kBlueColorHover,
+                      Skeletonizer(
+                        enabled: name == null,
+                        child: Text(
+                          'Assalamualaikum $name',
+                          style: blackTextStyle.copyWith(
+                            fontWeight: extraBold,
+                            fontSize: 20,
+                            height: 0.7,
+                            color: kBlueColorHover,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      )
                     ],
                   ),
                 ),
@@ -85,21 +88,21 @@ class _HomePageState extends State<HomePage> {
                   authC.logout();
                 },
                 child: Icon(
-                  Icons.logout_rounded,
-                  size: 20,
-                  color: kWarningMain,
-                ),
-              ),
-              GestureDetector(
-                onTap: () async {
-                  Get.toNamed(RouteHelper.getFavoritePage());
-                },
-                child: Icon(
-                  Icons.filter,
+                  Icons.settings_power_rounded,
                   size: 20,
                   color: kBlackColor,
                 ),
-              )
+              ),
+              // GestureDetector(
+              //   onTap: () async {
+              //     Get.toNamed(RouteHelper.getFavoritePage());
+              //   },
+              //   child: Icon(
+              //     Icons.filter,
+              //     size: 20,
+              //     color: kBlackColor,
+              //   ),
+              // )
             ],
           ),
           Container(
@@ -318,7 +321,9 @@ class _HomePageState extends State<HomePage> {
       padding: EdgeInsets.symmetric(horizontal: defaultMargin),
       child: RekomendasiTitle(
         title: 'Kategori',
-        onTap: () {},
+        onTap: () {
+          Get.toNamed(RouteHelper.getHomeKategory());
+        },
       ),
     );
   }

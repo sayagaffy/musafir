@@ -33,4 +33,9 @@ class GoogleRepo extends GetxService {
     return await apiGoogle.getData(
         '${AppConstans.PLACE_DETAIL}?place_id=${placeId}&language=id&key=${AppConstans.API_GKEY}');
   }
+
+  Future<Response> getTextSearch(String latlang, String textSearch) async {
+    return await apiGoogle.getData(
+        '${AppConstans.PLACE_TEXTSEARCH}?location=${latlang}&query=${textSearch}?&language=id&key=${AppConstans.API_GKEY}');
+  }
 }

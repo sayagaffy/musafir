@@ -6,11 +6,13 @@ import 'package:intl/intl.dart';
 
 class TextfieldDatetimePick extends StatefulWidget {
   final TextEditingController textController;
+  final TextEditingController textdatetime;
   final String labelText;
 
   const TextfieldDatetimePick({
     super.key,
     required this.textController,
+    required this.textdatetime,
     required this.labelText,
   });
 
@@ -20,11 +22,13 @@ class TextfieldDatetimePick extends StatefulWidget {
 
 class _TextfieldDatetimePickState extends State<TextfieldDatetimePick> {
   TextEditingController? textController;
+  TextEditingController? stringText;
   @override
   void initState() {
     super.initState();
 
     textController = widget.textController;
+    stringText = widget.textdatetime;
   }
 
   @override
@@ -111,6 +115,7 @@ class _TextfieldDatetimePickState extends State<TextfieldDatetimePick> {
       String formattedDate = DateFormat('dd-MMMM-yyyy HH:MM').format(_picked);
       setState(() {
         textController!.text = formattedDate;
+        stringText!.text = _picked.toString();
       });
     }
   }

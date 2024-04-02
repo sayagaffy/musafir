@@ -5,11 +5,13 @@ import 'package:musafir/ui/pages/auth/reset_password.dart';
 import 'package:musafir/ui/pages/auth/sign_in_page.dart';
 import 'package:musafir/ui/pages/auth/sign_up_page.dart';
 import 'package:musafir/ui/pages/explore/explore_pages.dart';
+import 'package:musafir/ui/pages/explore/explore_search.dart';
 import 'package:musafir/ui/pages/explore/rencana_page.dart';
 import 'package:musafir/ui/pages/favorite/favorite_page.dart';
 import 'package:musafir/ui/pages/home/detail_card.dart';
 import 'package:musafir/ui/pages/home/home_page.dart';
 import 'package:musafir/ui/pages/home/home_search.dart';
+import 'package:musafir/ui/pages/home/list_kategory.dart';
 import 'package:musafir/ui/pages/home/llist_card.dart';
 import 'package:musafir/ui/pages/home/review_place.dart';
 import 'package:musafir/ui/pages/home/set_location.dart';
@@ -41,10 +43,12 @@ class RouteHelper {
   static const String setlocation = "/setlocation";
   static const String homeSearch = "/home-search";
   static const String homeReview = "/home-review";
+  static const String homekategory = "/home-kategory";
 
   ///[EXPLORE]
   static const String explore = "/explore";
   static const String rencana = "/explore-rencana";
+  static const String exploreSearch = "/explore-search";
 
   ///[FAVORITE]
   static const String favorite = "/favorite";
@@ -77,10 +81,12 @@ class RouteHelper {
   static String getHomeReview(
           String pageId, String placeName, String latlng, String from) =>
       '$homeReview?pageId=$pageId&placeName=$placeName&latlng=$latlng&from=$from';
+  static String getHomeKategory() => '$homekategory';
 
   ///[EXPLORE]
   static String getExplorePage() => '$explore';
   static String getRencanaPage() => '$rencana';
+  static String getExploreSearch() => '$exploreSearch';
 
   ///[FAVORITE]
   static String getFavoritePage() => '$favorite';
@@ -178,6 +184,11 @@ class RouteHelper {
       },
       transition: Transition.fade,
     ),
+    GetPage(
+      name: homekategory,
+      page: () => const ListKategory(),
+      transition: Transition.fade,
+    ),
 
     ///[EXPLORE]
     GetPage(
@@ -189,6 +200,11 @@ class RouteHelper {
       name: rencana,
       page: () => const RencanaPage(),
       transition: Transition.rightToLeft,
+    ),
+
+    GetPage(
+      name: exploreSearch,
+      page: () => const ExploreSearch(),
     ),
 
     ///[FAVORITE]

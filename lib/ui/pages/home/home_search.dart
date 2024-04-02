@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
+import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
-import 'package:musafir/ui/widgets/custom_title.dart';
-import 'package:musafir/ui/widgets/location_list_tile.dart';
+import 'package:musafir/ui/widgets/list_tile_card.dart';
 import 'package:musafir/ui/widgets/rekomendasi_card.dart';
+import 'package:musafir/ui/widgets/rekomendasi_title.dart';
 import 'package:musafir/ui/widgets/tile_tags_search.dart';
+import 'package:musafir/utilitis/apps_constants.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class HomeSearch extends StatefulWidget {
@@ -18,24 +20,37 @@ class HomeSearch extends StatefulWidget {
 }
 
 class _HomeSearchState extends State<HomeSearch> {
-  var locationController = Get.find<LocationController>();
+  String? latlang;
+  var homeC = Get.find<HomeController>();
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
+  void getData() async {
+    var locationController = Get.find<LocationController>();
+    UserStore().getUserDetail().then((value) {
+      setState(() {
+        latlang = value['lat'] != null
+            ? '${value['lat']},${value['long']}'
+            : locationController.latlng.toString();
+      });
+    });
+  }
 
   Widget header(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.only(
-        left: 18,
-        top: 20,
-        bottom: 20,
-        right: 18,
-      ),
+      padding: const EdgeInsets.only(left: 18, top: 20, right: 18, bottom: 20),
       decoration: BoxDecoration(color: kBackgroundColor),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           GestureDetector(
               onTap: () {
-                Get.offNamed(RouteHelper.getInitial());
+                homeC.clearSearchPlace();
+                Get.back();
               },
               child: const Icon(Icons.keyboard_backspace_rounded)),
           const SizedBox(
@@ -47,8 +62,7 @@ class _HomeSearchState extends State<HomeSearch> {
               width: double.infinity,
               child: TextFormField(
                 onChanged: (value) {
-                  // Get.find<GoogleController>().getPlace(value);
-                  locationController.getPlace(value);
+                  homeC.getSearchPlace(value, latlang.toString());
                 },
                 style: blackTextStyle.copyWith(
                   fontSize: 12,
@@ -65,13 +79,13 @@ class _HomeSearchState extends State<HomeSearch> {
                     Icons.search_rounded,
                     size: 18,
                   ),
-                  hintText: 'Cari di musafir,',
+                  hintText: 'Cari resto atau ruang shalat di Musafir,',
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(defaultRadius),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(
-                      defaultRadius,
+                      4,
                     ),
                     borderSide: const BorderSide(color: Colors.blue),
                   ),
@@ -89,21 +103,49 @@ class _HomeSearchState extends State<HomeSearch> {
       margin: const EdgeInsets.only(
         bottom: 30,
       ),
-      padding: const EdgeInsets.only(),
+      padding: const EdgeInsets.only(
+        left: 18,
+        right: 18,
+      ),
       child: Column(
         children: [
-          GetBuilder<LocationController>(builder: (place) {
-            return place.isLoaded
+          GetBuilder<HomeController>(builder: (place) {
+            return place.isLoadedSearch
                 ? ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: place.getPlaces.length,
-                    itemBuilder: (BuildContext context, int index) =>
-                        LocationListTile(
-                      press: () {},
-                      location: place.getPlaces[index].description,
-                    ),
-                  )
+                    itemCount: place.searchPlace.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      var item = place.searchPlace[index];
+                      return GestureDetector(
+                        onTap: () {
+                          String type = 'place';
+                          if (item.types.contains('mosque')) {
+                            type = 'mosque';
+                          } else if (item.types.contains('food')) {
+                            type = 'food';
+                          }
+
+                          place.placeDetail(item.placeId);
+
+                          Get.toNamed(RouteHelper.getHomeDetailPage(
+                            item.placeId.toString(),
+                            item.name,
+                            'homePage_search',
+                            type,
+                          ));
+                        },
+                        child: ListTileCard(
+                          title: item.name,
+                          address: item.formattedAddress,
+                          imgUrl: item.photos != null
+                              ? item.photos.first.photoReference
+                              : 'none',
+                          rating: item.rating,
+                          price: item.priceLevel,
+                        ),
+                      );
+                    })
                 : const SizedBox();
           })
         ],
@@ -114,33 +156,108 @@ class _HomeSearchState extends State<HomeSearch> {
   Widget titleKategori() {
     return Container(
       margin: const EdgeInsets.only(
-        bottom: 30,
+        top: 20,
+        bottom: 20,
       ),
-      padding: const EdgeInsets.only(
-        left: 25,
-        right: 19,
+      padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+      child: RekomendasiTitle(
+        title: 'Kategori',
+        onTap: () {
+          Get.toNamed(RouteHelper.getHomeKategory());
+        },
       ),
-      child: const CustomTitle(title: 'Kategori Makanan'),
     );
   }
 
   Widget tags() {
+    var homeController = Get.find<HomeController>();
+    var locationController = Get.find<LocationController>();
+    String latLang = latlang ??
+        '${locationController.latlng?.latitude}, ${locationController.latlng?.longitude}';
     return Container(
       padding: const EdgeInsets.only(
         left: 25,
         right: 19,
         bottom: 10,
       ),
-      child: const Wrap(
+      child: Wrap(
         spacing: 10,
         runSpacing: 10,
         children: [
-          TileTagsSearch(title: 'Korean'),
-          TileTagsSearch(title: 'Japanise'),
-          TileTagsSearch(title: 'Middle East'),
-          TileTagsSearch(title: 'Chinese'),
-          TileTagsSearch(title: 'Indonesia'),
-          TileTagsSearch(title: 'Europe'),
+          GestureDetector(
+            onTap: () async {
+              homeController.getNearbyPlace(
+                keyword: 'algerian+food',
+                rankby: 'distance',
+                type: 'food',
+                location: latLang,
+              );
+              Get.toNamed(
+                RouteHelper.getHomeListPage('filterList_food', 'Algerian'),
+              );
+            },
+            child: const TileTagsSearch(title: 'Algerian'),
+          ),
+          GestureDetector(
+            onTap: () async {
+              homeController.getNearbyPlace(
+                keyword: 'indian+food',
+                rankby: 'distance',
+                type: 'food',
+                location: latLang,
+              );
+
+              Get.toNamed(
+                RouteHelper.getHomeListPage('filterList_food', 'Indian'),
+              );
+            },
+            child: const TileTagsSearch(title: 'Indian'),
+          ),
+          GestureDetector(
+            onTap: () async {
+              homeController.getNearbyPlace(
+                keyword: 'japan+food',
+                rankby: 'distance',
+                type: 'food',
+                location: latLang,
+              );
+
+              Get.toNamed(
+                RouteHelper.getHomeListPage('filterList_food', 'Japan'),
+              );
+            },
+            child: const TileTagsSearch(title: 'Japan'),
+          ),
+          GestureDetector(
+            onTap: () async {
+              homeController.getNearbyPlace(
+                keyword: 'bakery+food',
+                rankby: 'distance',
+                type: 'food',
+                location: latLang,
+              );
+
+              Get.toNamed(
+                RouteHelper.getHomeListPage('filterList_food', 'Bakery'),
+              );
+            },
+            child: const TileTagsSearch(title: 'Bakery'),
+          ),
+          GestureDetector(
+            onTap: () {
+              homeController.getNearbyPlace(
+                keyword: 'korean+food',
+                rankby: 'distance',
+                type: 'food',
+                location: latLang,
+              );
+
+              Get.toNamed(
+                RouteHelper.getHomeListPage('filterList_food', 'Korean'),
+              );
+            },
+            child: const TileTagsSearch(title: 'Korean'),
+          ),
         ],
       ),
     );
@@ -149,14 +266,16 @@ class _HomeSearchState extends State<HomeSearch> {
   Widget titleRestoTinggi() {
     return Container(
       margin: const EdgeInsets.only(
-        bottom: 30,
         top: 30,
+        bottom: 20,
       ),
-      padding: const EdgeInsets.only(
-        left: 25,
-        right: 19,
+      padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+      child: RekomendasiTitle(
+        title: 'Rekomendasi Resto Rating Teratas',
+        onTap: () {
+          Get.toNamed(RouteHelper.getHomeListPage('filterList_resto', 'none'));
+        },
       ),
-      child: const CustomTitle(title: 'Rekomendasi Resto Rating Teratas'),
     );
   }
 
@@ -186,17 +305,18 @@ class _HomeSearchState extends State<HomeSearch> {
                           homecontroller.placeDetail(item.placeId.toString());
 
                           Get.offNamed(RouteHelper.getHomeDetailPage(
-                              item.placeId.toString(),
-                              item.name,
-                              'homePage',
-                              'NONES'));
+                            item.placeId.toString(),
+                            item.name,
+                            'homePage',
+                            'food',
+                          ));
                         },
-                        //'${AppConstans.BASE_URL_GOOGLE}${AppConstans.PLACE_PHOTO}?maxwidth=400&photo_reference=${item.photos.first.photoReference,}&key=${AppConstans.API_GKEY}',
                         child: RekomendasiCard(
                           name: item.name,
                           city: item.vicinity,
-                          // imgUrl:
-                          //     '${AppConstans.BASE_URL_GOOGLE}${AppConstans.PLACE_PHOTO}?maxwidth=400&photo_reference=${item.photos.first.photoReference}&key=${AppConstans.API_GKEY}',
+                          imgUrl: item.photos != null
+                              ? '${AppConstans.PLACE_PHOTO}${item.photos.first.photoReference}'
+                              : 'none',
                           rating: item.rating,
                           ulasan: item.userRatingsTotal,
                         ),

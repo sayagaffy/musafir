@@ -35,6 +35,7 @@ Color kNeutral20 = const Color(0xffF6F6F6);
 Color kNeutral40 = const Color(0xffE3E4E5);
 Color kNeutral50 = const Color(0xffC8C9CA);
 Color kNeutral70 = const Color(0xff838588);
+Color kNeutral90 = const Color(0xff53565A);
 
 TextStyle blackTextStyle = GoogleFonts.manrope(
   color: kBlackColor,

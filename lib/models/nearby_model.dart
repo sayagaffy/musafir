@@ -26,6 +26,7 @@ class NearbyPlace {
 }
 
 class NearbyPlaceModel {
+  String? formattedAddress;
   String? businessStatus;
   Geometry? geometry;
   String? icon;
@@ -45,6 +46,7 @@ class NearbyPlaceModel {
   int? priceLevel;
 
   NearbyPlaceModel({
+    this.formattedAddress,
     this.businessStatus,
     this.geometry,
     this.icon,
@@ -65,7 +67,8 @@ class NearbyPlaceModel {
   });
 
   NearbyPlaceModel.fromJson(Map<String, dynamic> json) {
-    businessStatus = json['business_status'];
+    formattedAddress = json['formatted_address'];
+    businessStatus = json['business_status'] ?? 'null';
     geometry =
         json['geometry'] != null ? Geometry.fromJson(json['geometry']) : null;
     icon = json['icon'];
@@ -76,12 +79,12 @@ class NearbyPlaceModel {
         ? OpeningHours.fromJson(json['opening_hours'])
         : null;
     placeId = json['place_id'];
-    rating = json['rating'].toDouble();
+    rating = json['rating'] != null ? json['rating'].toDouble() : 0;
     reference = json['reference'];
-    scope = json['scope'];
+    scope = json['scope'] ?? 'null';
     types = json['types'].cast<String>();
-    userRatingsTotal = json['user_ratings_total'];
-    vicinity = json['vicinity'];
+    userRatingsTotal = json['user_ratings_total'] ?? 0;
+    vicinity = json['vicinity'] ?? 'null';
     if (json['photos'] != null) {
       photos = <Photos>[];
       json['photos'].forEach((v) {
@@ -90,7 +93,7 @@ class NearbyPlaceModel {
     }
     plusCode =
         json['plus_code'] != null ? PlusCode.fromJson(json['plus_code']) : null;
-    priceLevel = json['price_level'];
+    priceLevel = json['price_level'] ?? 0;
   }
 }
 

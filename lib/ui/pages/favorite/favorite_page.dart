@@ -4,7 +4,7 @@ import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
-import 'package:musafir/ui/widgets/favoriteCard.dart';
+import 'package:musafir/ui/widgets/favorite_card.dart';
 import 'package:musafir/utilitis/apps_constants.dart';
 
 class FavoritePage extends StatefulWidget {
@@ -26,7 +26,9 @@ class _FavoritePageState extends State<FavoritePage> {
   void getData() async {
     UserStore().bookmarkList().then((value) {
       setState(() {
-        dataBookmark = value['place'];
+        if (value != null) {
+          dataBookmark = value['place'];
+        }
       });
     });
   }

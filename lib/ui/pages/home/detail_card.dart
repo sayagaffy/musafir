@@ -10,7 +10,6 @@ import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
-import 'package:musafir/ui/widgets/custom_title.dart';
 import 'package:musafir/utilitis/apps_constants.dart';
 // ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
@@ -63,6 +62,7 @@ class _DetailCardState extends State<DetailCard> {
 
     addressCom = '$area4, $area3, $area2';
 
+    // ignore: avoid_print
     print(addressCom);
   }
 
@@ -145,17 +145,18 @@ class _DetailCardState extends State<DetailCard> {
             children: [
               GestureDetector(
                 onTap: () {
-                  if (widget.from == 'filterList_food') {
-                    Get.offNamed(
-                        RouteHelper.getHomeListPage(widget.from, 'none'));
-                  } else if (widget.from == 'filterList_mosque') {
-                    Get.offNamed(
-                        RouteHelper.getHomeListPage(widget.from, 'none'));
-                  } else {
-                    Get.offNamed(RouteHelper.getInitial());
-                  }
+                  // if (widget.from == 'filterList_food') {
+                  //   Get.offNamed(
+                  //       RouteHelper.getHomeListPage(widget.from, 'none'));
+                  // } else if (widget.from == 'filterList_mosque') {
+                  //   Get.offNamed(
+                  //       RouteHelper.getHomeListPage(widget.from, 'none'));
+                  // } else {
+                  //   Get.offNamed(RouteHelper.getInitial());
+                  // }
 
-                  home.loading = false;
+                  // home.loading = false;
+                  Get.back();
                 },
                 // onTap: onTap,
 
@@ -598,7 +599,14 @@ class _DetailCardState extends State<DetailCard> {
               bottom: 10,
             ),
             padding: const EdgeInsets.only(left: 25, right: 23),
-            child: const CustomTitle(title: 'Foto'),
+            child: Text(
+              'Foto',
+              style: blackTextStyle.copyWith(
+                fontSize: 16,
+                height: 1.5,
+                fontWeight: bold,
+              ),
+            ),
           )
         : const SizedBox();
   }
