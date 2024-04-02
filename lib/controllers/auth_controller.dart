@@ -120,6 +120,7 @@ class AuthController extends GetxController implements GetxService {
         Get.offNamed(RouteHelper.getInitial());
       }
     } catch (e) {
+      Get.back(closeOverlays: true);
       showCustomSnackBar(e.toString());
     }
   }
@@ -215,7 +216,10 @@ class AuthController extends GetxController implements GetxService {
       title: "Logout ",
       middleText: "Apakah kamu ingin keluar ?",
       onConfirm: () async {
+        final GoogleSignIn googleSignIn = GoogleSignIn();
+        await googleSignIn.signOut();
         await FirebaseAuth.instance.signOut();
+
         Get.back();
         Get.offNamed(RouteHelper.getsigInPage());
       },
