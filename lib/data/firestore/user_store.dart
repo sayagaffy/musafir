@@ -262,7 +262,7 @@ class UserStore {
               title: "Berhasil",
               backgroundColor: kSuccessMain,
             );
-            Get.toNamed(RouteHelper.getExplorePage());
+            Get.toNamed(RouteHelper.getInitial());
           }).catchError((error) {
             DialogHelper.hideLoading();
             DialogHelper.showErroDialog(description: error.toString());

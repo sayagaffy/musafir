@@ -8,7 +8,8 @@ import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/widgets/tile_card.dart';
 
 class ListKategory extends StatefulWidget {
-  const ListKategory({super.key});
+  final String from;
+  const ListKategory({super.key, required this.from});
 
   @override
   State<ListKategory> createState() => _ListKategoryState();
@@ -96,7 +97,13 @@ class _ListKategoryState extends State<ListKategory> {
                   GestureDetector(
                       onTap: () {
                         homeC.clearSearchPlace();
-                        Get.back();
+
+                        if (widget.from == 'searchSearch') {
+                          Get.toNamed(
+                              RouteHelper.getHomeSearchPage('listKategory'));
+                        } else {
+                          Get.toNamed(RouteHelper.getInitial());
+                        }
                       },
                       child: const Icon(Icons.keyboard_backspace_rounded)),
                   const SizedBox(
@@ -105,7 +112,8 @@ class _ListKategoryState extends State<ListKategory> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        Get.toNamed(RouteHelper.getHomeSearchPage());
+                        Get.toNamed(
+                            RouteHelper.getHomeSearchPage('listKategory'));
                       },
                       child: Container(
                         height: 32,
@@ -183,6 +191,7 @@ class _ListKategoryState extends State<ListKategory> {
                   return GestureDetector(
                     onTap: () {
                       var homeC = Get.find<HomeController>();
+                      homeC.clearFoodKategory();
                       homeC.getNearbyPlace(
                         keyword: item['keyword'],
                         rankby: 'distance',

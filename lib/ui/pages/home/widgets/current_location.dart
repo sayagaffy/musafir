@@ -20,8 +20,8 @@ class CurrentLocation extends StatelessWidget {
         GetBuilder<LocationController>(builder: (location) {
           return ListTile(
             onTap: () async {
-              var homeController = Get.find<HomeController>();
-              await locationController.getCurrentPosition();
+              var homeC = Get.find<HomeController>();
+              await location.getCurrentPosition();
 
               var usersUpdate = {
                 'address': location.address,
@@ -32,7 +32,10 @@ class CurrentLocation extends StatelessWidget {
               try {
                 await UserStore().updateUserData(usersUpdate);
 
-                homeController.refreshHome();
+                homeC.isLoadedFood = false;
+                homeC.isLoadedMosque = false;
+
+                homeC.refreshHome();
 
                 showCustomSnackBar(
                   isError: false,

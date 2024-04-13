@@ -77,11 +77,11 @@ class RouteHelper {
   static String getHomeListPage(String type, String search) =>
       '$homelist?type=$type&search=$search';
   static String getLocationPage() => '$setlocation';
-  static String getHomeSearchPage() => '$homeSearch';
+  static String getHomeSearchPage(String from) => '$homeSearch?from=$from';
   static String getHomeReview(
           String pageId, String placeName, String latlng, String from) =>
       '$homeReview?pageId=$pageId&placeName=$placeName&latlng=$latlng&from=$from';
-  static String getHomeKategory() => '$homekategory';
+  static String getHomeKategory(String from) => '$homekategory?from=$from';
 
   ///[EXPLORE]
   static String getExplorePage() => '$explore';
@@ -165,7 +165,10 @@ class RouteHelper {
     ),
     GetPage(
       name: homeSearch,
-      page: () => const HomeSearch(),
+      page: () {
+        var from = Get.parameters['from'];
+        return HomeSearch(from: from!);
+      },
       transition: Transition.fade,
     ),
     GetPage(
@@ -186,7 +189,10 @@ class RouteHelper {
     ),
     GetPage(
       name: homekategory,
-      page: () => const ListKategory(),
+      page: () {
+        var from = Get.parameters['from'];
+        return ListKategory(from: from!);
+      },
       transition: Transition.fade,
     ),
 

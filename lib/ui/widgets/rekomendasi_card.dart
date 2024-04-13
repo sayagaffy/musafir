@@ -53,8 +53,8 @@ class RekomendasiCard extends StatelessWidget {
               ),
               image: imgUrl == 'none'
                   ? const DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage('assets/image_destination1.png'),
+                      fit: BoxFit.contain,
+                      image: AssetImage('assets/brandBlue.png'),
                     )
                   : DecorationImage(
                       fit: BoxFit.cover,

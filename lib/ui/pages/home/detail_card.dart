@@ -145,18 +145,17 @@ class _DetailCardState extends State<DetailCard> {
             children: [
               GestureDetector(
                 onTap: () {
-                  // if (widget.from == 'filterList_food') {
-                  //   Get.offNamed(
-                  //       RouteHelper.getHomeListPage(widget.from, 'none'));
-                  // } else if (widget.from == 'filterList_mosque') {
-                  //   Get.offNamed(
-                  //       RouteHelper.getHomeListPage(widget.from, 'none'));
-                  // } else {
-                  //   Get.offNamed(RouteHelper.getInitial());
-                  // }
-
-                  // home.loading = false;
-                  Get.back();
+                  if (widget.from == 'homePage') {
+                    Get.toNamed(RouteHelper.getInitial());
+                  } else if (widget.from == 'filterList_resto' ||
+                      widget.from == 'filterList_mosque') {
+                    Get.toNamed(
+                        RouteHelper.getHomeListPage(widget.from, 'none'));
+                  } else if (widget.from == 'homePage_search') {
+                    Get.toNamed(RouteHelper.getHomeSearchPage('detail'));
+                  } else if (widget.from == 'favorite') {
+                    Get.toNamed(RouteHelper.getInitial());
+                  }
                 },
                 // onTap: onTap,
 
@@ -378,44 +377,29 @@ class _DetailCardState extends State<DetailCard> {
             ),
             width: 92,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.attach_money_rounded,
-                      size: 16,
-                      color: kBlackColor,
-                    ),
-                    Icon(
-                      Icons.attach_money_rounded,
-                      size: 16,
-                      color: kBlackColor,
-                    ),
-                    Icon(
-                      Icons.attach_money_rounded,
-                      size: 16,
-                      color: kBlackColor,
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      home.placeDtl.priceLevel != null
-                          ? home.placeDtl.priceLevel.toString()
-                          : 'uknown',
-                      style: blackTextStyle.copyWith(
-                        fontSize: 10,
+                home.placeDtl.priceLevel != null
+                    ? Stack(
+                        children: List.generate(
+                          home.placeDtl.priceLevel ?? 0,
+                          (index) {
+                            return Padding(
+                              padding:
+                                  EdgeInsets.only(left: index.toDouble() * 10),
+                              child: Icon(
+                                Icons.attach_money_rounded,
+                                size: 15,
+                                color: kBlueColor,
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    : Text(
+                        'Uknown',
+                        style: blackTextStyle.copyWith(fontSize: 10),
                       ),
-                    ),
-                  ],
-                )
               ],
             ),
           ),

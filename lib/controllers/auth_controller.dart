@@ -1,10 +1,10 @@
 // ignore_for_file: avoid_print
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
+import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/data/repository/auth_repo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -51,6 +51,11 @@ class AuthController extends GetxController implements GetxService {
         password: password.toString(),
       );
       if (myUser.user!.emailVerified) {
+        var homeC = Get.find<HomeController>();
+        if (homeC.nearbyFood.isEmpty) {
+          homeC.refreshHome();
+        }
+
         ///[turn off loading indicator]
         Get.back(closeOverlays: true);
         Get.offNamed(RouteHelper.getInitial());
@@ -125,34 +130,6 @@ class AuthController extends GetxController implements GetxService {
     }
   }
 
-  void signInWithFacebook() async {
-    try {
-      // Trigger the sign-in flow
-      LoginResult loginResult = await FacebookAuth.instance.login();
-
-      // Create a credential from the access token
-      OAuthCredential facebookAuthCredential =
-          FacebookAuthProvider.credential(loginResult.accessToken!.token);
-
-      // Once signed in, return the UserCredential
-      UserCredential userCredential =
-          await _auth.signInWithCredential(facebookAuthCredential);
-
-      User? user = userCredential.user;
-      if (user != null) {
-        if (userCredential.additionalUserInfo!.isNewUser) {
-          //Save user if new
-          await UserStore().createUser(
-              username: user.email?.split('@')[0], provider: 'facebook');
-        }
-
-        Get.offNamed(RouteHelper.getInitial());
-      }
-    } catch (e) {
-      showCustomSnackBar(e.toString());
-    }
-  }
-
   void signUp(
     String emailAddress,
     String password,
@@ -212,20 +189,23 @@ class AuthController extends GetxController implements GetxService {
   }
 
   void logout() async {
+    var homeC = Get.find<HomeController>();
     Get.defaultDialog(
-      title: "Logout ",
-      middleText: "Apakah kamu ingin keluar ?",
-      onConfirm: () async {
-        final GoogleSignIn googleSignIn = GoogleSignIn();
-        await googleSignIn.signOut();
-        await FirebaseAuth.instance.signOut();
-
-        Get.back();
-        Get.offNamed(RouteHelper.getsigInPage());
-      },
-      textConfirm: "Sign out",
-      textCancel: "Cancel",
-    );
+        title: "Logout ",
+        middleText: "Apakah kamu ingin keluar ?",
+        onConfirm: () async {
+          final GoogleSignIn googleSignIn = GoogleSignIn();
+          await googleSignIn.signOut();
+          await FirebaseAuth.instance.signOut();
+          homeC.clearList();
+          Get.back();
+          Get.offNamed(RouteHelper.getsigInPage());
+        },
+        textConfirm: "Sign out",
+        textCancel: "Cancel",
+        radius: 4,
+        contentPadding: const EdgeInsets.only(bottom: 20),
+        buttonColor: kBlueColor);
   }
 
   void resetPassword(String emailAddress, context) async {

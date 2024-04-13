@@ -1,5 +1,4 @@
 // ignore_for_file: avoid_print
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -23,10 +22,9 @@ class SignInPage1 extends StatefulWidget {
 }
 
 class _SignInPage1State extends State<SignInPage1> {
+  var locationC = Get.find<LocationController>();
   @override
   void initState() {
-    var locationC = Get.find<LocationController>();
-    locationC.determinePosition();
     super.initState();
   }
 
@@ -51,6 +49,8 @@ class _SignInPage1State extends State<SignInPage1> {
           title: 'Password');
     } else {
       _authController.logins(email, password, context);
+
+      locationC.determinePosition();
     }
   }
 
@@ -225,20 +225,21 @@ class _SignInPage1State extends State<SignInPage1> {
                               onPressed: () {
                                 var authController = Get.find<AuthController>();
                                 authController.signInWithGoogle(context);
+                                locationC.determinePosition();
                               },
                               icon: "assets/icon_google.png",
                             ),
                             const SizedBox(
                               height: 15,
                             ),
-                            CustomButtonSosial(
-                              title: 'Masuk lewat Facebook',
-                              onPressed: () {
-                                var authController = Get.find<AuthController>();
-                                authController.signInWithFacebook();
-                              },
-                              icon: "assets/icon_facebook.png",
-                            ),
+                            // CustomButtonSosial(
+                            //   title: 'Masuk lewat Facebook',
+                            //   onPressed: () {
+                            //     var authController = Get.find<AuthController>();
+                            //     authController.signInWithFacebook();
+                            //   },
+                            //   icon: "assets/icon_facebook.png",
+                            // ),
                             // const SizedBox(
                             //   height: 15,
                             // ),

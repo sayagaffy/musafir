@@ -178,9 +178,12 @@ class _SetLoactionState extends State<SetLoaction> {
                         itemBuilder: (BuildContext context, int index) =>
                             LocationListTile(
                           press: () {
-                            var homeController = Get.find<HomeController>();
+                            var homeC = Get.find<HomeController>();
 
-                            homeController.getGeoCodeAddress(
+                            homeC.isLoadedFood = false;
+                            homeC.isLoadedMosque = false;
+
+                            homeC.getGeoCodeAddress(
                                 place.getPlaces[index].description, 'setLoc');
                           },
                           location: place.getPlaces[index].description,

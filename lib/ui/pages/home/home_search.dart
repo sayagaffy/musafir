@@ -13,7 +13,8 @@ import 'package:musafir/utilitis/apps_constants.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class HomeSearch extends StatefulWidget {
-  const HomeSearch({super.key});
+  final String from;
+  const HomeSearch({super.key, required this.from});
 
   @override
   State<HomeSearch> createState() => _HomeSearchState();
@@ -50,7 +51,18 @@ class _HomeSearchState extends State<HomeSearch> {
           GestureDetector(
               onTap: () {
                 homeC.clearSearchPlace();
-                Get.back();
+
+                if (widget.from == 'homePage') {
+                  Get.toNamed(RouteHelper.initial);
+                } else if (widget.from == 'filterList_resto') {
+                  Get.toNamed(RouteHelper.getHomeListPage(widget.from, 'none'));
+                } else if (widget.from == 'filterList_mosque') {
+                  Get.toNamed(RouteHelper.getHomeListPage(widget.from, 'none'));
+                } else if (widget.from == 'listKategory') {
+                  Get.toNamed(RouteHelper.getHomeKategory('homeSearch'));
+                } else if (widget.from == 'detail') {
+                  Get.toNamed(RouteHelper.initial);
+                }
               },
               child: const Icon(Icons.keyboard_backspace_rounded)),
           const SizedBox(
@@ -163,7 +175,7 @@ class _HomeSearchState extends State<HomeSearch> {
       child: RekomendasiTitle(
         title: 'Kategori',
         onTap: () {
-          Get.toNamed(RouteHelper.getHomeKategory());
+          Get.toNamed(RouteHelper.getHomeKategory('homeSearch'));
         },
       ),
     );

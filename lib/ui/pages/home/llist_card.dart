@@ -12,8 +12,8 @@ import 'package:musafir/ui/pages/home/widgets/checkbox.dart';
 import 'package:musafir/ui/pages/home/widgets/dropdown.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
 import 'package:musafir/ui/widgets/rekomendasi_card.dart';
+import 'package:musafir/ui/widgets/skeleton_card_rekomendasi.dart';
 import 'package:musafir/utilitis/apps_constants.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 class ListCard extends StatefulWidget {
   final String type;
@@ -66,8 +66,8 @@ class _ListCardState extends State<ListCard> {
 
   String selectedRadius = 'Jarak';
 
-  void getPlace(String keyword, String type, int jarak) {
-    homeController.getNearbyPlace(
+  void getPlace(String keyword, String type, int jarak) async {
+    await homeController.getNearbyPlace(
       keyword: keyword,
       rankby: 'prominence',
       type: type,
@@ -91,12 +91,14 @@ class _ListCardState extends State<ListCard> {
 
   _handleValueRadius(String value) {
     selectedRadius = value;
+    homeController.setFalseLoad(widget.type);
 
     if (widget.type == 'filterList_resto' && value == '< 2 km') {
       getPlace('food', 'restaurant', 2000);
     } else if (widget.type == 'filterList_resto' && value == '> 2 km') {
       getPlace('food', 'restaurant', 10000);
     } else if (widget.type == 'filterList_resto' && value == 'Jarak') {
+      homeController.isLoadedFood = false;
       homeController.getNearbyPlace(
         keyword: 'food',
         rankby: 'distance',
@@ -149,6 +151,7 @@ class _ListCardState extends State<ListCard> {
     if (value == 'Ulasan') {
       homeController.setFilterType('default');
 
+      homeController.setFalseLoad(widget.type);
       if (widget.type == 'filterList_resto') {
         homeController.getNearbyPlace(
           keyword: 'food',
@@ -199,7 +202,14 @@ class _ListCardState extends State<ListCard> {
                 children: [
                   GestureDetector(
                       onTap: () {
-                        Get.back();
+                        if (widget.type == 'filterList_resto' ||
+                            widget.type == 'filterList_mosque') {
+                          Get.toNamed(RouteHelper.getInitial());
+                        } else if (widget.type == 'filterList_food') {
+                          homeController.setFalseLoad('filterList_food');
+                          homeController.clearFoodKategory();
+                          Get.toNamed(RouteHelper.getHomeKategory(widget.type));
+                        }
                       },
                       child: const Icon(Icons.keyboard_backspace_rounded)),
                   const SizedBox(
@@ -208,7 +218,7 @@ class _ListCardState extends State<ListCard> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        Get.toNamed(RouteHelper.getHomeSearchPage());
+                        Get.toNamed(RouteHelper.getHomeSearchPage(widget.type));
                       },
                       child: Container(
                         height: 32,
@@ -250,7 +260,7 @@ class _ListCardState extends State<ListCard> {
   Widget title() {
     String titleList = 'Rekomendasi Resto Terdekat';
     if (widget.type == 'filterList_mosque') {
-      titleList = 'Masjid Terdeka';
+      titleList = 'Masjid Terdekat';
     } else if (widget.type == 'filterList_food') {
       titleList = '${widget.search} Food';
     } else {
@@ -460,34 +470,8 @@ class _ListCardState extends State<ListCard> {
                     ),
                   ),
           )
-        : Padding(
-            padding: const EdgeInsets.only(top: 26, bottom: 26),
-            child: SizedBox(
-              height: 206,
-              width: double.infinity,
-              child: Skeletonizer(
-                ignorePointers: false,
-                child: GridView.builder(
-                  padding: const EdgeInsets.only(left: 18, right: 18),
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 206,
-                    mainAxisExtent: 206,
-                    crossAxisSpacing: 15,
-                    mainAxisSpacing: 15,
-                  ),
-                  itemCount: 4,
-                  itemBuilder: (BuildContext ctx, index) {
-                    return const RekomendasiCard(
-                      name: 'item.name',
-                      city: 'item.vicinity',
-                      rating: 0,
-                      ulasan: 0,
-                      margin: EdgeInsets.only(right: 0),
-                    );
-                  },
-                ),
-              ),
-            ),
+        : const SkeletonCardRekomendasi(
+            type: 'gridView',
           );
   }
 

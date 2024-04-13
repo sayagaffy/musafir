@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/controllers/home_controller.dart';
@@ -5,6 +7,7 @@ import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/widgets/favorite_card.dart';
+import 'package:musafir/ui/widgets/skeleton_card_rekomendasi.dart';
 import 'package:musafir/utilitis/apps_constants.dart';
 
 class FavoritePage extends StatefulWidget {
@@ -15,23 +18,13 @@ class FavoritePage extends StatefulWidget {
 }
 
 class _FavoritePageState extends State<FavoritePage> {
-  List dataBookmark = [];
-
-  @override
-  void initState() {
-    getData();
-    super.initState();
-  }
-
-  void getData() async {
-    UserStore().bookmarkList().then((value) {
-      setState(() {
-        if (value != null) {
-          dataBookmark = value['place'];
-        }
-      });
-    });
-  }
+  Future favorite = UserStore().bookmarkList().then((value) {
+    if (value != null) {
+      return value['place'];
+    } else {
+      return null;
+    }
+  });
 
   Widget header() {
     return Padding(
@@ -62,54 +55,66 @@ class _FavoritePageState extends State<FavoritePage> {
   }
 
   Widget listCard() {
-    return dataBookmark.isNotEmpty
-        ? Expanded(
-            child: Container(
-                padding: const EdgeInsets.only(bottom: 40),
-                child: GridView.builder(
-                  padding:
-                      const EdgeInsets.only(left: 18, right: 18, bottom: 70),
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 206,
-                    mainAxisExtent: 206,
-                    crossAxisSpacing: 15,
-                    mainAxisSpacing: 15,
-                  ),
-                  itemCount: dataBookmark.length,
-                  itemBuilder: (BuildContext ctx, index) {
-                    final item = dataBookmark[index];
-                    return GestureDetector(
-                      onTap: () {
-                        var homecontroller = Get.find<HomeController>();
-                        homecontroller.placeDetail(item['place_id']);
-
-                        Get.toNamed(RouteHelper.getHomeDetailPage(
-                          item['place_id'],
-                          item['place_name'],
-                          'favorite',
-                          item['type'],
-                        ));
-                      },
-                      child: FavoriteCard(
-                        name: item['place_name'],
-                        city: item['address'],
-                        imgUrl: '${AppConstans.PLACE_PHOTO}${item['photo']}',
-                        km: index.toDouble(),
-                        margin: const EdgeInsets.only(right: 0),
-                        isMasjid: item['type'] == 'mosque' ? true : false,
+    return FutureBuilder(
+      future: favorite,
+      builder: ((context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return snapshot.hasData
+              ? Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.only(bottom: 40),
+                    child: GridView.builder(
+                      padding: const EdgeInsets.only(
+                          left: 18, right: 18, bottom: 70),
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 206,
+                        mainAxisExtent: 206,
+                        crossAxisSpacing: 15,
+                        mainAxisSpacing: 15,
                       ),
-                    );
-                  },
-                )),
-          )
-        : Center(
-            child: Text(
-              'Kamu belum memiliki favorite place',
-              style: blackTextStyle.copyWith(
-                fontSize: 12,
-              ),
-            ),
-          );
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (BuildContext ctx, index) {
+                        final item = snapshot.data[index];
+                        return GestureDetector(
+                          onTap: () {
+                            var homecontroller = Get.find<HomeController>();
+                            homecontroller.placeDetail(item['place_id']);
+
+                            Get.toNamed(RouteHelper.getHomeDetailPage(
+                              item['place_id'],
+                              item['place_name'],
+                              'favorite',
+                              item['type'],
+                            ));
+                          },
+                          child: FavoriteCard(
+                            name: item['place_name'],
+                            city: item['address'],
+                            imgUrl:
+                                '${AppConstans.PLACE_PHOTO}${item['photo']}',
+                            km: index.toDouble(),
+                            margin: const EdgeInsets.only(right: 0),
+                            isMasjid: item['type'] == 'mosque' ? true : false,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                )
+              : Center(
+                  child: Text(
+                    'Kamu belum memiliki favorite place',
+                    style: blackTextStyle.copyWith(
+                      fontSize: 12,
+                    ),
+                  ),
+                );
+        }
+
+        return const SkeletonCardRekomendasi();
+      }),
+    );
   }
 
   @override

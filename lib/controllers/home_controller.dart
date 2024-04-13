@@ -31,10 +31,12 @@ class HomeController extends GetxController implements GetxService {
 
   ///['PARAMETER FOR NEARBY PLACE']
   ///[Restaurant]
+
   bool _isLoadedFood = false;
   bool get isLoadedFood => _isLoadedFood;
+  set isLoadedFood(bool? isLoadedFood) => _isLoadedFood = isLoadedFood!;
 
-  List<dynamic> _nearbyFood = [];
+  List<dynamic> _nearbyFood = [].obs;
   List<dynamic> get nearbyFood => _nearbyFood;
 
   late String _nextPageTokenFood;
@@ -55,8 +57,9 @@ class HomeController extends GetxController implements GetxService {
   ///[Mosque]
   bool _isLoadedMosque = false;
   bool get isLoadedMosque => _isLoadedMosque;
+  set isLoadedMosque(bool? isLoadedMosque) => _isLoadedMosque = isLoadedMosque!;
 
-  List<dynamic> _nearbyMosque = [];
+  List<dynamic> _nearbyMosque = [].obs;
   List<dynamic> get nearbyMosque => _nearbyMosque;
 
   late String _nextPageTokenMosque;
@@ -89,7 +92,7 @@ class HomeController extends GetxController implements GetxService {
   List<dynamic> get addressCollection => _addressCollection;
 
   bool _isLoadAddress = false;
-  bool get isLoadAddress => _isLoadedFood;
+  bool get isLoadAddress => _isLoadAddress;
 
   ///['PARAMETER FOR NEARBY PLACE']
   bool _isLoadedSearch = false;
@@ -113,7 +116,7 @@ class HomeController extends GetxController implements GetxService {
     // Get called after widget is rendered on the screen
     print('on ready');
 
-    if (_isLoadedFood == false) {
+    if (_nearbyFood.isEmpty) {
       refreshHome();
     }
     super.onReady();
@@ -124,6 +127,52 @@ class HomeController extends GetxController implements GetxService {
     //Get called when controller is removed from memory
     print('on close');
     super.onClose();
+  }
+
+  void clearList() {
+    if (_nearbyFood.isNotEmpty) {
+      _nearbyFood.clear();
+      _isLoadedFood = false;
+
+      print('clear nearby food');
+    }
+
+    if (_nearbyMosque.isNotEmpty) {
+      _nearbyMosque.clear();
+      _isLoadedMosque = false;
+
+      print('clear nearby Mosque');
+    }
+
+    if (_nearbyFoodKategory.isNotEmpty) {
+      _nearbyFoodKategory.clear();
+      _isLoadedFoodKategory = false;
+
+      print('clear nearby Mosque');
+    }
+    if (_addressCollection.isNotEmpty) {
+      _addressCollection.clear();
+      _isLoadAddress = false;
+
+      print('clear addressCollection');
+    }
+
+    if (_searchPlace.isNotEmpty) {
+      _searchPlace.clear();
+      _isLoadedSearch = false;
+
+      print('clear _searchPlace');
+    }
+
+    update();
+  }
+
+  void clearFoodKategory() {
+    if (_nearbyFoodKategory.isNotEmpty) {
+      _nearbyFoodKategory.clear();
+      update();
+      print('clear nearby Food Kategory');
+    }
   }
 
   ///['FUNCTION GET NEARBY PLACE']
@@ -149,7 +198,7 @@ class HomeController extends GetxController implements GetxService {
       if (type == 'restaurant') {
         _nearbyFood = [];
         _nearbyFood.addAll(NearbyPlace.fromJson(response.body).results);
-        _nextPageTokenFood = response.body['next_page_token'];
+        _nextPageTokenFood = response.body['next_page_token'] ?? 'none';
 
         _isLoadedFood = true;
         print('resto');
@@ -171,10 +220,20 @@ class HomeController extends GetxController implements GetxService {
         print('food');
       }
 
-      // print(query);
-
       update();
     }
+  }
+
+  void setFalseLoad(String type) {
+    if (type == 'filterList_resto') {
+      _isLoadedFood = false;
+    } else if (type == 'filterList_mosque') {
+      _isLoadedMosque = false;
+    } else if (type == 'filterList_food') {
+      _isLoadedFoodKategory = false;
+    }
+
+    update();
   }
 
   ///['FUNCTION PLACE DETAIL']
@@ -252,31 +311,26 @@ class HomeController extends GetxController implements GetxService {
 
   Future<void> refreshHome() async {
     var locationController = Get.find<LocationController>();
+    String? latlang;
+    await UserStore().getUserDetail().then((val) async {
+      latlang = val['lat'] != null
+          ? '${val['lat']},${val['long']}'
+          : locationController.latlng.toString();
+    });
 
-    try {
-      UserStore().getUserDetail().then((val) async {
-        String latlang = val['lat'] != null
-            ? '${val['lat']},${val['long']}'
-            : locationController.latlng.toString();
+    await getNearbyPlace(
+      keyword: 'food',
+      rankby: 'distance',
+      type: 'restaurant',
+      location: latlang,
+    );
 
-        await getNearbyPlace(
-          keyword: 'food',
-          rankby: 'distance',
-          type: 'restaurant',
-          location: latlang,
-        );
-
-        await getNearbyPlace(
-          keyword: 'masjid',
-          rankby: 'distance',
-          type: 'mosque',
-          location: latlang,
-        );
-      });
-    } catch (e) {
-      print(e);
-      rethrow;
-    }
+    await getNearbyPlace(
+      keyword: 'masjid',
+      rankby: 'distance',
+      type: 'mosque',
+      location: latlang,
+    );
   }
 }
 
