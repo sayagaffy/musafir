@@ -23,6 +23,7 @@ class AppConstans {
   static const String PLACE_PHOTO =
       '$BASE_URL_GOOGLE/place/photo?maxwidth=400&key=$API_GKEY&photo_reference=';
   static const String PLACE_TEXTSEARCH = "/place/textsearch/json";
+  static const String DISTANCE = "/distancematrix/json";
 
   ///[AUTH]
   static const String TOKEN = "";

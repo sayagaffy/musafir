@@ -94,19 +94,19 @@ class FavoriteCard extends StatelessWidget {
                       const SizedBox(
                         height: 10,
                       ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on_rounded,
-                            size: 16,
-                            color: kRedMain,
-                          ),
-                          Text(
-                            '$km km',
-                            style: blackTextStyle.copyWith(fontSize: 12),
-                          ),
-                        ],
-                      ),
+                      // Row(
+                      //   children: [
+                      //     Icon(
+                      //       Icons.location_on_rounded,
+                      //       size: 16,
+                      //       color: kRedMain,
+                      //     ),
+                      //     Text(
+                      //       '$km km',
+                      //       style: blackTextStyle.copyWith(fontSize: 12),
+                      //     ),
+                      //   ],
+                      // ),
                       const SizedBox(
                         height: 5,
                       ),

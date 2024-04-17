@@ -6,10 +6,12 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:musafir/controllers/home_controller.dart';
+import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
+import 'package:musafir/ui/widgets/location_text.dart';
 import 'package:musafir/utilitis/apps_constants.dart';
 // ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
@@ -36,11 +38,24 @@ class DetailCard extends StatefulWidget {
 class _DetailCardState extends State<DetailCard> {
   bool statusBookmark = false;
   String addressCom = '';
+  String? latlang;
+  final locationC = Get.find<LocationController>();
   @override
   void initState() {
     super.initState();
+    getData();
 
     // WidgetsBinding.instance.addPostFrameCallback((_) => yourFunction());
+  }
+
+  void getData() async {
+    UserStore().getUserDetail().then((value) {
+      setState(() {
+        latlang = value['lat'] != null
+            ? '${value['lat']},${value['long']}'
+            : locationC.latlng.toString();
+      });
+    });
   }
 
   void addressComponent(home) {
@@ -344,12 +359,10 @@ class _DetailCardState extends State<DetailCard> {
                     const SizedBox(
                       width: 3,
                     ),
-                    Text(
-                      '3,63 km',
-                      style: blackTextStyle.copyWith(
-                        fontSize: 10,
-                      ),
-                    ),
+                    GetLocationText(
+                        origin: latlang ?? latlang.toString(),
+                        destination:
+                            '${home.placeDtl.geometry.location.lat},${home.placeDtl.geometry.location.lng}'),
                   ],
                 ),
                 const SizedBox(

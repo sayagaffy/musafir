@@ -69,7 +69,7 @@ class _FavoritePageState extends State<FavoritePage> {
                       gridDelegate:
                           const SliverGridDelegateWithMaxCrossAxisExtent(
                         maxCrossAxisExtent: 206,
-                        mainAxisExtent: 206,
+                        mainAxisExtent: 190,
                         crossAxisSpacing: 15,
                         mainAxisSpacing: 15,
                       ),

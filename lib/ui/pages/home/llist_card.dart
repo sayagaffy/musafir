@@ -419,12 +419,13 @@ class _ListCardState extends State<ListCard> {
   }
 
   Widget card20(defaultList, bool load) {
-    return load
+    return load && latlang != null
         ? Container(
             padding: const EdgeInsets.only(top: 30, bottom: 20),
             child: defaultList.isNotEmpty
                 ? GridView.builder(
-                    padding: const EdgeInsets.only(left: 18, right: 18),
+                    padding:
+                        const EdgeInsets.only(left: 18, right: 18, bottom: 20),
                     gridDelegate:
                         const SliverGridDelegateWithMaxCrossAxisExtent(
                       maxCrossAxisExtent: 206,
@@ -457,8 +458,10 @@ class _ListCardState extends State<ListCard> {
                               : 'none',
                           rating: item.rating,
                           ulasan: item.userRatingsTotal,
-                          km: index.toDouble(),
                           margin: const EdgeInsets.only(right: 0),
+                          origin: latlang.toString(),
+                          destination:
+                              '${item.geometry.location.lat.toString()}, ${item.geometry.location.lng.toString()}',
                         ),
                       );
                     },

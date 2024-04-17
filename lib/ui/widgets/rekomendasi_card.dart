@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:musafir/shared/theme.dart';
+import 'package:musafir/ui/widgets/location_text.dart';
 
 class RekomendasiCard extends StatelessWidget {
   final String name;
@@ -9,7 +10,9 @@ class RekomendasiCard extends StatelessWidget {
   final bool isMasjid;
   final EdgeInsets margin;
   final int ulasan;
-  final double km;
+  final String km;
+  final String origin;
+  final String destination;
 
   const RekomendasiCard({
     super.key,
@@ -20,7 +23,9 @@ class RekomendasiCard extends StatelessWidget {
     this.margin = const EdgeInsets.only(right: 15),
     this.ulasan = 0,
     this.imgUrl = 'none',
-    this.km = 0.4,
+    this.km = '0.4 km',
+    this.origin = 'none',
+    this.destination = 'none',
   });
 
   @override
@@ -103,9 +108,9 @@ class RekomendasiCard extends StatelessWidget {
                             size: 16,
                             color: kRedMain,
                           ),
-                          Text(
-                            '$km km',
-                            style: blackTextStyle.copyWith(fontSize: 12),
+                          GetLocationText(
+                            origin: origin,
+                            destination: destination,
                           ),
                         ],
                       ),

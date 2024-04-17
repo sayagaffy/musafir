@@ -96,17 +96,19 @@ class _HomePageState extends State<HomePage> {
                   color: kBlackColor,
                 ),
               ),
-              // GestureDetector(
-              //   onTap: () async {
-              //     var homeC = Get.find<HomeController>();
-              //     homeC.clearList();
-              //   },
-              //   child: Icon(
-              //     Icons.filter,
-              //     size: 20,
-              //     color: kBlackColor,
-              //   ),
-              // )
+              GestureDetector(
+                onTap: () async {
+                  // homeC
+                  //     .distance(latlang.toString(),
+                  //         '-6.237220893691725, 106.85311789006593')
+                  //     .then((value) => print(value));
+                },
+                child: Icon(
+                  Icons.filter,
+                  size: 20,
+                  color: kBlackColor,
+                ),
+              )
             ],
           ),
           Container(
@@ -250,7 +252,7 @@ class _HomePageState extends State<HomePage> {
       width: double.infinity,
       child: GetBuilder<HomeController>(
         builder: (place) {
-          if (place.isLoadedFood) {
+          if (place.isLoadedFood && latlang != null) {
             return SizedBox(
               height: 206,
               width: double.infinity,
@@ -282,6 +284,9 @@ class _HomePageState extends State<HomePage> {
                                 : 'none',
                             rating: item.rating,
                             ulasan: item.userRatingsTotal,
+                            origin: latlang.toString(),
+                            destination:
+                                '${item.geometry.location.lat.toString()}, ${item.geometry.location.lng.toString()}',
                           ),
                         );
                       },
@@ -453,7 +458,7 @@ class _HomePageState extends State<HomePage> {
       width: double.infinity,
       child: GetBuilder<HomeController>(
         builder: (place) {
-          if (place.isLoadedMosque) {
+          if (place.isLoadedMosque && latlang != null) {
             return SizedBox(
               height: 206,
               width: double.infinity,
@@ -486,6 +491,9 @@ class _HomePageState extends State<HomePage> {
                             rating: item.rating,
                             ulasan: item.userRatingsTotal,
                             isMasjid: true,
+                            origin: latlang.toString(),
+                            destination:
+                                '${item.geometry.location.lat.toString()}, ${item.geometry.location.lng.toString()}',
                           ),
                         );
                       },

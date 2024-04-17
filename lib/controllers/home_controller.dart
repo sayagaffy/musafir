@@ -332,6 +332,22 @@ class HomeController extends GetxController implements GetxService {
       location: latlang,
     );
   }
+
+  ///['FUNCTION DISTANCE']
+  Future<String> distance(String destinations, String origins) async {
+    Response response = await googleRepo.getDistance(origins, destinations);
+
+    if (response.statusCode == 200) {
+      String isRes =
+          response.body['rows'][0]['elements'][0]['status'] == 'ZERO_RESULTS'
+              ? 'ZERO_RESULTS'
+              : response.body['rows'][0]['elements'][0]['distance']['text'];
+
+      return isRes;
+    }
+
+    return 'zero';
+  }
 }
 
 ///[CLASS DELAY SEARCH]
