@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
 import 'package:musafir/controllers/home_controller.dart';
@@ -7,13 +8,31 @@ import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 
-class CurrentLocation extends StatelessWidget {
+class CurrentLocation extends StatefulWidget {
   const CurrentLocation({super.key});
 
   @override
+  State<CurrentLocation> createState() => _CurrentLocationState();
+}
+
+class _CurrentLocationState extends State<CurrentLocation> {
+  var locationC = Get.find<LocationController>();
+
+  @override
+  void initState() {
+    super.initState();
+    locationC.determinePosition();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // print("WidgetsBinding");
+    });
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      // print("SchedulerBinding");
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    var locationController = Get.find<LocationController>();
-    locationController.getCurrentPosition();
+    locationC.getCurrentPosition();
 
     return Column(
       children: [
@@ -21,12 +40,15 @@ class CurrentLocation extends StatelessWidget {
           return ListTile(
             onTap: () async {
               var homeC = Get.find<HomeController>();
-              await location.getCurrentPosition();
+              // await location.getCurrentPosition();
 
               var usersUpdate = {
                 'address': location.address,
                 'lat': location.latlng!.latitude.toString(),
-                'long': location.latlng!.longitude.toString()
+                'lng': location.latlng!.longitude.toString(),
+                'country_id': location.countryId,
+                'province_id': location.provinceId,
+                'city_id': location.cityId,
               };
 
               try {

@@ -40,7 +40,7 @@ class UserStore {
       'provider': provider,
       'address': address,
       'lat': latlang,
-      'long': latlang,
+      'lng': latlang,
       'creatAt': DateTime.now(),
     });
   }
@@ -69,6 +69,19 @@ class UserStore {
       showCustomSnackBar(error.toString());
       throw 'failed';
     }
+  }
+
+  Future updateUserPlace(dynamic data) async {
+    await dbUsers.doc(auth.currentUser!.email).update(data).then((value) {
+      DialogHelper.hideLoading();
+      DialogHelper.showSnackBar(
+        'Berhasil  update  place',
+        title: 'Successfuly',
+        backgroundColor: kSuccessMain,
+      );
+    }).catchError((error) {
+      DialogHelper.showErroDialog(description: error.toString());
+    });
   }
 
   Future postingReview(

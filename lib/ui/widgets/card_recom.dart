@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:musafir/shared/theme.dart';
 
-class RekomendasiCard extends StatelessWidget {
+class CardRecom extends StatelessWidget {
   final String name;
   final String city;
   final String imgUrl;
@@ -12,8 +12,9 @@ class RekomendasiCard extends StatelessWidget {
   final String km;
   final String origin;
   final String destination;
+  final String halalStatus;
 
-  const RekomendasiCard({
+  const CardRecom({
     super.key,
     required this.name,
     required this.city,
@@ -25,13 +26,13 @@ class RekomendasiCard extends StatelessWidget {
     this.km = '0.4 km',
     this.origin = 'none',
     this.destination = 'none',
+    this.halalStatus = '1',
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 178,
-      height: !isMasjid ? 206 : 175,
       margin: margin,
       decoration: BoxDecoration(
         color: kWhiteColor,
@@ -77,7 +78,8 @@ class RekomendasiCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name,
+                  name.toTitleCase(),
+                  maxLines: 1,
                   style: blackTextStyle.copyWith(
                     fontSize: 14,
                     fontWeight: extraBold,
@@ -95,23 +97,10 @@ class RekomendasiCard extends StatelessWidget {
                           fontSize: 12,
                         ),
                         overflow: TextOverflow.ellipsis,
-                        maxLines: !isMasjid ? 1 : 3,
+                        maxLines: !isMasjid ? 2 : 3,
                       ),
                       const SizedBox(
                         height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on_rounded,
-                            size: 16,
-                            color: kRedMain,
-                          ),
-                          // GetLocationText(
-                          //   origin: origin,
-                          //   destination: destination,
-                          // ),
-                        ],
                       ),
                       const SizedBox(
                         height: 1,
@@ -128,71 +117,51 @@ class RekomendasiCard extends StatelessWidget {
                                         margin: const EdgeInsets.only(
                                           right: 3,
                                         ),
-                                        decoration: const BoxDecoration(
+                                        decoration: BoxDecoration(
                                           image: DecorationImage(
-                                            image: AssetImage(
-                                                'assets/icon_halal.png'),
+                                            image: AssetImage(halalStatus == '1'
+                                                ? 'assets/icon_halal.png'
+                                                : halalStatus == '2'
+                                                    ? 'assets/icon_halal_blue.png'
+                                                    : 'assets/icon_halal_black.png'),
                                           ),
                                         ),
                                       ),
                                       Text(
-                                        'Halal Certified',
+                                        halalStatus == '1'
+                                            ? 'Halal Certified'
+                                            : halalStatus == '2'
+                                                ? 'Halal Friendly'
+                                                : 'Halal',
                                         style: blackTextStyle.copyWith(
                                           fontSize: 12,
                                           fontWeight: bold,
-                                          color: kGreenHover,
+                                          color: halalStatus == '1'
+                                              ? kGreenHover
+                                              : halalStatus == '2'
+                                                  ? kBlueColorHover
+                                                  : kBlackColor,
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 1,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Container(
-                                            width: 16,
-                                            height: 16,
-                                            margin:
-                                                const EdgeInsets.only(right: 3),
-                                            decoration: const BoxDecoration(
-                                              image: DecorationImage(
-                                                image: AssetImage(
-                                                    'assets/icon_star.png'),
-                                              ),
-                                            ),
-                                          ),
-                                          Text(
-                                            rating.toString(),
-                                            style: greyTextStyle.copyWith(
-                                                fontSize: 12),
-                                          ),
-                                          Text(
-                                            ' |',
-                                            style: blackTextStyle.copyWith(
-                                                fontSize: 12),
-                                          ),
-                                          Text(
-                                            ' $ulasan ulasan ',
-                                            style: greyTextStyle.copyWith(
-                                                fontSize: 12),
-                                          ),
-                                        ],
+                                      const SizedBox(
+                                        width: 10,
                                       ),
-                                      Container(
-                                        width: 14,
-                                        height: 14,
-                                        decoration: const BoxDecoration(
-                                          image: DecorationImage(
-                                            image: AssetImage(
-                                                'assets/icon_dots.png'),
-                                          ),
-                                        ),
-                                      )
+                                      destination != 'none'
+                                          ? Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.location_on_rounded,
+                                                  size: 16,
+                                                  color: kRedMain,
+                                                ),
+                                                Text(
+                                                  '${destination}Km',
+                                                  style: blackTextStyle
+                                                      .copyWith(fontSize: 11),
+                                                ),
+                                              ],
+                                            )
+                                          : const SizedBox(),
                                     ],
                                   ),
                                 ],
@@ -211,4 +180,13 @@ class RekomendasiCard extends StatelessWidget {
       ),
     );
   }
+}
+
+extension StringExtension on String {
+  String toCapitalized() =>
+      length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
+  String toTitleCase() => replaceAll(RegExp(' +'), ' ')
+      .split(' ')
+      .map((str) => str.toCapitalized())
+      .join(' ');
 }

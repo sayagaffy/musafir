@@ -13,6 +13,7 @@ import 'package:musafir/ui/pages/home/home_page.dart';
 import 'package:musafir/ui/pages/home/home_search.dart';
 import 'package:musafir/ui/pages/home/list_kategory.dart';
 import 'package:musafir/ui/pages/home/llist_card.dart';
+import 'package:musafir/ui/pages/home/llist_places_card.dart';
 import 'package:musafir/ui/pages/home/review_place.dart';
 import 'package:musafir/ui/pages/home/set_location.dart';
 import 'package:musafir/ui/pages/main_page.dart';
@@ -44,6 +45,7 @@ class RouteHelper {
   static const String homeSearch = "/home-search";
   static const String homeReview = "/home-review";
   static const String homekategory = "/home-kategory";
+  static const String homePlaceList = "/home-place-list";
 
   ///[EXPLORE]
   static const String explore = "/explore";
@@ -82,6 +84,8 @@ class RouteHelper {
           String pageId, String placeName, String latlng, String from) =>
       '$homeReview?pageId=$pageId&placeName=$placeName&latlng=$latlng&from=$from';
   static String getHomeKategory(String from) => '$homekategory?from=$from';
+  static String getHomeListPlacePage(String type, String search) =>
+      '$homePlaceList?type=$type&search=$search';
 
   ///[EXPLORE]
   static String getExplorePage() => '$explore';
@@ -192,6 +196,19 @@ class RouteHelper {
       page: () {
         var from = Get.parameters['from'];
         return ListKategory(from: from!);
+      },
+      transition: Transition.fade,
+    ),
+    GetPage(
+      name: homePlaceList,
+      page: () {
+        var type = Get.parameters['type'];
+        var search = Get.parameters['search'];
+
+        return ListPlacesCard(
+          type: type!,
+          search: search!,
+        );
       },
       transition: Transition.fade,
     ),

@@ -259,10 +259,17 @@ class HomeController extends GetxController implements GetxService {
       _addressCollection.addAll(Geocode.fromJson(response.body).results);
 
       if (type == 'setLoc') {
+        var locationC = Get.find<LocationController>();
+        await locationC.setAddress(addressCollection[0].geometry.location.lat,
+            addressCollection[0].geometry.location.lng);
+
         var usersUpdate = {
           'address': addressCollection[0].formattedAddress,
           'lat': addressCollection[0].geometry.location.lat.toString(),
-          'long': addressCollection[0].geometry.location.lng.toString()
+          'lng': addressCollection[0].geometry.location.lng.toString(),
+          'country_id': locationC.countryId,
+          'province_id': locationC.provinceId,
+          'city_id': locationC.cityId,
         };
 
         try {
@@ -314,7 +321,7 @@ class HomeController extends GetxController implements GetxService {
     String? latlang;
     await UserStore().getUserDetail().then((val) async {
       latlang = val['lat'] != null
-          ? '${val['lat']},${val['long']}'
+          ? '${val['lat']},${val['lng']}'
           : locationController.latlng.toString();
     });
 

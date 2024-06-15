@@ -27,10 +27,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -44,37 +41,51 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCjto31wabWAxZZE2NJhYcxgo_rIDQbPuw',
-    appId: '1:302306254082:web:979040727f730c6aaa761b',
-    messagingSenderId: '302306254082',
-    projectId: 'demoflutter-65620',
-    authDomain: 'demoflutter-65620.firebaseapp.com',
-    storageBucket: 'demoflutter-65620.appspot.com',
+    apiKey: 'AIzaSyCCiODeSrn68x3OALkCYs97Yvj4FRMsDtg',
+    appId: '1:335848098890:web:a49b7002ba66eee1e0aab3',
+    messagingSenderId: '335848098890',
+    projectId: 'musafir-app-mobile',
+    authDomain: 'musafir-app-mobile.firebaseapp.com',
+    storageBucket: 'musafir-app-mobile.appspot.com',
+    measurementId: 'G-9QSHY5M4Q5',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCvJ7IM90OzTf7u3Nw1ZnOAI-wjqGio7Gw',
-    appId: '1:302306254082:android:20f41be12506312faa761b',
-    messagingSenderId: '302306254082',
-    projectId: 'demoflutter-65620',
-    storageBucket: 'demoflutter-65620.appspot.com',
+    apiKey: 'AIzaSyCK3HICu_uZx-NDESAqPOtIsKLpnT-DNSE',
+    appId: '1:335848098890:android:9380ae985b3fbe02e0aab3',
+    messagingSenderId: '335848098890',
+    projectId: 'musafir-app-mobile',
+    storageBucket: 'musafir-app-mobile.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAfhba3lrP_k4Uya8MmMPrMXohqWA2Ais0',
-    appId: '1:302306254082:ios:99f6fefc606e61e4aa761b',
-    messagingSenderId: '302306254082',
-    projectId: 'demoflutter-65620',
-    storageBucket: 'demoflutter-65620.appspot.com',
+    apiKey: 'AIzaSyCAgg_4Wrs1kCKlmlQvk772sLTNlBI7bMc',
+    appId: '1:335848098890:ios:154462accf15d2c9e0aab3',
+    messagingSenderId: '335848098890',
+    projectId: 'musafir-app-mobile',
+    storageBucket: 'musafir-app-mobile.appspot.com',
+    iosClientId: '335848098890-ovmha65killbn1o3npd6417pbsr6abti.apps.googleusercontent.com',
     iosBundleId: 'com.example.musafirApp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAfhba3lrP_k4Uya8MmMPrMXohqWA2Ais0',
-    appId: '1:302306254082:ios:efc8459b75d4b31aaa761b',
-    messagingSenderId: '302306254082',
-    projectId: 'demoflutter-65620',
-    storageBucket: 'demoflutter-65620.appspot.com',
-    iosBundleId: 'com.example.musafirApp.RunnerTests',
+    apiKey: 'AIzaSyCAgg_4Wrs1kCKlmlQvk772sLTNlBI7bMc',
+    appId: '1:335848098890:ios:154462accf15d2c9e0aab3',
+    messagingSenderId: '335848098890',
+    projectId: 'musafir-app-mobile',
+    storageBucket: 'musafir-app-mobile.appspot.com',
+    iosClientId: '335848098890-ovmha65killbn1o3npd6417pbsr6abti.apps.googleusercontent.com',
+    iosBundleId: 'com.example.musafirApp',
   );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyCCiODeSrn68x3OALkCYs97Yvj4FRMsDtg',
+    appId: '1:335848098890:web:6d84117278153132e0aab3',
+    messagingSenderId: '335848098890',
+    projectId: 'musafir-app-mobile',
+    authDomain: 'musafir-app-mobile.firebaseapp.com',
+    storageBucket: 'musafir-app-mobile.appspot.com',
+    measurementId: 'G-9FM946DWE3',
+  );
+
 }

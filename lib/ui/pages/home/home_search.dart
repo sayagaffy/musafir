@@ -34,7 +34,7 @@ class _HomeSearchState extends State<HomeSearch> {
     UserStore().getUserDetail().then((value) {
       setState(() {
         latlang = value['lat'] != null
-            ? '${value['lat']},${value['long']}'
+            ? '${value['lat']},${value['lng']}'
             : locationController.latlng.toString();
       });
     });
@@ -62,6 +62,9 @@ class _HomeSearchState extends State<HomeSearch> {
                   Get.toNamed(RouteHelper.getHomeKategory('homeSearch'));
                 } else if (widget.from == 'detail') {
                   Get.toNamed(RouteHelper.initial);
+                } else if (widget.from == 'filterList_resto_place') {
+                  Get.toNamed(
+                      RouteHelper.getHomeListPlacePage(widget.from, 'none'));
                 }
               },
               child: const Icon(Icons.keyboard_backspace_rounded)),

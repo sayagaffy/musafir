@@ -52,7 +52,7 @@ class _DetailCardState extends State<DetailCard> {
     UserStore().getUserDetail().then((value) {
       setState(() {
         latlang = value['lat'] != null
-            ? '${value['lat']},${value['long']}'
+            ? '${value['lat']},${value['lng']}'
             : locationC.latlng.toString();
       });
     });
@@ -170,6 +170,9 @@ class _DetailCardState extends State<DetailCard> {
                     Get.toNamed(RouteHelper.getHomeSearchPage('detail'));
                   } else if (widget.from == 'favorite') {
                     Get.toNamed(RouteHelper.getInitial());
+                  } else if (widget.from == 'filterList_resto_place') {
+                    Get.toNamed(RouteHelper.getHomeListPlacePage(
+                        'widget.from', 'none'));
                   }
                 },
                 // onTap: onTap,

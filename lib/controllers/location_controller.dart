@@ -1,9 +1,12 @@
-// ignore_for_file: unnecessary_brace_in_string_interps, avoid_print, unused_field, prefer_final_fields
+// ignore_for_file: unnecessary_brace_in_string_interps, avoid_print, unused_field, prefer_final_fields, prefer_typing_uninitialized_variables
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:musafir/data/firestore/geo_store.dart';
+import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/data/repository/google_repo.dart';
 import 'package:musafir/models/geocode_model.dart';
 import 'package:musafir/models/getplaces_model.dart';
@@ -29,6 +32,10 @@ class LocationController extends GetxController implements GetxService {
 
   String _address = 'none';
   String get address => _address;
+
+  int countryId = 0;
+  int provinceId = 0;
+  int cityId = 0;
 
   LatLng? _latLng;
   LatLng? get latlng => _latLng;
@@ -98,15 +105,116 @@ class LocationController extends GetxController implements GetxService {
         .then((Position position) {
       _position = position;
 
-      getGeoCodelatLng(LatLng(
-        position.latitude,
-        position.longitude,
-      ));
-
       _latLng = LatLng(position.latitude, position.longitude);
+
+      setAddress(position.latitude, position.longitude);
     }).catchError((e) {
       debugPrint(e);
     });
+  }
+
+  Future<void> getPlaceMarks() async {
+    //check address is empty or not then get latlang from firestore, if null get from geolocation and then return
+    String address = await UserStore().getUserDetail().then((val) async {
+      return val['lat'] != null
+          ? '${val['lat']},${val['lng']}'
+          : latlng.toString();
+    });
+    //process if address is not empty
+    if (address.isNotEmpty || latlng != null) {
+      var lat;
+      var lng;
+
+      final split = address.split(',');
+      final Map<int, String> values = {
+        for (int i = 0; i < split.length; i++) i: split[i]
+      };
+
+      lat = values[0];
+      lng = values[1];
+
+      setAddress(double.parse(lat), double.parse(lng));
+    } else {
+      print('error latlang null');
+    }
+  }
+
+  Future<void> setAddress(double lat, double lng) async {
+    List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+    // print(placemarks[1]);
+
+    Placemark plc = placemarks[1];
+
+    // String? name =
+    //     plc.name!.isNotEmpty || plc.name != null ? '${plc.name}, ' : '';
+    String? street =
+        plc.street!.isNotEmpty || plc.street != null ? '${plc.street}, ' : '';
+    String? subLocality = plc.subLocality!.isNotEmpty || plc.subLocality != null
+        ? '${plc.subLocality}, '
+        : '';
+    String? locality = plc.locality!.isNotEmpty || plc.locality != null
+        ? '${plc.locality}, '
+        : '';
+    String? subAdministrativeArea = plc.subAdministrativeArea!.isNotEmpty ||
+            plc.subAdministrativeArea != null
+        ? '${plc.subAdministrativeArea}, '
+        : '';
+    String? administrative =
+        plc.administrativeArea!.isNotEmpty ? '${plc.administrativeArea}, ' : '';
+    String? postalCode = plc.postalCode!.isNotEmpty || plc.postalCode != null
+        ? '${plc.postalCode}, '
+        : '';
+    String? country = plc.country!.isNotEmpty || plc.country != null
+        ? '${plc.country}, '
+        : '';
+    String? thoroughfare = plc.thoroughfare != '' || plc.thoroughfare != null
+        ? '${plc.thoroughfare}, '
+        : '';
+
+    String address = street +
+        thoroughfare +
+        subLocality +
+        postalCode +
+        locality +
+        subAdministrativeArea +
+        administrative +
+        country;
+
+    _address = address;
+    setIdPlace(
+        plc.isoCountryCode.toString(), plc.subAdministrativeArea.toString());
+  }
+
+  void setIdPlace(String isoCountry, String cityName) async {
+    //get country code province code and city code from firestore with variable from placemarks/place derail
+
+    await GeoStore().placesCountry(isoCountry).then((payload) async {
+      for (var i in payload.docs) {
+        countryId = int.parse(i.data()['id']);
+      }
+    });
+
+    await GeoStore().placesCity(cityName).then((payload) async {
+      for (var i in payload.docs) {
+        cityId = i.data()['id'];
+        provinceId = i.data()['province_id'];
+      }
+    });
+
+    // var usersUpdate = {
+    //   'country_id': countryId,
+    //   'province_id': cityId,
+    //   'city_id': provinceId
+    // };
+
+    // await UserStore().updateUserPlace(usersUpdate);
+
+    update();
+
+    // print(address);
+    // print(countryId);
+    // print(provinceId);
+    // print(cityId);
   }
 
   ///[FUNCTION GET PLACE]
@@ -130,11 +238,9 @@ class LocationController extends GetxController implements GetxService {
     if (!hasPermission) return;
     await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
         .then((Position position) {
-      _position = position;
+      position = position;
 
       _latLng = LatLng(position.latitude, position.longitude);
-
-      print(_latLng);
     }).catchError((e) {
       debugPrint(e);
     });

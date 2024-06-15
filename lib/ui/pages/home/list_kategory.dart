@@ -29,7 +29,7 @@ class _ListKategoryState extends State<ListKategory> {
     UserStore().getUserDetail().then((value) {
       setState(() {
         latlang = value['lat'] != null
-            ? '${value['lat']},${value['long']}'
+            ? '${value['lat']},${value['lng']}'
             : locationController.latlng.toString();
       });
     });
