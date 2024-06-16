@@ -95,27 +95,27 @@ class RekomendasiCard extends StatelessWidget {
                           fontSize: 12,
                         ),
                         overflow: TextOverflow.ellipsis,
-                        maxLines: !isMasjid ? 1 : 3,
+                        maxLines: !isMasjid ? 2 : 3,
                       ),
                       const SizedBox(
                         height: 10,
                       ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on_rounded,
-                            size: 16,
-                            color: kRedMain,
-                          ),
-                          // GetLocationText(
-                          //   origin: origin,
-                          //   destination: destination,
-                          // ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 1,
-                      ),
+                      // Row(
+                      //   children: [
+                      //     Icon(
+                      //       Icons.location_on_rounded,
+                      //       size: 16,
+                      //       color: kRedMain,
+                      //     ),
+                      //     GetLocationText(
+                      //       origin: origin,
+                      //       destination: destination,
+                      //     ),
+                      //   ],
+                      // ),
+                      // const SizedBox(
+                      //   height: 1,
+                      // ),
                       SizedBox(
                         child: !isMasjid
                             ? Column(
