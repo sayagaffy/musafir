@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:musafir/controllers/auth_controller.dart';
 import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
-import 'package:musafir/data/firestore/place_store.dart';
 import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
@@ -26,15 +25,14 @@ class _HomePageState extends State<HomePage> {
   String? name;
   String? address;
   String? latlang;
-  bool loadPlace = false;
-  List placesData = [];
+
   final locationC = Get.find<LocationController>();
   final homeC = Get.find<HomeController>();
 
   @override
   void initState() {
     getDataUser();
-    getPlacesData();
+
     super.initState();
   }
 
@@ -48,28 +46,6 @@ class _HomePageState extends State<HomePage> {
             : locationC.latlng.toString();
       });
     });
-  }
-
-  void getPlacesData() async {
-    await PlacesStore().placesList(100, 1211).then((payload) async {
-      for (var i in payload.docs) {
-        var destination = i.data()['lat'] + ',' + i.data()['lng'];
-        await homeC.distance(latlang.toString(), destination).then((value) {
-          Map<String, dynamic> newdata = {
-            "place_id": i.data()['place_id'],
-            'title': i.data()['title'],
-            'halal_status': i.data()['halal_status'],
-            'address': i.data()['address'],
-            'jarak': value.replaceAll('km', ''),
-          };
-          setState(() {
-            placesData.add(newdata);
-          });
-        });
-      }
-    });
-
-    loadPlace = true;
   }
 
   Widget header() {
@@ -125,7 +101,7 @@ class _HomePageState extends State<HomePage> {
               ),
               GestureDetector(
                 onTap: () async {
-                  await locationC.getPlaceMarks();
+                  await homeC.getPlaceMarks();
                 },
                 child: Icon(
                   Icons.filter,
@@ -252,67 +228,83 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget titleVerified() {
-    return placesData.isNotEmpty
-        ? Container(
-            margin: const EdgeInsets.only(
-              top: 30,
-              bottom: 20,
-            ),
-            padding: EdgeInsets.symmetric(horizontal: defaultMargin),
-            child: RekomendasiTitle(
+    return Container(
+      margin: const EdgeInsets.only(
+        top: 30,
+        bottom: 20,
+      ),
+      padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+      child: GetBuilder<HomeController>(
+        builder: (place) {
+          if (place.isLoadedlocal && place.localPlace.isNotEmpty) {
+            return RekomendasiTitle(
               title: 'Resto Verified Sekitarmu',
               onTap: () {
                 Get.toNamed(RouteHelper.getHomeListPlacePage(
                     'filterList_resto_place', 'none'));
               },
-            ),
-          )
-        : const SizedBox();
+            );
+          }
+
+          return const SizedBox();
+        },
+      ),
+    );
   }
 
   Widget verified() {
-    return placesData.isNotEmpty
-        ? Container(
-            padding: EdgeInsets.only(
-              left: defaultMargin,
-              bottom: 20,
-            ),
-            width: double.infinity,
-            child: SizedBox(
+    return Container(
+      padding: EdgeInsets.only(
+        left: defaultMargin,
+        bottom: 20,
+      ),
+      width: double.infinity,
+      child: GetBuilder<HomeController>(
+        builder: (place) {
+          if (place.isLoadedlocal && latlang != null) {
+            return SizedBox(
               height: 180,
               width: double.infinity,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                clipBehavior: Clip.none,
-                shrinkWrap: true,
-                itemCount: placesData.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final item = placesData[index];
-                  // print(item);
+              child: place.nearbyFood.isNotEmpty
+                  ? ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      clipBehavior: Clip.none,
+                      shrinkWrap: true,
+                      itemCount: place.localPlace.isNotEmpty &&
+                              place.localPlace.length > 4
+                          ? 4
+                          : place.localPlace.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final item = place.localPlace[index];
 
-                  return GestureDetector(
-                    onTap: () {
-                      homeC.placeDetail(item['place_id'].toString());
+                        return GestureDetector(
+                          onTap: () {
+                            homeC.placeDetail(item['place_id'].toString());
 
-                      Get.toNamed(RouteHelper.getHomeDetailPage(
-                        item['place_id'].toString(),
-                        item['title'],
-                        'homePage',
-                        'food',
-                      ));
-                    },
-                    child: CardRecom(
-                      name: item['title'],
-                      city: item['address'],
-                      halalStatus: item['halal_status'].toString(),
-                      destination: item['jarak'],
-                    ),
-                  );
-                },
-              ),
-            ),
-          )
-        : const SizedBox();
+                            Get.toNamed(RouteHelper.getHomeDetailPage(
+                              item['place_id'].toString(),
+                              item['title'],
+                              'homePage',
+                              'food',
+                            ));
+                          },
+                          child: CardRecom(
+                            name: item['title'],
+                            city: item['address'],
+                            halalStatus: item['halal_status'].toString(),
+                            destination: item['jarak'],
+                          ),
+                        );
+                      },
+                    )
+                  : const SizedBox(),
+            );
+          }
+
+          return const SkeletonCardRekomendasi();
+        },
+      ),
+    );
   }
 
   Widget titleRekomendasi() {
@@ -548,7 +540,7 @@ class _HomePageState extends State<HomePage> {
         builder: (place) {
           if (place.isLoadedMosque && latlang != null) {
             return SizedBox(
-              height: 206,
+              height: 180,
               width: double.infinity,
               child: place.nearbyMosque.isNotEmpty
                   ? ListView.builder(

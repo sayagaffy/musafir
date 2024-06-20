@@ -55,7 +55,9 @@ class _ListPlacesCardState extends State<ListPlacesCard> {
   }
 
   void getPlacesData() async {
-    await PlacesStore().placesList(100, 1211).then((payload) async {
+    await PlacesStore()
+        .placesList(homeController.countryId, homeController.cityId)
+        .then((payload) async {
       for (var i in payload.docs) {
         var destination = i.data()['lat'] + ',' + i.data()['lng'];
         await homeController
@@ -85,7 +87,8 @@ class _ListPlacesCardState extends State<ListPlacesCard> {
       isLoad = false;
     });
     await PlacesStore()
-        .placesListWhere(100, 1211, status)
+        .placesListWhere(
+            homeController.countryId, homeController.cityId, status)
         .then((payload) async {
       for (var i in payload.docs) {
         var destination = i.data()['lat'] + ',' + i.data()['lng'];

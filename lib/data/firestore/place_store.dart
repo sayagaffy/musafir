@@ -16,12 +16,10 @@ class PlacesStore {
         .where("city_id", isEqualTo: cityId)
         .get()
         .then(
-          (QuerySnapshot querySnapshot) => {
-            review = querySnapshot
-            // for (var element in querySnapshot.docs) { return element.data()},
-          },
+          (QuerySnapshot querySnapshot) => {review = querySnapshot},
           onError: (e) => print("Error completing: $e"),
         );
+
     return review;
   }
 

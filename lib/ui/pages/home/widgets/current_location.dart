@@ -46,9 +46,9 @@ class _CurrentLocationState extends State<CurrentLocation> {
                 'address': location.address,
                 'lat': location.latlng!.latitude.toString(),
                 'lng': location.latlng!.longitude.toString(),
-                'country_id': location.countryId,
-                'province_id': location.provinceId,
-                'city_id': location.cityId,
+                'country_id': homeC.countryId,
+                'province_id': homeC.provinceId,
+                'city_id': homeC.cityId,
               };
 
               try {

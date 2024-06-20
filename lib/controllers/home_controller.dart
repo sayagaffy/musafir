@@ -1,11 +1,14 @@
-// ignore_for_file: unused_field, prefer_final_fields, unnecessary_brace_in_string_interps, avoid_print
+// ignore_for_file: unused_field, prefer_final_fields, unnecessary_brace_in_string_interps, avoid_print, prefer_typing_uninitialized_variables
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'dart:async';
 import 'package:musafir/base/show_custom_snackbar.dart';
 import 'package:musafir/controllers/location_controller.dart';
+import 'package:musafir/data/firestore/geo_store.dart';
+import 'package:musafir/data/firestore/place_store.dart';
 import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/data/repository/google_repo.dart';
 import 'package:musafir/models/geocode_model.dart';
@@ -104,6 +107,18 @@ class HomeController extends GetxController implements GetxService {
   late String _nextPageSearchPlace;
   String get nextPageSearchPlace => _nextPageSearchPlace;
 
+  var locationC = Get.find<LocationController>();
+
+  int countryId = 0;
+  int provinceId = 0;
+  int cityId = 0;
+
+  List<dynamic> _localPlace = [].obs;
+  List<dynamic> get localPlace => _localPlace;
+
+  bool _isLoadedlocal = false;
+  bool get isLoadedlocal => _isLoadedlocal;
+
   @override
   void onInit() {
     // Get called when controller is created
@@ -164,6 +179,13 @@ class HomeController extends GetxController implements GetxService {
       print('clear _searchPlace');
     }
 
+    if (_localPlace.isNotEmpty) {
+      _localPlace.clear();
+      _isLoadedlocal = false;
+
+      print('clear _localplace');
+    }
+
     update();
   }
 
@@ -191,6 +213,7 @@ class HomeController extends GetxController implements GetxService {
     var rd = radius != null ? 'radius=${radius}&' : '';
     var pt = pagetoken != null ? 'pagetoken=${pagetoken}&' : '';
     var query = k + r + t + l + rd + pt;
+    print(query);
 
     Response response = await googleRepo.getNearbyPlace(query);
 
@@ -259,17 +282,16 @@ class HomeController extends GetxController implements GetxService {
       _addressCollection.addAll(Geocode.fromJson(response.body).results);
 
       if (type == 'setLoc') {
-        var locationC = Get.find<LocationController>();
-        await locationC.setAddress(addressCollection[0].geometry.location.lat,
-            addressCollection[0].geometry.location.lng);
+        await setAddress(addressCollection[0].geometry.location.lat,
+            addressCollection[0].geometry.location.lng, 'set');
 
         var usersUpdate = {
           'address': addressCollection[0].formattedAddress,
           'lat': addressCollection[0].geometry.location.lat.toString(),
           'lng': addressCollection[0].geometry.location.lng.toString(),
-          'country_id': locationC.countryId,
-          'province_id': locationC.provinceId,
-          'city_id': locationC.cityId,
+          'country_id': countryId,
+          'province_id': provinceId,
+          'city_id': cityId,
         };
 
         try {
@@ -317,27 +339,49 @@ class HomeController extends GetxController implements GetxService {
   }
 
   Future<void> refreshHome() async {
-    var locationController = Get.find<LocationController>();
-    String? latlang;
-    await UserStore().getUserDetail().then((val) async {
-      latlang = val['lat'] != null
+    String ltlng = await UserStore().getUserDetail().then((val) async {
+      if (locationC.latlng == null) {
+        locationC.determinePosition();
+      }
+
+      return val['lat'] != null
           ? '${val['lat']},${val['lng']}'
-          : locationController.latlng.toString();
+          : locationC.latlng.toString();
     });
 
-    await getNearbyPlace(
-      keyword: 'food',
-      rankby: 'distance',
-      type: 'restaurant',
-      location: latlang,
-    );
+    if (ltlng.isNotEmpty || locationC.latlng != null) {
+      var lat;
+      var lng;
 
-    await getNearbyPlace(
-      keyword: 'masjid',
-      rankby: 'distance',
-      type: 'mosque',
-      location: latlang,
-    );
+      final split = ltlng
+          .replaceAll(RegExp('LatLng'), '')
+          .replaceAll(RegExp(r'\(|\)'), '')
+          .split(',');
+      final Map<int, String> values = {
+        for (int i = 0; i < split.length; i++) i: split[i]
+      };
+
+      lat = values[0];
+      lng = values[1];
+
+      await getNearbyPlace(
+        keyword: 'food',
+        rankby: 'distance',
+        type: 'restaurant',
+        location: '${lat},${lng}',
+      );
+
+      await getNearbyPlace(
+        keyword: 'masjid',
+        rankby: 'distance',
+        type: 'mosque',
+        location: '${lat},${lng}',
+      );
+
+      await getPlaceMarks();
+    } else {
+      print('error latlang null');
+    }
   }
 
   ///['FUNCTION DISTANCE']
@@ -354,6 +398,136 @@ class HomeController extends GetxController implements GetxService {
     }
 
     return 'zero';
+  }
+
+  Future<void> getPlaceMarks() async {
+    //check address is empty or not then get latlang from firestore, if null get from geolocation and then return
+    String ltlng = await UserStore().getUserDetail().then((val) async {
+      if (locationC.latlng == null) {
+        locationC.determinePosition();
+      }
+
+      return val['lat'] != null
+          ? '${val['lat']},${val['lng']}'
+          : locationC.latlng.toString();
+    });
+
+    //process if address is not empty
+    if (ltlng.isNotEmpty || locationC.latlng != null) {
+      var lat;
+      var lng;
+
+      final split = ltlng
+          .replaceAll(RegExp('LatLng'), '')
+          .replaceAll(RegExp(r'\(|\)'), '')
+          .split(',');
+      final Map<int, String> values = {
+        for (int i = 0; i < split.length; i++) i: split[i]
+      };
+
+      lat = values[0];
+      lng = values[1];
+
+      setAddress(double.parse(lat), double.parse(lng), 'set');
+    } else {
+      print('error latlang null');
+    }
+  }
+
+  Future<void> setAddress(double lat, double lng, String type) async {
+    List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+
+    Placemark plc = placemarks[1];
+
+    // String? name =
+    //     plc.name!.isNotEmpty || plc.name != null ? '${plc.name}, ' : '';
+    String? street =
+        plc.street!.isNotEmpty || plc.street != null ? '${plc.street}, ' : '';
+    String? subLocality = plc.subLocality!.isNotEmpty || plc.subLocality != null
+        ? '${plc.subLocality}, '
+        : '';
+    String? locality = plc.locality!.isNotEmpty || plc.locality != null
+        ? '${plc.locality}, '
+        : '';
+    String? subAdministrativeArea = plc.subAdministrativeArea!.isNotEmpty ||
+            plc.subAdministrativeArea != null
+        ? '${plc.subAdministrativeArea}, '
+        : '';
+    String? administrative =
+        plc.administrativeArea!.isNotEmpty ? '${plc.administrativeArea}, ' : '';
+    String? postalCode = plc.postalCode!.isNotEmpty || plc.postalCode != null
+        ? '${plc.postalCode}, '
+        : '';
+    String? country = plc.country!.isNotEmpty || plc.country != null
+        ? '${plc.country}, '
+        : '';
+    // String? thoroughfare = plc.thoroughfare != '' || plc.thoroughfare != null
+    //     ? '${plc.thoroughfare}, '
+    //     : '';
+
+    String address = street +
+        subLocality +
+        postalCode +
+        locality +
+        subAdministrativeArea +
+        administrative +
+        country;
+
+    locationC.address = address;
+
+    String latlang = '${lat},${lng}';
+    if (type == 'set') {
+      setIdPlace(plc.isoCountryCode.toString(),
+          plc.subAdministrativeArea.toString(), latlang);
+    } else {
+      locationC.address = address;
+
+      locationC.forceUpdate();
+    }
+  }
+
+  void setIdPlace(String isoCountry, String cityName, String latlng) async {
+    //get country code province code and city code from firestore with variable from placemarks/place derail
+
+    await GeoStore().placesCountry(isoCountry).then((payload) async {
+      for (var i in payload.docs) {
+        countryId = int.parse(i.data()['id']);
+      }
+    });
+
+    await GeoStore().placesCity(cityName).then((payload) async {
+      for (var i in payload.docs) {
+        cityId = i.data()['id'];
+        provinceId = i.data()['province_id'];
+      }
+    });
+
+    _isLoadedlocal = false;
+
+    await PlacesStore().placesList(countryId, cityId).then((payload) async {
+      if (payload.docs.length != 0) {
+        _localPlace.clear();
+        for (var i in payload.docs) {
+          var destination = i.data()['lat'] + ',' + i.data()['lng'];
+
+          await distance(latlng, destination).then((value) {
+            Map<String, dynamic> newplace = {
+              "place_id": i.data()['place_id'],
+              'title': i.data()['title'],
+              'halal_status': i.data()['halal_status'],
+              'address': i.data()['address'],
+              'jarak': value.replaceAll('km', ''),
+            };
+
+            _localPlace.add(newplace);
+          });
+        }
+      }
+    });
+
+    _isLoadedlocal = true;
+
+    update();
   }
 }
 
