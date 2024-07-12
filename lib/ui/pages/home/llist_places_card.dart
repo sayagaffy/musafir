@@ -59,7 +59,8 @@ class _ListPlacesCardState extends State<ListPlacesCard> {
         .placesList(homeController.countryId, homeController.cityId)
         .then((payload) async {
       for (var i in payload.docs) {
-        var destination = i.data()['lat'] + ',' + i.data()['lng'];
+        var destination =
+            '${homeController.filterDot(i.data()['lat'])},${homeController.filterDot(i.data()['lng'])}';
         await homeController
             .distance(latlang.toString(), destination)
             .then((value) {

@@ -282,19 +282,20 @@ class HomeController extends GetxController implements GetxService {
       _addressCollection.addAll(Geocode.fromJson(response.body).results);
 
       if (type == 'setLoc') {
-        await setAddress(addressCollection[0].geometry.location.lat,
-            addressCollection[0].geometry.location.lng, 'set');
-
-        var usersUpdate = {
-          'address': addressCollection[0].formattedAddress,
-          'lat': addressCollection[0].geometry.location.lat.toString(),
-          'lng': addressCollection[0].geometry.location.lng.toString(),
-          'country_id': countryId,
-          'province_id': provinceId,
-          'city_id': cityId,
-        };
-
         try {
+          await setAddress(addressCollection[0].geometry.location.lat,
+              addressCollection[0].geometry.location.lng, 'set');
+          update();
+
+          var usersUpdate = {
+            'address': addressCollection[0].formattedAddress,
+            'lat': addressCollection[0].geometry.location.lat.toString(),
+            'lng': addressCollection[0].geometry.location.lng.toString(),
+            'country_id': countryId,
+            'province_id': provinceId,
+            'city_id': cityId,
+          };
+
           await UserStore().updateUserData(usersUpdate);
 
           showCustomSnackBar(
@@ -439,6 +440,8 @@ class HomeController extends GetxController implements GetxService {
 
     Placemark plc = placemarks[1];
 
+    // print(placemarks);
+
     // String? name =
     //     plc.name!.isNotEmpty || plc.name != null ? '${plc.name}, ' : '';
     String? street =
@@ -475,9 +478,11 @@ class HomeController extends GetxController implements GetxService {
 
     locationC.address = address;
 
+    // print(address);
+
     String latlang = '${lat},${lng}';
     if (type == 'set') {
-      setIdPlace(plc.isoCountryCode.toString(),
+      await setIdPlace(plc.isoCountryCode.toString(),
           plc.subAdministrativeArea.toString(), latlang);
     } else {
       locationC.address = address;
@@ -486,9 +491,22 @@ class HomeController extends GetxController implements GetxService {
     }
   }
 
-  void setIdPlace(String isoCountry, String cityName, String latlng) async {
-    //get country code province code and city code from firestore with variable from placemarks/place derail
+  String filterDot(String payload) {
+    String firstCharacterBeforeDot = payload.substring(0, payload.indexOf('.'));
+    List<String> wordAfterFirstDot = payload.split(".");
 
+    String word =
+        wordAfterFirstDot.sublist(1, wordAfterFirstDot.length).join("");
+
+    return '$firstCharacterBeforeDot.$word';
+  }
+
+  Future<void> setIdPlace(
+      String isoCountry, String cityName, String latlng) async {
+    //get country code province code and city code from firestore with variable from placemarks/place derail
+    // print(isoCountry);
+    // print(cityName);
+    // print(latlng);
     await GeoStore().placesCountry(isoCountry).then((payload) async {
       for (var i in payload.docs) {
         countryId = int.parse(i.data()['id']);
@@ -502,13 +520,16 @@ class HomeController extends GetxController implements GetxService {
       }
     });
 
+    update();
+
     _isLoadedlocal = false;
 
     await PlacesStore().placesList(countryId, cityId).then((payload) async {
       if (payload.docs.length != 0) {
         _localPlace.clear();
         for (var i in payload.docs) {
-          var destination = i.data()['lat'] + ',' + i.data()['lng'];
+          var destination =
+              '${filterDot(i.data()['lat'])},${filterDot(i.data()['lng'])}';
 
           await distance(latlng, destination).then((value) {
             Map<String, dynamic> newplace = {

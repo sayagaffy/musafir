@@ -146,7 +146,8 @@ class CardRecom extends StatelessWidget {
                                       const SizedBox(
                                         width: 10,
                                       ),
-                                      destination != 'none'
+                                      destination != 'none' &&
+                                              destination != 'ZERO_RESULTS'
                                           ? Row(
                                               children: [
                                                 Icon(
