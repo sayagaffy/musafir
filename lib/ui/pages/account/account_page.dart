@@ -1,10 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
+import 'package:musafir/controllers/auth_controller.dart';
+import 'package:musafir/data/firestore/user_store.dart';
+import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/widgets/roundedBox_title.dart';
 
-class AccountPage extends StatelessWidget {
+class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
+
+  @override
+  State<AccountPage> createState() => _AccountPageState();
+}
+
+class _AccountPageState extends State<AccountPage> {
+  String namaDepan = '';
+  String namaBelakang = '';
+  @override
+  void initState() {
+    getDataUser();
+
+    super.initState();
+  }
+
+  void getDataUser() async {
+    UserStore().getUserDetail().then((value) {
+      setState(() {
+        namaDepan = value['firstName'] ?? value['username'];
+        namaBelakang = value['lastName'];
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,28 +55,14 @@ class AccountPage extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 18),
-                                  child: Center(
-                                    child: Text(
-                                      'Profile',
-                                      style: blackTextStyle.copyWith(
-                                        fontSize: 18,
-                                        fontWeight: extraBold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                          Center(
+                            child: Text(
+                              'Profile',
+                              style: blackTextStyle.copyWith(
+                                fontSize: 18,
+                                fontWeight: extraBold,
                               ),
-                              const Icon(
-                                Icons.edit,
-                                size: 18,
-                              ),
-                            ],
+                            ),
                           ),
                           const SizedBox(
                             height: 30.5,
@@ -73,7 +85,7 @@ class AccountPage extends StatelessWidget {
                               ),
                               //ShortInfo
                               Text(
-                                'Andi Santoso',
+                                '${namaDepan!.toTitleCase()} ${namaBelakang!.toTitleCase()}',
                                 style: blackTextStyle.copyWith(
                                   fontSize: 16,
                                   fontWeight: bold,
@@ -117,9 +129,23 @@ class AccountPage extends StatelessWidget {
                             height: 18,
                           ),
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              Get.toNamed(RouteHelper.getAccountInfo());
+                            },
                             child: const RoundedBoxTitle(
-                              title: 'Privasi dan pengaturan',
+                              title: 'Info Profile',
+                              icon: Icon(
+                                Icons.manage_accounts,
+                                size: 19,
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Get.toNamed(RouteHelper.getAccountPrivaci());
+                            },
+                            child: const RoundedBoxTitle(
+                              title: 'Privasi dan Pengaturan',
                               icon: Icon(
                                 Icons.settings_outlined,
                                 size: 19,
@@ -127,7 +153,9 @@ class AccountPage extends StatelessWidget {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              Get.toNamed(RouteHelper.getAccountFaq());
+                            },
                             child: const RoundedBoxTitle(
                               title: 'FAQ',
                               icon: Icon(
@@ -157,7 +185,10 @@ class AccountPage extends StatelessWidget {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              var authC = Get.find<AuthController>();
+                              authC.logout();
+                            },
                             child: const RoundedBoxTitle(
                               title: 'Keluar',
                               icon: Icon(
@@ -178,4 +209,13 @@ class AccountPage extends StatelessWidget {
       ),
     );
   }
+}
+
+extension StringExtension on String {
+  String toCapitalized() =>
+      length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
+  String toTitleCase() => replaceAll(RegExp(' +'), ' ')
+      .split(' ')
+      .map((str) => str.toCapitalized())
+      .join(' ');
 }

@@ -66,62 +66,36 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(
-                width: 300,
-                height: 20,
-                child: FittedBox(
-                  fit: BoxFit.fitWidth,
-                  child: Row(
-                    children: [
-                      name != null
-                          ? Text(
-                              'Assalamualaikum $name',
-                              style: blackTextStyle.copyWith(
-                                fontWeight: extraBold,
-                                fontSize: 20,
-                                height: 0.7,
-                                color: kBlueColorHover,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            )
-                          : const SkeletonText(
-                              size: 20,
-                            )
-                    ],
+              Expanded(
+                child: SizedBox(
+                  height: 20,
+                  child: FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Row(
+                      children: [
+                        name != null
+                            ? Text(
+                                'Assalamualaikum $name',
+                                style: blackTextStyle.copyWith(
+                                  fontWeight: extraBold,
+                                  fontSize: 20,
+                                  height: 0.7,
+                                  color: kBlueColorHover,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              )
+                            : const SkeletonText(
+                                size: 20,
+                              )
+                      ],
+                    ),
                   ),
                 ),
               ),
-              GestureDetector(
-                onTap: () {
-                  var authC = Get.find<AuthController>();
-                  authC.logout();
-                },
-                child: Icon(
-                  Icons.settings_power_rounded,
-                  size: 20,
-                  color: kBlackColor,
-                ),
-              ),
-              GestureDetector(
-                onTap: () async {
-                  await GeoStore()
-                      .placesCity('Kota Cimahi')
-                      .then((payload) async {
-                    for (var i in payload.docs) {
-                      print(i.data()['id']);
-                      print(i.data()['province_id']);
-                    }
-                  });
-                },
-                child: Icon(
-                  Icons.filter,
-                  size: 20,
-                  color: kBlackColor,
-                ),
-              )
             ],
           ),
           Container(
+              width: double.infinity,
               margin: const EdgeInsets.only(
                 top: 5,
                 bottom: 15,
@@ -149,7 +123,7 @@ class _HomePageState extends State<HomePage> {
                           child: Row(
                             children: [
                               SizedBox(
-                                width: 180,
+                                width: 220,
                                 child: Text(
                                   ' $address',
                                   style: blackTextStyle.copyWith(

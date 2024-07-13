@@ -7,6 +7,9 @@ class TextFieldText extends StatelessWidget {
   final String hintText;
   final String label;
   final IconData icon;
+  final Color bgcolor;
+  final bool activeBg;
+  final bool readOnly;
 
   const TextFieldText({
     super.key,
@@ -14,6 +17,9 @@ class TextFieldText extends StatelessWidget {
     required this.hintText,
     required this.label,
     required this.icon,
+    this.activeBg = false,
+    this.bgcolor = const Color(0xFFF5F5F5),
+    this.readOnly = false,
   });
 
   @override
@@ -34,7 +40,7 @@ class TextFieldText extends StatelessWidget {
             margin: const EdgeInsets.only(
               top: 10,
             ),
-            padding: const EdgeInsets.only(bottom: 3),
+            padding: EdgeInsets.only(bottom: activeBg ? 0 : 3),
             height: 40,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(6.0),
@@ -49,9 +55,12 @@ class TextFieldText extends StatelessWidget {
               ],
             ),
             child: TextField(
+              readOnly: readOnly,
               textAlignVertical: TextAlignVertical.bottom,
               controller: textController,
               decoration: InputDecoration(
+                fillColor: bgcolor,
+                filled: activeBg,
                 hintText: hintText,
                 hintStyle: noColorTextStyle.copyWith(
                   fontSize: 14,
@@ -67,9 +76,9 @@ class TextFieldText extends StatelessWidget {
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(6),
-                  borderSide: const BorderSide(
+                  borderSide: BorderSide(
                     width: 1.0,
-                    color: Colors.white,
+                    color: activeBg ? bgcolor : Colors.white,
                   ),
                 ),
               ),

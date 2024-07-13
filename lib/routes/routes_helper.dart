@@ -1,6 +1,9 @@
 // ignore_for_file: unnecessary_string_interpolations
 
 import 'package:get/get.dart';
+import 'package:musafir/ui/pages/account/faq.dart';
+import 'package:musafir/ui/pages/account/info_profile.dart';
+import 'package:musafir/ui/pages/account/privasi.dart';
 import 'package:musafir/ui/pages/auth/reset_password.dart';
 import 'package:musafir/ui/pages/auth/sign_in_page.dart';
 import 'package:musafir/ui/pages/auth/sign_up_page.dart';
@@ -55,6 +58,11 @@ class RouteHelper {
   ///[FAVORITE]
   static const String favorite = "/favorite";
 
+  ///[ACCOUNT]
+  static const String accountInfo = "/accountinfo";
+  static const String accountprivaci = "/accountprivaci";
+  static const String accountFaq = "/accountfaq";
+
   ///INITIAL PARAM
 
   ///[MAIN]
@@ -94,6 +102,11 @@ class RouteHelper {
 
   ///[FAVORITE]
   static String getFavoritePage() => '$favorite';
+
+  ///[ACCOUNT]
+  static String getAccountInfo() => '$accountInfo';
+  static String getAccountPrivaci() => '$accountprivaci';
+  static String getAccountFaq() => '$accountFaq';
 
   ///[SET SCREEN AND SET PARAM]
 
@@ -234,6 +247,23 @@ class RouteHelper {
     GetPage(
       name: favorite,
       page: () => const FavoritePage(),
+      transition: Transition.fade,
+    ),
+
+    ///[ACCOUNT]
+    GetPage(
+      name: accountInfo,
+      page: () => const InfoProfile(),
+      transition: Transition.fade,
+    ),
+    GetPage(
+      name: accountprivaci,
+      page: () => const Privasi(),
+      transition: Transition.fade,
+    ),
+    GetPage(
+      name: accountFaq,
+      page: () => const Faq(),
       transition: Transition.fade,
     ),
   ];
