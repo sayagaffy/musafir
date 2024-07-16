@@ -40,4 +40,15 @@ class PlacesStore {
         );
     return review;
   }
+
+  Future checkPlaces(String placeid) async {
+    dynamic review;
+
+    return await dbPlaces.where("place_id", isEqualTo: placeid).get().then(
+      (value) {
+        return value.docs.length;
+      },
+      onError: (e) => print("Error completing: $e"),
+    );
+  }
 }

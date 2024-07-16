@@ -11,6 +11,8 @@ import 'package:musafir/ui/pages/explore/explore_pages.dart';
 import 'package:musafir/ui/pages/explore/explore_search.dart';
 import 'package:musafir/ui/pages/explore/rencana_page.dart';
 import 'package:musafir/ui/pages/favorite/favorite_page.dart';
+import 'package:musafir/ui/pages/home/add_place.dart';
+import 'package:musafir/ui/pages/home/custom.dart';
 import 'package:musafir/ui/pages/home/detail_card.dart';
 import 'package:musafir/ui/pages/home/home_page.dart';
 import 'package:musafir/ui/pages/home/home_search.dart';
@@ -49,6 +51,7 @@ class RouteHelper {
   static const String homeReview = "/home-review";
   static const String homekategory = "/home-kategory";
   static const String homePlaceList = "/home-place-list";
+  static const String addPlace = "/addplace";
 
   ///[EXPLORE]
   static const String explore = "/explore";
@@ -62,6 +65,9 @@ class RouteHelper {
   static const String accountInfo = "/accountinfo";
   static const String accountprivaci = "/accountprivaci";
   static const String accountFaq = "/accountfaq";
+
+  ///[ACCOUNT]
+  static const String custom = "/custom";
 
   ///INITIAL PARAM
 
@@ -94,6 +100,8 @@ class RouteHelper {
   static String getHomeKategory(String from) => '$homekategory?from=$from';
   static String getHomeListPlacePage(String type, String search) =>
       '$homePlaceList?type=$type&search=$search';
+  static String getaddPlace(String placeid, double lat, double lng) =>
+      '$addPlace?placeid=$placeid&lat=$lat&lng=$lng';
 
   ///[EXPLORE]
   static String getExplorePage() => '$explore';
@@ -107,6 +115,9 @@ class RouteHelper {
   static String getAccountInfo() => '$accountInfo';
   static String getAccountPrivaci() => '$accountprivaci';
   static String getAccountFaq() => '$accountFaq';
+
+  ///[CUSTOM]
+  static String getCustom() => '$custom';
 
   ///[SET SCREEN AND SET PARAM]
 
@@ -226,6 +237,22 @@ class RouteHelper {
       transition: Transition.fade,
     ),
 
+    GetPage(
+      name: addPlace,
+      page: () {
+        var placeid = Get.parameters['placeid'];
+        var lat = Get.parameters['lat'];
+        var lng = Get.parameters['lng'];
+
+        return AddPlace(
+          placeid: placeid!,
+          lat: double.parse(lat!),
+          lng: double.parse(lng!),
+        );
+      },
+      transition: Transition.fade,
+    ),
+
     ///[EXPLORE]
     GetPage(
       name: explore,
@@ -264,6 +291,13 @@ class RouteHelper {
     GetPage(
       name: accountFaq,
       page: () => const Faq(),
+      transition: Transition.fade,
+    ),
+
+    ///[CUSTTOM]
+    GetPage(
+      name: custom,
+      page: () => const DropDownCust(),
       transition: Transition.fade,
     ),
   ];

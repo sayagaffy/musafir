@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
+import 'package:musafir/data/firestore/place_store.dart';
 import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
@@ -112,6 +113,26 @@ class _DetailCardState extends State<DetailCard> {
           size: 30,
           color: kWhiteColor,
         );
+      }),
+    );
+  }
+
+  Widget addPlace() {
+    dynamic placeLeng = PlacesStore().checkPlaces(widget.pageId);
+
+    return FutureBuilder(
+      future: placeLeng,
+      builder: ((context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.data == 0) {
+            return Icon(
+              Icons.add_circle,
+              size: 30,
+              color: kWhiteColor,
+            );
+          }
+        }
+        return const SizedBox();
       }),
     );
   }
@@ -256,6 +277,16 @@ class _DetailCardState extends State<DetailCard> {
                       });
                 },
                 child: bookmark(),
+              ),
+              GestureDetector(
+                onTap: () async {
+                  Get.toNamed(RouteHelper.getaddPlace(
+                    widget.pageId,
+                    home.placeDtl.geometry.location.lat,
+                    home.placeDtl.geometry.location.lng,
+                  ));
+                },
+                child: addPlace(),
               ),
             ],
           ),

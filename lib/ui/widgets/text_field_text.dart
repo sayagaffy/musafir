@@ -10,6 +10,7 @@ class TextFieldText extends StatelessWidget {
   final Color bgcolor;
   final bool activeBg;
   final bool readOnly;
+  final bool padding;
 
   const TextFieldText({
     super.key,
@@ -20,12 +21,13 @@ class TextFieldText extends StatelessWidget {
     this.activeBg = false,
     this.bgcolor = const Color(0xFFF5F5F5),
     this.readOnly = false,
+    this.padding = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18),
+      padding: EdgeInsets.symmetric(horizontal: padding ? 18 : 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
