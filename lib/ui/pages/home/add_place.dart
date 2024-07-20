@@ -1,13 +1,18 @@
+import 'dart:async';
+
 import 'package:dropdown_search/dropdown_search.dart';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-
 import 'package:get/get.dart';
+import 'package:musafir/base/dialog_helper.dart';
+import 'package:musafir/controllers/home_controller.dart';
+import 'package:musafir/data/firestore/place_store.dart';
+import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/models/address_model.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
 import 'package:musafir/ui/widgets/text_field_text.dart';
+
+import 'package:intl/intl.dart';
 
 class AddPlace extends StatefulWidget {
   final String placeid;
@@ -25,9 +30,37 @@ class AddPlace extends StatefulWidget {
 }
 
 class _AddPlaceState extends State<AddPlace> {
+  final homeC = Get.find<HomeController>();
+  late TextEditingController nameController;
+  late TextEditingController placeidController;
+  late TextEditingController latController;
+  late TextEditingController lngController;
+  late TextEditingController subtitleController;
+  late TextEditingController phoneController;
+  late TextEditingController addressController;
+  late TextEditingController webController;
+
   String? countryId;
   int? provinceId;
   String? cityId;
+  int? halalCode;
+
+  @override
+  void initState() {
+    setState(() {
+      nameController = TextEditingController(text: homeC.placeDtl?.name);
+      placeidController = TextEditingController(text: widget.placeid);
+      latController = TextEditingController(text: widget.lat.toString());
+      lngController = TextEditingController(text: widget.lng.toString());
+      subtitleController = TextEditingController();
+      phoneController = TextEditingController();
+      addressController =
+          TextEditingController(text: homeC.placeDtl?.formattedAddress);
+      webController = TextEditingController(text: homeC.placeDtl?.website);
+    });
+
+    super.initState();
+  }
 
   Widget _customPopupItemBuilderExample2(
       BuildContext context, CountryModel item, bool isSelected) {
@@ -1585,188 +1618,350 @@ class _AddPlaceState extends State<AddPlace> {
     return [];
   }
 
+  Future getPhotos() async {
+    List photos = homeC.placeDtl?.photos != null ? homeC.placeDtl.photos : [];
+
+    List photosFilter = photos.map((item) => item.photoReference).toList();
+
+    return photosFilter;
+  }
+
+  Future<void> addplace() async {
+    int id = await PlacesStore().placesId().then((value) => value['id']);
+    List photos = await getPhotos();
+
+    var now = DateTime.now();
+    var formatter = DateFormat('dd/MM/yyyy kk:mm');
+    String formattedDate = formatter.format(now);
+
+    if (countryId == null) {
+      DialogHelper.showSnackBar(
+        'Pilih Negara Terlebih Dahulu',
+        title: 'Select Country',
+        backgroundColor: kWarningMain,
+      );
+    } else if (provinceId == null) {
+      DialogHelper.showSnackBar(
+        'Pilih Provinsi Terlebih Dahulu',
+        title: 'Select Provinsi',
+        backgroundColor: kWarningMain,
+      );
+    } else if (cityId == null) {
+      DialogHelper.showSnackBar(
+        'Pilih Kota Terlebih Dahulu',
+        title: 'Select City',
+        backgroundColor: kWarningMain,
+      );
+    } else if (halalCode == null) {
+      DialogHelper.showSnackBar(
+        'Pilih Status Halal Terlebih Dahulu',
+        title: 'Select Halal Status ',
+        backgroundColor: kWarningMain,
+      );
+    } else {
+      var placeInfo = {
+        'id': id + 1,
+        'title': nameController.text.trim(),
+        'place_id': placeidController.text.trim(),
+        'lat': latController.text.trim(),
+        'lng': lngController.text.trim(),
+        'subtitle': subtitleController.text.trim(),
+        'phone_number': phoneController.text.trim(),
+        'address': addressController.text.trim(),
+        'website': webController.text.trim(),
+        'country_id': countryId,
+        'province_id': provinceId,
+        'city_id': cityId,
+        'halal_status': halalCode,
+        'active_inactive_status': 1,
+        'created_at': formattedDate,
+        'updated_at': formattedDate,
+        'image_banner': photos.take(4),
+      };
+
+      await PlacesStore().addPlaceToInternal(placeInfo).then((value) {
+        if (value == 'SUCCESS') {
+          Timer(const Duration(seconds: 3), () {
+            Get.toNamed(RouteHelper.getHomeDetailPage(
+                widget.placeid, homeC.placeDtl?.name, 'addplace', 'food'));
+          });
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    var nameController = TextEditingController();
-
     return Scaffold(
       backgroundColor: kWhiteColor,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              Container(
-                color: kWhiteColor,
-                padding: const EdgeInsets.only(
-                  left: 18,
-                  right: 18,
-                  bottom: 14,
-                  top: 20,
-                ),
+      body: GetBuilder<HomeController>(builder: (home) {
+        return home.loading
+            ? SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 child: Column(
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                            onTap: () {
-                              Get.back();
-                            },
-                            child:
-                                const Icon(Icons.keyboard_backspace_rounded)),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Text(
-                          'Add Place',
-                          style: blackTextStyle.copyWith(
-                            fontSize: 18,
-                            fontWeight: extraBold,
+                    Container(
+                      color: kWhiteColor,
+                      padding: const EdgeInsets.only(
+                        left: 18,
+                        right: 18,
+                        bottom: 14,
+                        top: 20,
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                  onTap: () {
+                                    Get.back();
+                                  },
+                                  child: const Icon(
+                                      Icons.keyboard_backspace_rounded)),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              Text(
+                                'Add Place ',
+                                style: blackTextStyle.copyWith(
+                                  fontSize: 18,
+                                  fontWeight: extraBold,
+                                ),
+                                maxLines: 1,
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 30.5,
-                    ),
-                    Column(
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextFieldText(
-                                textController: nameController,
-                                hintText: 'Anta Store / Food / Masjid',
-                                label: 'Place Name',
-                                icon: Icons.email,
-                                activeBg: true,
-                                padding: false,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            Expanded(
-                              child: TextFieldText(
-                                textController: nameController,
-                                hintText: 'Id',
-                                label: 'Place Id',
-                                icon: Icons.email,
-                                activeBg: true,
-                                padding: false,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextFieldText(
-                                textController: nameController,
-                                hintText: 'LAT',
-                                label: 'Latitude',
-                                icon: Icons.email,
-                                activeBg: true,
-                                padding: false,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            Expanded(
-                              child: TextFieldText(
-                                textController: nameController,
-                                hintText: 'LNG',
-                                label: 'Langitude',
-                                icon: Icons.email,
-                                activeBg: true,
-                                padding: false,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextFieldText(
-                                textController: nameController,
-                                hintText:
-                                    'Ramen Restaurant / Sushi Restaurant / Pecel AyAM',
-                                label: 'Subtitle',
-                                icon: Icons.email,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            Expanded(
-                              child: TextFieldText(
-                                textController: nameController,
-                                hintText: '+81092020202',
-                                label: 'Phone Number',
-                                icon: Icons.email,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        TextFieldText(
-                          textController: nameController,
-                          hintText: '',
-                          label: 'Address',
-                          icon: Icons.email,
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: DropdownSearch<String>(
-                                popupProps: PopupProps.menu(
-                                  showSelectedItems: true,
-                                  disabledItemFn: (String s) =>
-                                      s.startsWith('I'),
-                                  showSearchBox: true,
-                                ),
-                                items: const [
-                                  "Halal Frendly",
-                                  "Halal Certificate",
-                                  "Halal",
+                          const SizedBox(
+                            height: 30.5,
+                          ),
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TextFieldText(
+                                      textController: nameController,
+                                      hintText: 'Anta Store / Food / Masjid',
+                                      label: 'Place Name',
+                                      icon: Icons.email,
+                                      padding: false,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  Expanded(
+                                    child: TextFieldText(
+                                      textController: placeidController,
+                                      hintText: 'Id',
+                                      label: 'Place Id',
+                                      icon: Icons.email,
+                                      activeBg: true,
+                                      padding: false,
+                                      readOnly: true,
+                                    ),
+                                  ),
                                 ],
-                                dropdownDecoratorProps: DropDownDecoratorProps(
-                                  dropdownSearchDecoration:
-                                      const InputDecoration(
-                                    labelText: "Halal Status",
-                                    border: OutlineInputBorder(),
-                                  ),
-                                  baseStyle: blackTextStyle.copyWith(
-                                    fontSize: 15,
-                                  ),
-                                ),
-                                onChanged: print,
                               ),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            Expanded(
-                              child: DropdownSearch<CountryModel>(
-                                asyncItems: (String? filter) => getData(filter),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TextFieldText(
+                                      textController: latController,
+                                      hintText: 'LAT',
+                                      label: 'Latitude',
+                                      icon: Icons.email,
+                                      activeBg: true,
+                                      padding: false,
+                                      readOnly: true,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  Expanded(
+                                    child: TextFieldText(
+                                      textController: lngController,
+                                      hintText: 'LNG',
+                                      label: 'Langitude',
+                                      icon: Icons.email,
+                                      activeBg: true,
+                                      padding: false,
+                                      readOnly: true,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TextFieldText(
+                                      textController: subtitleController,
+                                      hintText:
+                                          'Ramen Restaurant / Sushi Restaurant / Pecel AyAM',
+                                      label: 'Subtitle',
+                                      icon: Icons.email,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  Expanded(
+                                    child: TextFieldText(
+                                      textController: phoneController,
+                                      hintText: '+81092020202',
+                                      label: 'Phone Number',
+                                      icon: Icons.email,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              TextFieldText(
+                                textController: addressController,
+                                hintText: '',
+                                label: 'Address',
+                                icon: Icons.email,
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              TextFieldText(
+                                textController: webController,
+                                hintText: '',
+                                label: 'Website',
+                                icon: Icons.email,
+                                padding: false,
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: DropdownSearch<String>(
+                                      popupProps: PopupProps.menu(
+                                        showSelectedItems: true,
+                                        disabledItemFn: (String s) =>
+                                            s.startsWith('I'),
+                                        showSearchBox: true,
+                                      ),
+                                      items: const [
+                                        "Halal Frendly",
+                                        "Halal Certified",
+                                        "Halal",
+                                      ],
+                                      dropdownDecoratorProps:
+                                          DropDownDecoratorProps(
+                                        dropdownSearchDecoration:
+                                            const InputDecoration(
+                                          labelText: "Halal Status",
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(6.0),
+                                            ),
+                                            borderSide: BorderSide(
+                                              width: 0.6,
+                                              color: Color(0xFFD2D2D2),
+                                            ),
+                                          ),
+                                        ),
+                                        baseStyle: blackTextStyle.copyWith(
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      onChanged: (value) {
+                                        if (value == 'Halal Frendly') {
+                                          halalCode = 2;
+                                        } else if (value == 'Halal Certified') {
+                                          halalCode = 1;
+                                        } else {
+                                          halalCode = 3;
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  Expanded(
+                                    child: DropdownSearch<CountryModel>(
+                                      asyncItems: (String? filter) =>
+                                          getData(filter),
+                                      popupProps: PopupPropsMultiSelection
+                                          .modalBottomSheet(
+                                        showSelectedItems: true,
+                                        itemBuilder:
+                                            _customPopupItemBuilderExample2,
+                                        showSearchBox: false,
+                                        title: const Padding(
+                                          padding: EdgeInsets.only(
+                                            top: 20,
+                                            left: 18,
+                                            right: 18,
+                                          ),
+                                          child: Text(''),
+                                        ),
+                                        favoriteItemProps: FavoriteItemProps(
+                                          showFavoriteItems: false,
+                                          favoriteItems: (us) {
+                                            return us
+                                                .where((e) => e.name
+                                                    .contains("indonesia"))
+                                                .toList();
+                                          },
+                                        ),
+                                      ),
+                                      compareFn: (item, sItem) =>
+                                          item.id == sItem.id,
+                                      dropdownDecoratorProps:
+                                          DropDownDecoratorProps(
+                                        dropdownSearchDecoration:
+                                            const InputDecoration(
+                                          labelText: "Country",
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(6.0),
+                                            ),
+                                            borderSide: BorderSide(
+                                              width: 0.6,
+                                              color: Color(0xFFD2D2D2),
+                                            ),
+                                          ),
+                                        ),
+                                        baseStyle: blackTextStyle.copyWith(
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      onChanged: (CountryModel? j) {
+                                        setState(() {
+                                          countryId = j?.id;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              DropdownSearch<ProvinceModel>(
+                                asyncItems: (filter) => getDataProvinci(filter),
+                                compareFn: (i, s) => i.isEqual(s),
                                 popupProps:
                                     PopupPropsMultiSelection.modalBottomSheet(
                                   showSelectedItems: true,
-                                  itemBuilder: _customPopupItemBuilderExample2,
-                                  showSearchBox: false,
+                                  itemBuilder: _customPopupProvince,
+                                  showSearchBox: true,
                                   title: const Padding(
                                     padding: EdgeInsets.only(
                                       top: 20,
@@ -1775,125 +1970,99 @@ class _AddPlaceState extends State<AddPlace> {
                                     ),
                                     child: Text(''),
                                   ),
-                                  favoriteItemProps: FavoriteItemProps(
-                                    showFavoriteItems: false,
-                                    favoriteItems: (us) {
-                                      return us
-                                          .where((e) =>
-                                              e.name.contains("indonesia"))
-                                          .toList();
-                                    },
-                                  ),
                                 ),
-                                compareFn: (item, sItem) => item.id == sItem.id,
                                 dropdownDecoratorProps: DropDownDecoratorProps(
                                   dropdownSearchDecoration:
                                       const InputDecoration(
-                                    labelText: "Country",
-                                    border: OutlineInputBorder(),
+                                    labelText: "Province",
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(6.0),
+                                      ),
+                                      borderSide: BorderSide(
+                                        width: 0.6,
+                                        color: Color(0xFFD2D2D2),
+                                      ),
+                                    ),
                                   ),
                                   baseStyle: blackTextStyle.copyWith(
                                     fontSize: 15,
                                   ),
                                 ),
-                                onChanged: (CountryModel? j) {
+                                onChanged: (ProvinceModel? j) {
                                   setState(() {
-                                    countryId = j?.id;
+                                    provinceId = int.parse(j!.id);
                                   });
                                 },
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        DropdownSearch<ProvinceModel>(
-                          asyncItems: (filter) => getDataProvinci(filter),
-                          compareFn: (i, s) => i.isEqual(s),
-                          popupProps: PopupPropsMultiSelection.modalBottomSheet(
-                            showSelectedItems: true,
-                            itemBuilder: _customPopupProvince,
-                            showSearchBox: true,
-                            title: const Padding(
-                              padding: EdgeInsets.only(
-                                top: 20,
-                                left: 18,
-                                right: 18,
+                              const SizedBox(
+                                height: 10,
                               ),
-                              child: Text(''),
-                            ),
-                          ),
-                          dropdownDecoratorProps: DropDownDecoratorProps(
-                            dropdownSearchDecoration: const InputDecoration(
-                              labelText: "Province",
-                              border: OutlineInputBorder(),
-                            ),
-                            baseStyle: blackTextStyle.copyWith(
-                              fontSize: 15,
-                            ),
-                          ),
-                          onChanged: (ProvinceModel? j) {
-                            setState(() {
-                              provinceId = int.parse(j!.id);
-                            });
-                          },
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        DropdownSearch<CityModel>(
-                          asyncItems: (filter) => getDataCity(filter),
-                          compareFn: (i, s) => i.isEqual(s),
-                          popupProps: PopupPropsMultiSelection.modalBottomSheet(
-                            showSelectedItems: true,
-                            itemBuilder: _customPopupCity,
-                            showSearchBox: true,
-                            // isFilterOnline: true,
-                            title: const Padding(
-                              padding: EdgeInsets.only(
-                                top: 20,
-                                left: 18,
-                                right: 18,
-                              ),
-                              child: Text(''),
-                            ),
-                          ),
-                          dropdownDecoratorProps: DropDownDecoratorProps(
-                            dropdownSearchDecoration: const InputDecoration(
-                              labelText: "City",
-                              border: OutlineInputBorder(),
-                            ),
-                            baseStyle: blackTextStyle.copyWith(
-                              fontSize: 15,
-                            ),
-                          ),
-                          onChanged: (CityModel? j) {
-                            setState(() {
-                              cityId = j?.id.toString();
-                            });
+                              DropdownSearch<CityModel>(
+                                asyncItems: (filter) => getDataCity(filter),
+                                compareFn: (i, s) => i.isEqual(s),
+                                popupProps:
+                                    PopupPropsMultiSelection.modalBottomSheet(
+                                  showSelectedItems: true,
+                                  itemBuilder: _customPopupCity,
+                                  showSearchBox: true,
+                                  // isFilterOnline: true,
+                                  title: const Padding(
+                                    padding: EdgeInsets.only(
+                                      top: 20,
+                                      left: 18,
+                                      right: 18,
+                                    ),
+                                    child: Text(''),
+                                  ),
+                                ),
+                                dropdownDecoratorProps: DropDownDecoratorProps(
+                                  dropdownSearchDecoration:
+                                      const InputDecoration(
+                                    labelText: "City",
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(6.0),
+                                      ),
+                                      borderSide: BorderSide(
+                                        width: 0.6,
+                                        color: Color(0xFFD2D2D2),
+                                      ),
+                                    ),
+                                  ),
+                                  baseStyle: blackTextStyle.copyWith(
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                onChanged: (CityModel? j) {
+                                  setState(() {
+                                    cityId = j?.id.toString();
+                                  });
 
-                            print(countryId);
-                            print(provinceId);
-                            print(cityId);
-                          },
-                        ),
-                        const SizedBox(
-                          height: 40,
-                        ),
-                        CustomButton(
-                          title: 'Simpan Place',
-                          onPressed: () {},
-                        ),
-                      ],
+                                  print(countryId);
+                                  print(provinceId);
+                                  print(cityId);
+                                },
+                              ),
+                              const SizedBox(
+                                height: 40,
+                              ),
+                              CustomButton(
+                                title: 'Simpan Place',
+                                onPressed: () {
+                                  addplace();
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-        ),
-      ),
+              )
+            : const SizedBox();
+      }),
     );
   }
 }

@@ -11,6 +11,7 @@ class TextFieldText extends StatelessWidget {
   final bool activeBg;
   final bool readOnly;
   final bool padding;
+  final bool showIcon;
 
   const TextFieldText({
     super.key,
@@ -22,6 +23,7 @@ class TextFieldText extends StatelessWidget {
     this.bgcolor = const Color(0xFFF5F5F5),
     this.readOnly = false,
     this.padding = false,
+    this.showIcon = false,
   });
 
   @override
@@ -42,11 +44,11 @@ class TextFieldText extends StatelessWidget {
             margin: const EdgeInsets.only(
               top: 10,
             ),
-            padding: EdgeInsets.only(bottom: activeBg ? 0 : 3),
+            // padding: EdgeInsets.only(bottom: activeBg ? 0 : 3),
             height: 40,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(6.0),
-              color: kWhiteColor,
+              color: activeBg ? bgcolor : kWhiteColor,
               boxShadow: [
                 BoxShadow(
                   blurRadius: 3,
@@ -56,34 +58,42 @@ class TextFieldText extends StatelessWidget {
                 ),
               ],
             ),
-            child: TextField(
-              readOnly: readOnly,
-              textAlignVertical: TextAlignVertical.bottom,
-              controller: textController,
-              decoration: InputDecoration(
-                fillColor: bgcolor,
-                filled: activeBg,
-                hintText: hintText,
-                hintStyle: noColorTextStyle.copyWith(
-                  fontSize: 14,
-                  color: kNeutral50,
-                  height: 1.4,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(6),
-                  borderSide: const BorderSide(
-                    width: 1.5,
-                    color: Color.fromARGB(255, 3, 106, 154),
+            child: Row(
+              // mainAxisAlignment: MainAxisAlignment.center,
+              // crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                showIcon ? Icon(icon) : const SizedBox(),
+                Expanded(
+                  child: TextField(
+                    readOnly: readOnly,
+                    textAlignVertical: TextAlignVertical.bottom,
+                    controller: textController,
+                    decoration: InputDecoration(
+                      isCollapsed: true,
+                      contentPadding: const EdgeInsets.only(left: 8, right: 8),
+                      hintText: hintText,
+                      hintStyle: noColorTextStyle.copyWith(
+                        fontSize: 14,
+                        color: kNeutral50,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6),
+                        borderSide: BorderSide(
+                          width: 1.5,
+                          color: kWhiteColor,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6),
+                        borderSide: BorderSide(
+                          width: 1.0,
+                          color: activeBg ? bgcolor : Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(6),
-                  borderSide: BorderSide(
-                    width: 1.0,
-                    color: activeBg ? bgcolor : Colors.white,
-                  ),
-                ),
-              ),
+              ],
             ),
           ),
         ],

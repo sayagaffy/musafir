@@ -137,6 +137,7 @@ class _SignInPage1State extends State<SignInPage1> {
                         hintText: 'contoh: abe@gmailcom',
                         icon: Icons.email,
                         label: 'Email',
+                        padding: true,
                       ),
                       const SizedBox(
                         height: 15,

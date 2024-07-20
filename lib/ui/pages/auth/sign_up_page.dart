@@ -152,6 +152,7 @@ class SignUpPage1 extends StatelessWidget {
               hintText: 'contoh: abe@gmailcom',
               icon: Icons.email,
               label: 'Email',
+              padding: true,
             ),
             const SizedBox(
               height: 10,
@@ -161,6 +162,7 @@ class SignUpPage1 extends StatelessWidget {
               hintText: 'contoh: Andi',
               icon: Icons.email,
               label: 'Nama Depan',
+              padding: true,
             ),
             const SizedBox(
               height: 10,
@@ -170,6 +172,7 @@ class SignUpPage1 extends StatelessWidget {
               hintText: 'contoh: Ginting',
               icon: Icons.email,
               label: 'Nama Belakang',
+              padding: true,
             ),
             const SizedBox(
               height: 10,
@@ -179,6 +182,7 @@ class SignUpPage1 extends StatelessWidget {
               hintText: 'contoh: 081222199912',
               icon: Icons.email,
               label: 'Nomor HP',
+              padding: true,
             ),
             const SizedBox(
               height: 10,

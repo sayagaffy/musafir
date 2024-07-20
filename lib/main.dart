@@ -31,8 +31,7 @@ class MainApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             home: const MainPage(),
             initialRoute: snapshot.data != null && snapshot.data!.emailVerified
-                ? RouteHelper.getaddPlace(
-                    'ChIJjWkS22UBMTARfGscubrO6Bg', 3.1126785, 98.5032119)
+                ? RouteHelper.getInitial()
                 : RouteHelper.getSplashPage(),
             getPages: RouteHelper.routes,
           );
@@ -50,6 +49,7 @@ class MainApp extends StatelessWidget {
   }
 }
 
+//RouteHelper.getaddPlace('ChIJUdoG4cgBMTARE4jspjaeF_8', 3.1110831, 98.5024141)
 
 // addplace?placeid=ChIJjWkS22UBMTARfGscubrO6Bg&lat=3.1126785&lng=98.5032119
 

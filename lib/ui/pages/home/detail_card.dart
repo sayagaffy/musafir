@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
@@ -45,8 +46,6 @@ class _DetailCardState extends State<DetailCard> {
   void initState() {
     super.initState();
     getData();
-
-    // WidgetsBinding.instance.addPostFrameCallback((_) => yourFunction());
   }
 
   void getData() async {
@@ -194,6 +193,8 @@ class _DetailCardState extends State<DetailCard> {
                   } else if (widget.from == 'filterList_resto_place') {
                     Get.toNamed(RouteHelper.getHomeListPlacePage(
                         'widget.from', 'none'));
+                  } else {
+                    Get.toNamed(RouteHelper.getInitial());
                   }
                 },
                 // onTap: onTap,

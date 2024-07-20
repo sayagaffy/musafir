@@ -267,7 +267,6 @@ class HomeController extends GetxController implements GetxService {
       // _geoCode.addAll(Geocode.fromJson(response.body).results);
 
       _placeDtl = PlaceDetail.fromJson(response.body).result;
-
       _loading = true;
       update();
     }
