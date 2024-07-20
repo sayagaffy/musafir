@@ -82,7 +82,36 @@ class _HomePageState extends State<HomePage> {
                               )
                             : const SkeletonText(
                                 size: 20,
-                              )
+                              ),
+                        GestureDetector(
+                          onTap: () async {
+                            print('halo');
+
+                            print(homeC.nearbyFood.length);
+                            print(homeC.localPlace.length);
+
+                            // for (var lokal in homeC.localPlace) {
+                            //   homeC.nearbyFood.removeWhere(
+                            //       (item) => item.placeId == lokal['place_id']);
+                            // }
+
+                            // print(homeC.nearbyFood.length);
+                            // print(homeC.localPlace.length);
+
+                            await homeC.testRemoveDuplicate();
+
+                            print(homeC.nearbyFood.length);
+                            print(homeC.localPlace.length);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 2),
+                            child: Icon(
+                              Icons.filter,
+                              size: 20,
+                              color: kBlackColor,
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),

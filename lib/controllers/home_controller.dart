@@ -259,6 +259,16 @@ class HomeController extends GetxController implements GetxService {
     update();
   }
 
+  Future<void> testRemoveDuplicate() async {
+    for (var lokal in localPlace) {
+      nearbyFood.removeWhere((item) => item.placeId == lokal['place_id']);
+    }
+
+    print('test duplicate');
+
+    update();
+  }
+
   ///['FUNCTION PLACE DETAIL']
   Future<void> placeDetail(String placeId) async {
     Response response = await googleRepo.getPlaceDetail(placeId);
@@ -542,6 +552,8 @@ class HomeController extends GetxController implements GetxService {
             _localPlace.add(newplace);
           });
         }
+
+        testRemoveDuplicate();
       }
     });
 
