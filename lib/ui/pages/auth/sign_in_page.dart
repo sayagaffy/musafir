@@ -78,7 +78,7 @@ class _SignInPage1State extends State<SignInPage1> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  Get.back();
+                                  Get.toNamed(RouteHelper.getSplashPage());
                                 },
                                 child: Icon(
                                   Icons.west_rounded,

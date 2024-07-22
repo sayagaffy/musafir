@@ -40,9 +40,9 @@ class _AddPlaceState extends State<AddPlace> {
   late TextEditingController addressController;
   late TextEditingController webController;
 
-  String? countryId;
+  int? countryId;
   int? provinceId;
-  String? cityId;
+  int? cityId;
   int? halalCode;
 
   @override
@@ -228,8 +228,9 @@ class _AddPlaceState extends State<AddPlace> {
       {"id": "141", "name": "Yamanashi", "country_id": "107"},
     ];
 
-    List provinceFilter =
-        province.where((item) => item['country_id'] == countryId).toList();
+    List provinceFilter = province
+        .where((item) => item['country_id'] == countryId.toString())
+        .toList();
 
     if (province.isNotEmpty) {
       return ProvinceModel.fromJsonList(provinceFilter);
@@ -1679,8 +1680,9 @@ class _AddPlaceState extends State<AddPlace> {
         'image_banner': photos.take(4),
       };
 
-      await PlacesStore().addPlaceToInternal(placeInfo).then((value) {
+      await PlacesStore().addPlaceToInternal(placeInfo).then((value) async {
         if (value == 'SUCCESS') {
+          await homeC.getPlaceMarks();
           Timer(const Duration(seconds: 3), () {
             Get.toNamed(RouteHelper.getHomeDetailPage(
                 widget.placeid, homeC.placeDtl?.name, 'addplace', 'food'));
@@ -1944,7 +1946,7 @@ class _AddPlaceState extends State<AddPlace> {
                                       ),
                                       onChanged: (CountryModel? j) {
                                         setState(() {
-                                          countryId = j?.id;
+                                          countryId = int.parse(j!.id);
                                         });
                                       },
                                     ),
@@ -2036,7 +2038,7 @@ class _AddPlaceState extends State<AddPlace> {
                                 ),
                                 onChanged: (CityModel? j) {
                                   setState(() {
-                                    cityId = j?.id.toString();
+                                    cityId = j?.id;
                                   });
 
                                   print(countryId);

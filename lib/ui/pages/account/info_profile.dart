@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/base/dialog_helper.dart';
 import 'package:musafir/data/firestore/user_store.dart';
+import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
 import 'package:musafir/ui/widgets/text_field_text.dart';
@@ -120,7 +121,7 @@ class _InfoProfileState extends State<InfoProfile> {
                       children: [
                         GestureDetector(
                             onTap: () {
-                              Get.back();
+                              Get.toNamed(RouteHelper.getInitial());
                             },
                             child:
                                 const Icon(Icons.keyboard_backspace_rounded)),

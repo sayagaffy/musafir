@@ -387,8 +387,6 @@ class HomeController extends GetxController implements GetxService {
         type: 'mosque',
         location: '${lat},${lng}',
       );
-
-      await getPlaceMarks();
     } else {
       print('error latlang null');
     }
@@ -513,9 +511,10 @@ class HomeController extends GetxController implements GetxService {
   Future<void> setIdPlace(
       String isoCountry, String cityName, String latlng) async {
     //get country code province code and city code from firestore with variable from placemarks/place derail
-    // print(isoCountry);
-    // print(cityName);
-    // print(latlng);
+    print(isoCountry);
+    print(cityName);
+    print(latlng);
+
     await GeoStore().placesCountry(isoCountry).then((payload) async {
       for (var i in payload.docs) {
         countryId = int.parse(i.data()['id']);
@@ -523,17 +522,32 @@ class HomeController extends GetxController implements GetxService {
     });
 
     await GeoStore().placesCity(cityName).then((payload) async {
-      for (var i in payload.docs) {
-        cityId = i.data()['id'];
-        provinceId = i.data()['province_id'];
+      if (payload.docs.length != 0) {
+        for (var i in payload.docs) {
+          cityId = i.data()['id'];
+          provinceId = i.data()['province_id'];
+        }
+      } else {
+        cityId = 0;
+        provinceId = 0;
       }
     });
 
     update();
 
+    print(cityId);
+    print(provinceId);
+    print(countryId);
+
+    print(localPlace);
+
     _isLoadedlocal = false;
 
     await PlacesStore().placesList(countryId, cityId).then((payload) async {
+      print(countryId);
+      print('testTrigger HAHAHAH');
+      print(cityId);
+
       if (payload.docs.length != 0) {
         _localPlace.clear();
         for (var i in payload.docs) {
@@ -554,7 +568,12 @@ class HomeController extends GetxController implements GetxService {
         }
 
         testRemoveDuplicate();
+      } else {
+        _localPlace.clear();
       }
+      print(payload.docs.length);
+
+      update();
     });
 
     _isLoadedlocal = true;

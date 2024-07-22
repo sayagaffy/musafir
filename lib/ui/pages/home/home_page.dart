@@ -31,6 +31,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     getDataUser();
+    homeC.getPlaceMarks();
 
     super.initState();
   }
@@ -83,35 +84,35 @@ class _HomePageState extends State<HomePage> {
                             : const SkeletonText(
                                 size: 20,
                               ),
-                        GestureDetector(
-                          onTap: () async {
-                            print('halo');
+                        // GestureDetector(
+                        //   onTap: () async {
+                        //     print('halo');
 
-                            print(homeC.nearbyFood.length);
-                            print(homeC.localPlace.length);
+                        //     print(homeC.nearbyFood.length);
+                        //     print(homeC.localPlace.length);
 
-                            // for (var lokal in homeC.localPlace) {
-                            //   homeC.nearbyFood.removeWhere(
-                            //       (item) => item.placeId == lokal['place_id']);
-                            // }
+                        //     // for (var lokal in homeC.localPlace) {
+                        //     //   homeC.nearbyFood.removeWhere(
+                        //     //       (item) => item.placeId == lokal['place_id']);
+                        //     // }
 
-                            // print(homeC.nearbyFood.length);
-                            // print(homeC.localPlace.length);
+                        //     // print(homeC.nearbyFood.length);
+                        //     // print(homeC.localPlace.length);
 
-                            await homeC.testRemoveDuplicate();
+                        //     await homeC.testRemoveDuplicate();
 
-                            print(homeC.nearbyFood.length);
-                            print(homeC.localPlace.length);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 2),
-                            child: Icon(
-                              Icons.filter,
-                              size: 20,
-                              color: kBlackColor,
-                            ),
-                          ),
-                        )
+                        //     print(homeC.nearbyFood.length);
+                        //     print(homeC.localPlace.length);
+                        //   },
+                        //   child: Padding(
+                        //     padding: const EdgeInsets.only(left: 2),
+                        //     child: Icon(
+                        //       Icons.filter,
+                        //       size: 20,
+                        //       color: kBlackColor,
+                        //     ),
+                        //   ),
+                        // )
                       ],
                     ),
                   ),
@@ -237,41 +238,43 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget titleVerified() {
-    return Container(
-      margin: const EdgeInsets.only(
-        top: 30,
-        bottom: 20,
-      ),
-      padding: EdgeInsets.symmetric(horizontal: defaultMargin),
-      child: GetBuilder<HomeController>(
-        builder: (place) {
-          if (place.isLoadedlocal && place.localPlace.isNotEmpty) {
-            return RekomendasiTitle(
-              title: 'Resto Verified Sekitarmu',
-              onTap: () {
-                Get.toNamed(RouteHelper.getHomeListPlacePage(
-                    'filterList_resto_place', 'none'));
-              },
-            );
-          }
+    return homeC.localPlace.isNotEmpty
+        ? Container(
+            margin: const EdgeInsets.only(
+              top: 30,
+              bottom: 20,
+            ),
+            padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+            child: GetBuilder<HomeController>(
+              builder: (place) {
+                if (place.isLoadedlocal && place.localPlace.isNotEmpty) {
+                  return RekomendasiTitle(
+                    title: 'Resto Verified Sekitarmu',
+                    onTap: () {
+                      Get.toNamed(RouteHelper.getHomeListPlacePage(
+                          'filterList_resto_place', 'none'));
+                    },
+                  );
+                }
 
-          return const SizedBox();
-        },
-      ),
-    );
+                return const SizedBox();
+              },
+            ),
+          )
+        : const SizedBox();
   }
 
   Widget verified() {
-    return Container(
-      padding: EdgeInsets.only(
-        left: defaultMargin,
-        bottom: 20,
-      ),
-      width: double.infinity,
-      child: GetBuilder<HomeController>(
-        builder: (place) {
-          if (place.isLoadedlocal && latlang != null) {
-            return SizedBox(
+    return GetBuilder<HomeController>(
+      builder: (place) {
+        if (place.localPlace.isNotEmpty) {
+          return Container(
+            padding: EdgeInsets.only(
+              left: defaultMargin,
+              bottom: 20,
+            ),
+            width: double.infinity,
+            child: SizedBox(
               height: 180,
               width: double.infinity,
               child: place.nearbyFood.isNotEmpty
@@ -307,12 +310,12 @@ class _HomePageState extends State<HomePage> {
                       },
                     )
                   : const SizedBox(),
-            );
-          }
+            ),
+          );
+        }
 
-          return const SkeletonCardRekomendasi();
-        },
-      ),
+        return const SizedBox();
+      },
     );
   }
 

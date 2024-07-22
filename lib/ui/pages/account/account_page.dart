@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/controllers/auth_controller.dart';
+import 'package:musafir/controllers/main_page_controller.dart';
 import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
@@ -85,7 +86,7 @@ class _AccountPageState extends State<AccountPage> {
                               ),
                               //ShortInfo
                               Text(
-                                '${namaDepan!.toTitleCase()} ${namaBelakang!.toTitleCase()}',
+                                '${namaDepan.toTitleCase()} ${namaBelakang.toTitleCase()}',
                                 style: blackTextStyle.copyWith(
                                   fontSize: 16,
                                   fontWeight: bold,
@@ -187,6 +188,8 @@ class _AccountPageState extends State<AccountPage> {
                           GestureDetector(
                             onTap: () {
                               var authC = Get.find<AuthController>();
+                              var mainPageC = Get.find<MainPageController>();
+                              mainPageC.menuTabController.value = 0;
                               authC.logout();
                             },
                             child: const RoundedBoxTitle(

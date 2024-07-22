@@ -46,8 +46,6 @@ class PlacesStore {
   }
 
   Future checkPlaces(String placeid) async {
-    dynamic review;
-
     return await dbPlaces.where("place_id", isEqualTo: placeid).get().then(
       (value) {
         return value.docs.length;

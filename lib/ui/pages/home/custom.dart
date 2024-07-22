@@ -3,7 +3,6 @@
 import 'package:dio/dio.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:musafir/models/address_model.dart';
 
 class DropDownCust extends StatefulWidget {
@@ -207,7 +206,7 @@ class _DropDownCustState extends State<DropDownCust> {
                               child: Row(
                                 children: [
                                   Text(
-                                    "${item.name}",
+                                    item.name,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(color: Colors.indigo),
                                   ),
@@ -568,7 +567,7 @@ class _DropDownCustState extends State<DropDownCust> {
                                   },
                                 )),
                       subtitle: item.subLevel.isNotEmpty && item.isExpanded
-                          ? Container(
+                          ? SizedBox(
                               height: item.subLevel.length * 50,
                               child: ListView(
                                 children: item.subLevel
@@ -614,16 +613,14 @@ class _DropDownCustState extends State<DropDownCust> {
       children: selectedItems.map((e) {
         return Padding(
           padding: const EdgeInsets.all(4.0),
-          child: Container(
-            child: ListTile(
-              contentPadding: EdgeInsets.all(0),
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(e.avatar),
-              ),
-              title: Text(e.name),
-              subtitle: Text(
-                e.createdAt.toString(),
-              ),
+          child: ListTile(
+            contentPadding: EdgeInsets.all(0),
+            leading: CircleAvatar(
+              backgroundImage: NetworkImage(e.avatar),
+            ),
+            title: Text(e.name),
+            subtitle: Text(
+              e.createdAt.toString(),
             ),
           ),
         );
