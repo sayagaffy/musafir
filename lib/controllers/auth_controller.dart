@@ -152,6 +152,11 @@ class AuthController extends GetxController implements GetxService {
           );
         }
 
+        var homeC = Get.find<HomeController>();
+        if (homeC.nearbyFood.isEmpty) {
+          homeC.refreshHome();
+        }
+
         ///[turn off loading indicator]
         Get.back(closeOverlays: true);
         Get.offNamed(RouteHelper.getInitial());
