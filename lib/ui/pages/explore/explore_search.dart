@@ -148,6 +148,9 @@ class _ExploreSearchState extends State<ExploreSearch> {
                               place.getPlaces[index].placeId,
                             );
 
+                            exploreController.getGeoCodeAddress(
+                                place.getPlaces[index].description);
+
                             Get.offNamed(RouteHelper.getRencanaPage());
                           },
                           location: place.getPlaces[index].description,

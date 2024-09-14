@@ -2041,9 +2041,9 @@ class _AddPlaceState extends State<AddPlace> {
                                     cityId = j?.id;
                                   });
 
-                                  print(countryId);
-                                  print(provinceId);
-                                  print(cityId);
+                                  // print(countryId);
+                                  // print(provinceId);
+                                  // print(cityId);
                                 },
                               ),
                               const SizedBox(

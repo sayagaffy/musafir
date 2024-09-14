@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:musafir/base/dialog_helper.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
+import 'package:musafir/controllers/explore_controller.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 
@@ -18,6 +19,7 @@ class UserStore {
       FirebaseFirestore.instance.collection('bookmark');
   final CollectionReference dbExplore =
       FirebaseFirestore.instance.collection('explore');
+  final expC = Get.find<ExploreController>();
 
   Future createUser({
     String? username,
@@ -246,76 +248,105 @@ class UserStore {
   }
 
   Future explorePlan(
-      String placeId, String address, String startTime, String endTime) async {
-    final collection = dbExplore.doc(auth.currentUser!.email);
-    final docSnap = await collection.get();
+      String placeId,
+      String address,
+      String startTime,
+      String endTime,
+      String namePlan,
+      List resto,
+      List mosque,
+      double lat,
+      double lng) async {
     Map<String, dynamic> payload = {
       "place_id": placeId,
       'place_name': address,
       'start_time': startTime,
       'end_time': endTime,
+      'name_plan': namePlan,
+      'resto': resto,
+      'mosque': mosque,
+      'lat': lat,
+      'lng': lng,
       'creatAt': DateTime.now(),
+      'email': auth.currentUser!.email,
     };
-    return await collection
-        .get()
-        .then((DocumentSnapshot documentSnapshot) async {
-      if (documentSnapshot.exists) {
-        List cart = docSnap.get('plan');
-        List item = cart
-            .where((element) => element['place_id'].contains(placeId))
-            .toList();
-        if (item.isEmpty) {
-          ///[Update bookmark]
-          dbExplore.doc(auth.currentUser!.email).update({
-            'plan': FieldValue.arrayUnion([payload]),
-          }).then((value) {
-            DialogHelper.hideLoading();
-            DialogHelper.showSnackBar(
-              "Berhasil Membuat Rencana Perjalanan dan add event new di google kalender anda",
-              title: "Berhasil",
-              backgroundColor: kSuccessMain,
-            );
-            Get.toNamed(RouteHelper.getInitial());
-          }).catchError((error) {
-            DialogHelper.hideLoading();
-            DialogHelper.showErroDialog(description: error.toString());
-          });
-        }
-      } else {
-        ///[Create if colection not ready yet]
-        dbExplore.doc(auth.currentUser!.email).set({
-          'plan': FieldValue.arrayUnion([payload]),
-        }).then((value) {
-          DialogHelper.hideLoading();
-          DialogHelper.showSnackBar(
-            "Berhasil Membuat Rencana Perjalanan dan add event new di google kalender anda",
-            title: "Berhasil",
-            backgroundColor: kSuccessMain,
-          );
-          Get.toNamed(RouteHelper.getExplorePage());
-        }).catchError((error) {
-          DialogHelper.hideLoading();
-          DialogHelper.showErroDialog(description: error.toString());
-        });
-      }
+
+    dbExplore.doc().set(payload).then((value) {
+      DialogHelper.hideLoading();
+      DialogHelper.showSnackBar(
+        "Berhasil Membuat Rencana Perjalanan",
+        title: "Berhasil",
+        backgroundColor: kSuccessMain,
+      );
+
+      expC.clearAll();
+      Get.offNamed(RouteHelper.getInitial());
+    }).catchError((error) {
+      DialogHelper.hideLoading();
+      DialogHelper.showErroDialog(description: error.toString());
+    });
+  }
+
+  Future explorePlanUpdates(
+      String id,
+      String placeId,
+      String address,
+      String startTime,
+      String endTime,
+      String namePlan,
+      List resto,
+      List mosque,
+      double lat,
+      double lng) async {
+    Map<String, dynamic> payload = {
+      "place_id": placeId,
+      'place_name': address,
+      'start_time': startTime,
+      'end_time': endTime,
+      'name_plan': namePlan,
+      'resto': resto,
+      'mosque': mosque,
+      'lat': lat,
+      'lng': lng,
+      'creatAt': DateTime.now(),
+      'email': auth.currentUser!.email,
+    };
+
+    dbExplore.doc(id).update(payload).then((value) {
+      DialogHelper.hideLoading();
+      DialogHelper.showSnackBar(
+        "Berhasil Update Rencana Perjalanan",
+        title: "Berhasil",
+        backgroundColor: kSuccessMain,
+      );
+      Get.offNamed(RouteHelper.getInitial());
+    }).catchError((error) {
+      DialogHelper.hideLoading();
+      DialogHelper.showErroDialog(description: error.toString());
+    });
+  }
+
+  Future exploreDelete(String id) async {
+    dbExplore.doc(id).delete().then((value) {
+      DialogHelper.hideLoading();
+      DialogHelper.showSnackBar(
+        "Berhasil Menghapus Rencana Perjalanan",
+        title: "Berhasil",
+        backgroundColor: kSuccessMain,
+      );
+    }).catchError((error) {
+      DialogHelper.hideLoading();
+      DialogHelper.showErroDialog(description: error.toString());
     });
   }
 
   Future exploreList() async {
-    return await dbExplore
-        .doc(auth.currentUser!.email)
+    dynamic explorePlan;
+    await dbExplore
+        .where("email", isEqualTo: auth.currentUser!.email)
         .get()
-        .then((DocumentSnapshot documentSnapshot) {
-      if (documentSnapshot.exists) {
-        Map<String, dynamic> data =
-            documentSnapshot.data() as Map<String, dynamic>;
-
-        return data;
-      } else {
-        // ignore: avoid_print
-        print('Document does not exist on the database');
-        return null;
-      }
-    });
+        .then((QuerySnapshot querySnapshot) => {explorePlan = querySnapshot},
+            onError: (e) => print("Error completing: $e"));
+    return explorePlan;
   }
 }

@@ -57,6 +57,7 @@ dependencies:
   flutter_launcher_icons: "^0.13.1"
   dropdown_search: ^5.0.6
   dio: ^5.5.0+1
+  map_launcher: ^3.5.0
 
 
 

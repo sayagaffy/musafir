@@ -29,7 +29,7 @@ class _GetLocationTextState extends State<GetLocationText> {
       var homeC = Get.find<HomeController>();
       // ignore: prefer_typing_uninitialized_variables
       var des;
-      print(widget.origin);
+      // print(widget.origin);
 
       await homeC.distance(widget.origin, widget.destination).then((value) {
         des = value;

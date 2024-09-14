@@ -657,8 +657,7 @@ class _DropDownCustState extends State<DropDownCust> {
     );
 
     final data = response.data;
-    print(response.data);
-    print('HAHAHAH');
+
     if (data != null) {
       return UserMode.fromJsonList(data);
     }

@@ -237,7 +237,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget titleVerified() {
+  Widget titleVerified1() {
     return homeC.localPlace.isNotEmpty
         ? Container(
             margin: const EdgeInsets.only(
@@ -247,7 +247,7 @@ class _HomePageState extends State<HomePage> {
             padding: EdgeInsets.symmetric(horizontal: defaultMargin),
             child: GetBuilder<HomeController>(
               builder: (place) {
-                if (place.isLoadedlocal && place.localPlace.isNotEmpty) {
+                if (place.localPlace.isNotEmpty) {
                   return RekomendasiTitle(
                     title: 'Resto Verified Sekitarmu',
                     onTap: () {
@@ -262,6 +262,39 @@ class _HomePageState extends State<HomePage> {
             ),
           )
         : const SizedBox();
+  }
+
+  Widget titleVerified() {
+    return GetBuilder<HomeController>(
+      builder: (place) {
+        if (place.localPlace.isNotEmpty) {
+          return Container(
+            margin: const EdgeInsets.only(
+              top: 30,
+              bottom: 20,
+            ),
+            padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+            child: GetBuilder<HomeController>(
+              builder: (place) {
+                if (place.localPlace.isNotEmpty) {
+                  return RekomendasiTitle(
+                    title: 'Resto Verified Sekitarmu',
+                    onTap: () {
+                      Get.toNamed(RouteHelper.getHomeListPlacePage(
+                          'filterList_resto_place', 'none'));
+                    },
+                  );
+                }
+
+                return const SizedBox();
+              },
+            ),
+          );
+        }
+
+        return const SizedBox();
+      },
+    );
   }
 
   Widget verified() {

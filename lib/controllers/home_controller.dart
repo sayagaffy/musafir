@@ -213,7 +213,7 @@ class HomeController extends GetxController implements GetxService {
     var rd = radius != null ? 'radius=${radius}&' : '';
     var pt = pagetoken != null ? 'pagetoken=${pagetoken}&' : '';
     var query = k + r + t + l + rd + pt;
-    print(query);
+    // print(query);
 
     Response response = await googleRepo.getNearbyPlace(query);
 
@@ -224,7 +224,7 @@ class HomeController extends GetxController implements GetxService {
         _nextPageTokenFood = response.body['next_page_token'] ?? 'none';
 
         _isLoadedFood = true;
-        print('resto');
+        // print('resto');
       }
 
       if (type == 'mosque') {
@@ -232,7 +232,7 @@ class HomeController extends GetxController implements GetxService {
         _nearbyMosque.addAll(NearbyPlace.fromJson(response.body).results);
         _nextPageTokenMosque = response.body['next_page_token'] ?? 'none';
         _isLoadedMosque = true;
-        print('mosque');
+        // print('mosque');
       }
 
       if (type == 'food') {
@@ -240,7 +240,7 @@ class HomeController extends GetxController implements GetxService {
         _nearbyFoodKategory.addAll(NearbyPlace.fromJson(response.body).results);
         _nextPageTokenFoodKategory = response.body['next_page_token'] ?? 'none';
         _isLoadedFoodKategory = true;
-        print('food');
+        // print('food');
       }
 
       update();
@@ -264,7 +264,7 @@ class HomeController extends GetxController implements GetxService {
       nearbyFood.removeWhere((item) => item.placeId == lokal['place_id']);
     }
 
-    print('test duplicate');
+    // print('test duplicate');
 
     update();
   }
@@ -535,18 +535,18 @@ class HomeController extends GetxController implements GetxService {
 
     update();
 
-    print(cityId);
-    print(provinceId);
-    print(countryId);
+    // print(cityId);
+    // print(provinceId);
+    // print(countryId);
 
-    print(localPlace);
+    // print(localPlace);
 
     _isLoadedlocal = false;
 
     await PlacesStore().placesList(countryId, cityId).then((payload) async {
-      print(countryId);
-      print('testTrigger HAHAHAH');
-      print(cityId);
+      // print(countryId);
+      // print('testTrigger HAHAHAH');
+      // print(cityId);
 
       if (payload.docs.length != 0) {
         _localPlace.clear();

@@ -110,9 +110,8 @@ Widget listDataSearch() {
                       //   'placeId': place.getPlaces[index].placeId,
                       // });
                       exploreController.setTujuan(
-                        place.getPlaces[index].description,
-                        place.getPlaces[index].placeId,
-                      );
+                          place.getPlaces[index].description,
+                          place.getPlaces[index].placeId);
 
                       Get.offNamed(RouteHelper.getRencanaPage());
                     },

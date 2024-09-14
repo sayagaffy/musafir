@@ -28,9 +28,8 @@ class _SignInPage1State extends State<SignInPage1> {
     super.initState();
   }
 
-  var emailController =
-      TextEditingController(text: 'developer.adhikari.1@gmail.com');
-  var passwordController = TextEditingController(text: 'qwerty');
+  var emailController = TextEditingController();
+  var passwordController = TextEditingController();
 
   // ignore: no_leading_underscores_for_local_identifiers
   void _login(AuthController _authController, context) {

@@ -136,7 +136,7 @@ class _ListCardState extends State<ListCard> {
       );
     }
 
-    print(value);
+    // print(value);
   }
 
   List<String> ulasan = [

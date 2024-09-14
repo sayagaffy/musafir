@@ -10,6 +10,9 @@ import 'package:musafir/ui/pages/auth/sign_up_page.dart';
 import 'package:musafir/ui/pages/explore/explore_pages.dart';
 import 'package:musafir/ui/pages/explore/explore_search.dart';
 import 'package:musafir/ui/pages/explore/rencana_page.dart';
+import 'package:musafir/ui/pages/explore/rencana_page_edit.dart';
+import 'package:musafir/ui/pages/explore/search_place.dart';
+import 'package:musafir/ui/pages/explore/search_place2.dart';
 import 'package:musafir/ui/pages/favorite/favorite_page.dart';
 import 'package:musafir/ui/pages/home/add_place.dart';
 import 'package:musafir/ui/pages/home/custom.dart';
@@ -56,7 +59,10 @@ class RouteHelper {
   ///[EXPLORE]
   static const String explore = "/explore";
   static const String rencana = "/explore-rencana";
+  static const String rencanaEdit = "/explore-rencana-edit";
   static const String exploreSearch = "/explore-search";
+  static const String searchPlace = "/explore-search-place";
+  static const String searchPlace2 = "/explore-search-place2";
 
   ///[FAVORITE]
   static const String favorite = "/favorite";
@@ -106,7 +112,11 @@ class RouteHelper {
   ///[EXPLORE]
   static String getExplorePage() => '$explore';
   static String getRencanaPage() => '$rencana';
+  static String getRencanaPageEdit() => '$rencanaEdit';
   static String getExploreSearch() => '$exploreSearch';
+  static String getSearchPlaceExplore(String type) => '$searchPlace?type=$type';
+  static String getSearchPlaceExplore2(String type) =>
+      '$searchPlace2?type=$type';
 
   ///[FAVORITE]
   static String getFavoritePage() => '$favorite';
@@ -266,8 +276,32 @@ class RouteHelper {
     ),
 
     GetPage(
+      name: rencanaEdit,
+      page: () => const RencanaPageEdit(),
+      transition: Transition.rightToLeft,
+    ),
+
+    GetPage(
       name: exploreSearch,
       page: () => const ExploreSearch(),
+    ),
+
+    GetPage(
+      name: searchPlace,
+      page: () {
+        var type = Get.parameters['type'];
+        return SearchPlace(type: type!);
+      },
+      transition: Transition.fade,
+    ),
+
+    GetPage(
+      name: searchPlace2,
+      page: () {
+        var type = Get.parameters['type'];
+        return SearchPlace2(type: type!);
+      },
+      transition: Transition.fade,
     ),
 
     ///[FAVORITE]

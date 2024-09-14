@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:musafir/controllers/explore_controller.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 // ignore: depend_on_referenced_packages
@@ -23,6 +25,7 @@ class TextfieldDatetimePick extends StatefulWidget {
 class _TextfieldDatetimePickState extends State<TextfieldDatetimePick> {
   TextEditingController? textController;
   TextEditingController? stringText;
+  TextEditingController? startDt;
   @override
   void initState() {
     super.initState();
@@ -75,11 +78,16 @@ class _TextfieldDatetimePickState extends State<TextfieldDatetimePick> {
   }
 
   Future<void> _selectDate() async {
+    var exploreC = Get.find<ExploreController>();
     // ignore: no_leading_underscores_for_local_identifiers
     DateTime? _picked = await showOmniDateTimePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
+      initialDate: exploreC.startDtTime.text.isNotEmpty
+          ? DateFormat("dd/MM/yyyy").parse(exploreC.startDtTime.text)
+          : DateTime.now(),
+      firstDate: exploreC.startDtTime.text.isNotEmpty
+          ? DateFormat("dd/MM/yyyy").parse(exploreC.startDtTime.text)
+          : DateTime.now(),
       lastDate: DateTime.now().add(
         const Duration(days: 3652),
       ),
@@ -112,11 +120,21 @@ class _TextfieldDatetimePickState extends State<TextfieldDatetimePick> {
     );
 
     if (_picked != null) {
-      String formattedDate = DateFormat('dd-MMMM-yyyy HH:MM').format(_picked);
+      String formattedDate = DateFormat('dd/MM/yyyy HH:MM').format(_picked);
       setState(() {
         textController!.text = formattedDate;
         stringText!.text = _picked.toString();
       });
+    }
+  }
+}
+
+extension DateFormatTryParse on DateFormat {
+  DateTime? tryParse(String inputString, [bool utc = false]) {
+    try {
+      return parse(inputString, utc);
+    } on FormatException {
+      return null;
     }
   }
 }

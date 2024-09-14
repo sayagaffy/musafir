@@ -146,9 +146,9 @@ class _AccountPageState extends State<AccountPage> {
                               Get.toNamed(RouteHelper.getAccountPrivaci());
                             },
                             child: const RoundedBoxTitle(
-                              title: 'Privasi dan Pengaturan',
+                              title: 'Privasi',
                               icon: Icon(
-                                Icons.settings_outlined,
+                                Icons.policy,
                                 size: 19,
                               ),
                             ),

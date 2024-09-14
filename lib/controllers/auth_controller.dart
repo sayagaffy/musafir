@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:musafir/base/dialog_helper.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
 import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/data/firestore/user_store.dart';
@@ -28,6 +29,9 @@ class AuthController extends GetxController implements GetxService {
   // ignore: prefer_final_fields
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+
+  String? _tokenGoogle;
+  String? get tokenGoogle => _tokenGoogle;
 
   void showLoading(context) {
     showDialog(
@@ -93,9 +97,35 @@ class AuthController extends GetxController implements GetxService {
     }
   }
 
+  void checkUserSignin() async {
+    final user = auth.currentUser;
+
+    // for (final providerProfile in user!.providerData) {
+    //   // ID of the provider (google.com, apple.com, etc.)
+
+    //   print(providerProfile.providerId);
+    //   print(providerProfile.displayName);
+    //   print(providerProfile.email);
+    // }
+
+    // print(auth.currentUser);
+
+    var contain = user?.providerData.where((e) => e.providerId == "google.com");
+
+    if (contain!.isNotEmpty) {
+      Get.offNamed(RouteHelper.getRencanaPage());
+    } else {
+      DialogHelper.showSnackBar(
+        'Kamu harus masuk dengan google sign in terlebih dahulu sebelum memakai fitur ini.',
+        title: 'Warning',
+      );
+    }
+  }
+
   void signInWithGoogle(context) async {
     try {
       showLoading(context);
+
       GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       // Obtain the auth details from the request
@@ -106,6 +136,8 @@ class AuthController extends GetxController implements GetxService {
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
+
+      _tokenGoogle = googleAuth?.accessToken;
 
       UserCredential userCredential =
           await _auth.signInWithCredential(credential);

@@ -29,7 +29,7 @@ Future<void> init() async {
   ///[Controllers]
   Get.lazyPut(() => MainPageController());
   Get.lazyPut(() => AuthController(authRepo: Get.find()));
-  Get.lazyPut(() => ExploreController());
+  Get.lazyPut(() => ExploreController(googleRepo: Get.find()));
   Get.lazyPut(() => LocationController(googleRepo: Get.find()));
   Get.lazyPut(() => HomeController(googleRepo: Get.find()));
 

@@ -91,6 +91,8 @@ class LocationController extends GetxController implements GetxService {
       _address = geoCode[0].formattedAddress;
 
       _isLoaded = true;
+      print(
+          '${geoCode[0].geometry.location.lat}, ${geoCode[0].geometry.location.lng}');
       update();
     }
   }

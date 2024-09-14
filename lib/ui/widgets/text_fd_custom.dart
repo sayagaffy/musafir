@@ -28,6 +28,7 @@ class TextFdCustom extends StatelessWidget {
         style: blackTextStyle.copyWith(
           fontSize: 14,
         ),
+        textInputAction: TextInputAction.done,
         textAlignVertical: TextAlignVertical.center,
         controller: textController,
         decoration: InputDecoration(

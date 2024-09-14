@@ -15,7 +15,7 @@ class AppConstans {
 
   ///[Google API]
   static const String BASE_URL_GOOGLE = "https://maps.googleapis.com/maps/api";
-  static const String API_GKEY = "AIzaSyAtgRd3xXJac5wG5eR5uSmY-XbH04PBSwA";
+  static const String API_GKEY = "AIzaSyD1YcOyL2SqkMUA9iPe4EfiH15rjRXz8LY";
   static const String GEOCODE = "/geocode/json";
   static const String SEARCH = "/place/autocomplete/json";
   static const String NEARBYSEARCH = "/place/nearbysearch/json";

@@ -17,8 +17,7 @@ class SignUpPage1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var emailController =
-        TextEditingController(text: 'developer.adhikari.1@gmail.com');
+    var emailController = TextEditingController();
 
     var namaDepanController = TextEditingController();
     var namaBelakangController = TextEditingController();

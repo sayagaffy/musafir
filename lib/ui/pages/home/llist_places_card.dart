@@ -152,7 +152,7 @@ class _ListPlacesCardState extends State<ListPlacesCard> {
       });
     }
 
-    print(placesData);
+    // print(placesData);
   }
 
   List<String> ulasan = [

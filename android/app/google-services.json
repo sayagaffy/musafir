@@ -7,42 +7,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:335848098890:android:0f8e0d4d6177a6d2e0aab3",
-        "android_client_info": {
-          "package_name": "com.devadhikari.musafir_app"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "335848098890-fa3tflt1t3uddbkrue7h9prhgqbra4o8.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCK3HICu_uZx-NDESAqPOtIsKLpnT-DNSE"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "335848098890-fa3tflt1t3uddbkrue7h9prhgqbra4o8.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "335848098890-ovmha65killbn1o3npd6417pbsr6abti.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.musafirApp"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:335848098890:android:9380ae985b3fbe02e0aab3",
         "android_client_info": {
           "package_name": "com.example.musafir_app"
@@ -50,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "335848098890-fa3tflt1t3uddbkrue7h9prhgqbra4o8.apps.googleusercontent.com",
+          "client_id": "335848098890-am8a81jottht3pd1ff20b76uaer0d2ph.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.musafir_app",
+            "certificate_hash": "5c44c1facfdd234519c6d62b72482c4e05616d21"
+          }
+        },
+        {
+          "client_id": "335848098890-o0g36j592uj5gjl89dlure0da6pt3qn3.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -67,7 +39,7 @@
               "client_type": 3
             },
             {
-              "client_id": "335848098890-ovmha65killbn1o3npd6417pbsr6abti.apps.googleusercontent.com",
+              "client_id": "335848098890-7ohdiuodtaof0merhqd296c8ussj92o8.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.example.musafirApp"

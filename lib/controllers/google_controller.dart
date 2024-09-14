@@ -140,7 +140,6 @@ class GoogleController extends GetxController {
         _nextPageTokenFood = response.body['next_page_token'];
 
         _isLoadedFood = true;
-        print('food');
       }
 
       if (type == 'mosque') {
@@ -148,7 +147,6 @@ class GoogleController extends GetxController {
         _nearbyMosque.addAll(NearbyPlace.fromJson(response.body).results);
         _nextPageTokenMosque = response.body['next_page_token'] ?? 'none';
         _isLoadedMosque = true;
-        print('mosque');
       }
 
       // print(query);
