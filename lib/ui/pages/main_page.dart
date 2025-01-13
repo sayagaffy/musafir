@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/controllers/main_page_controller.dart';
 import 'package:musafir/shared/theme.dart';
+import 'package:musafir/ui/widgets/bottom_sheet_menu.dart';
 import 'package:musafir/ui/widgets/tab_config.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
@@ -16,35 +17,6 @@ class MainPage extends StatelessWidget {
 
     PersistentTabController _controller = PersistentTabController(
         initialIndex: mainPageC.menuTabController.value);
-
-    Future _diplayBottomSheet(BuildContext context) {
-      return showModalBottomSheet(
-          context: context,
-          builder: (context) => Container(
-                height: 200,
-                color: Colors.white,
-                child: const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // list 3 menu button disini
-                      ListTile(
-                        title: Text('Add Restoran'),
-                        onTap: (null),
-                      ),
-                      ListTile(
-                        title: Text('Add Masjid'),
-                        onTap: (null),
-                      ),
-                      ListTile(
-                        title: Text('Add Prayer Space'),
-                        onTap: (null),
-                      ),
-                    ],
-                  ),
-                ),
-              ));
-    }
 
     return Scaffold(
       body: Stack(
@@ -66,7 +38,7 @@ class MainPage extends StatelessWidget {
             right: 24, // Jarak tombol dari kanan.
             child: FloatingActionButton(
               onPressed: () {
-                _diplayBottomSheet(context);
+                _displayBottomSheet(context);
               },
               backgroundColor: kBlueColor,
               foregroundColor: kWhiteColor,
@@ -75,6 +47,13 @@ class MainPage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Future _displayBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (context) => const BottomSheetMenu(),
     );
   }
 }
