@@ -148,5 +148,9 @@ class ExploreController extends GetxController implements GetxService {
   void onClose() {
     super.onClose();
     searchPlace.dispose();
+    namePlan.dispose();
+    startDtTime.dispose();
+    endDtTime.dispose();
+    super.dispose();
   }
 }
