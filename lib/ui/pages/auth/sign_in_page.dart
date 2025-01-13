@@ -144,7 +144,7 @@ class _SignInPage1State extends State<SignInPage1> {
                       TextFieldPassword(
                         textController: passwordController,
                         label: 'Password',
-                        hintText: 'password',
+                        hintText: 'Password',
                       ),
                       Align(
                         alignment: Alignment.centerRight,
@@ -153,7 +153,7 @@ class _SignInPage1State extends State<SignInPage1> {
                             Get.toNamed(RouteHelper.getResetPasswordPage());
                           },
                           child: Text(
-                            'lupa kata sandi ?',
+                            'Lupa kata sandi ?',
                             style: greyTextStyle,
                           ),
                         ),
@@ -270,7 +270,7 @@ class _SignInPage1State extends State<SignInPage1> {
                                         duration:
                                             const Duration(milliseconds: 300),
                                       ),
-                                text: " Daftar",
+                                text: "Daftar",
                                 style: noColorTextStyle.copyWith(
                                   color: kBlueColor,
                                   fontSize: 14,
