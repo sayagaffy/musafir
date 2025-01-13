@@ -12,18 +12,20 @@ class TextFieldText extends StatelessWidget {
   final bool readOnly;
   final bool padding;
   final bool showIcon;
+  final Widget? suffixIcon;
 
   const TextFieldText({
     super.key,
     required this.textController,
     required this.hintText,
     required this.label,
-    required this.icon,
+    this.icon = Icons.text_fields,
     this.activeBg = false,
     this.bgcolor = const Color(0xFFF5F5F5),
     this.readOnly = false,
     this.padding = false,
     this.showIcon = false,
+    this.suffixIcon,
   });
 
   @override
@@ -76,6 +78,8 @@ class TextFieldText extends StatelessWidget {
                         fontSize: 14,
                         color: kNeutral50,
                       ),
+                      prefixIcon: showIcon ? null : Icon(icon),
+                      suffixIcon: suffixIcon,
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(6),
                         borderSide: BorderSide(
