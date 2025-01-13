@@ -1,4 +1,4 @@
-// import 'package:firebase_auth/firebase_auth.dart'; // di comment dulu sementara mau debuging
+import 'package:firebase_auth/firebase_auth.dart'; // di comment dulu sementara mau debuging
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,44 +10,48 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  await dep.init();
-  runApp(const MainApp());
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    await dep.init();
+    runApp(MainApp());
+  } catch (e) {
+    print('terjadi kesalahan ketika initialize firebase: $e');
+  }
 }
 
-// class MainApp extends StatelessWidget {
-//   final authC = Get.put(AuthController(authRepo: Get.find()), permanent: true);
-//   MainApp({super.key});
+class MainApp extends StatelessWidget {
+  final authC = Get.put(AuthController(authRepo: Get.find()), permanent: true);
+  MainApp({super.key});
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return StreamBuilder<User?>(
-//       stream: authC.streamAuthStatus,
-//       builder: (context, snapshot) {
-//         if (snapshot.connectionState == ConnectionState.active) {
-//           return GetMaterialApp(
-//             debugShowCheckedModeBanner: false,
-//             home: const MainPage(),
-//             initialRoute: snapshot.data != null && snapshot.data!.emailVerified
-// ? RouteHelper.getInitial()
-//                 : RouteHelper.getSplashPage(),
-//             getPages: RouteHelper.routes,
-//           );
-//         }
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: authC.streamAuthStatus,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.active) {
+          return GetMaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: const MainPage(),
+            initialRoute: snapshot.data != null && snapshot.data!.emailVerified
+                ? RouteHelper.getInitial()
+                : RouteHelper.getSplashPage(),
+            getPages: RouteHelper.routes,
+          );
+        }
 
-//         return const MaterialApp(
-//           home: Scaffold(
-//             body: Center(
-//               child: CircularProgressIndicator(),
-//             ),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
+        return const MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
 
 //RouteHelper.getaddPlace('ChIJUdoG4cgBMTARE4jspjaeF_8', 3.1110831, 98.5024141)
 
@@ -60,33 +64,3 @@ Future<void> main() async {
 //                     'ChIJjWkS22UBMTARfGscubrO6Bg', 3.1126785, 98.5032119)
 
 // mulai kode untuk bypass login
-
-class MainApp extends StatefulWidget {
-  const MainApp({super.key});
-
-  @override
-  State<MainApp> createState() => _MainAppState();
-}
-
-class _MainAppState extends State<MainApp> {
-  final authC = Get.put(AuthController(authRepo: Get.find()), permanent: true);
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Panggil autoLogin saat aplikasi dimulai
-      authC.autoLogin(context);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: const MainPage(),
-      initialRoute: RouteHelper.getInitial(), // Selalu masuk ke halaman utama
-      getPages: RouteHelper.routes,
-    );
-  }
-}

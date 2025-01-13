@@ -45,32 +45,6 @@ class AuthController extends GetxController implements GetxService {
     );
   }
 
-  void autoLogin(BuildContext context) async {
-    try {
-      // Login dengan email dan password tetap (akun dummy)
-      String email = "usertest@mail.com"; // Ubah dengan akun dummy
-      String password = "Gaffy156"; // Ubah dengan password dummy
-
-      UserCredential myUser = await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      if (myUser.user != null) {
-        // Simpan token atau jalankan fungsi post-login
-        var homeC = Get.find<HomeController>();
-        if (homeC.nearbyFood.isEmpty) {
-          homeC.refreshHome();
-        }
-
-        // Pindah ke halaman utama
-        Get.offNamed(RouteHelper.getInitial());
-      }
-    } catch (e) {
-      print("Auto login failed: $e");
-    }
-  }
-
   void logins(
       String emailAddress, String password, BuildContext context) async {
     try {
