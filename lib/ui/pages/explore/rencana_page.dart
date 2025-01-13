@@ -174,19 +174,19 @@ class _RencanaPageState extends State<RencanaPage> {
       DialogHelper.showSnackBar("Kamu belum memilih Tanggal Kembali",
           title: "Tanggal Kembali");
     } else {
-      final jsonEvent = {
-        'summary': 'Rencana Perjalanan',
-        'description':
-            'Berpergian ke $tujuan  pada tanggal ${startDateTime.text} dan kembali pada saat ${endDateTime.text}.',
-        'start': {
-          'dateTime': DateTime.parse(startFormat.text).toUtc().toIso8601String()
-        },
-        'end': {
-          'dateTime': DateTime.parse(endFormat.text).toUtc().toIso8601String()
-        },
-        "location": tujuan,
-        // "place_id": exploreController.placeIdX.value,
-      };
+      // final jsonEvent = {
+      //   'summary': 'Rencana Perjalanan',
+      //   'description':
+      //       'Berpergian ke $tujuan  pada tanggal ${startDateTime.text} dan kembali pada saat ${endDateTime.text}.',
+      //   'start': {
+      //     'dateTime': DateTime.parse(startFormat.text).toUtc().toIso8601String()
+      //   },
+      //   'end': {
+      //     'dateTime': DateTime.parse(endFormat.text).toUtc().toIso8601String()
+      //   },
+      //   "location": tujuan,
+      //   // "place_id": exploreController.placeIdX.value,
+      // };
       String? token = authController.tokenGoogle;
 
       if (token != null) {

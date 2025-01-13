@@ -62,6 +62,19 @@ class _AddPlaceState extends State<AddPlace> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    nameController.dispose();
+    placeidController.dispose();
+    latController.dispose();
+    lngController.dispose();
+    subtitleController.dispose();
+    phoneController.dispose();
+    addressController.dispose();
+    webController.dispose();
+    super.dispose();
+  }
+
   Widget _customPopupItemBuilderExample2(
       BuildContext context, CountryModel item, bool isSelected) {
     return Container(
