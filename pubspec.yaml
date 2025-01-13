@@ -38,6 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_fonts: ^6.1.0
   persistent_bottom_nav_bar_v2: ^5.0.0
+  image_picker: ^0.8.4+4
   google_maps_flutter: ^2.5.3
   http: ^1.2.0
   device_preview: ^1.1.0
@@ -58,8 +59,7 @@ dependencies:
   dropdown_search: ^5.0.6
   dio: ^5.5.0+1
   map_launcher: ^3.5.0
-
-
+  flutter_datetime_picker: ^1.5.1
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -78,8 +78,6 @@ flutter_launcher_icons:
   macos:
     generate: true
     image_path: "assets/brandBlue.png"
-
-
 
 dev_dependencies:
   flutter_test:
