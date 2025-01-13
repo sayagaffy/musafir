@@ -1,3 +1,18 @@
+/// Halaman akun pengguna yang menampilkan informasi profil dan beberapa opsi pengaturan.
+///
+/// Halaman ini terdiri dari beberapa bagian:
+/// - Menampilkan avatar pengguna, nama depan, nama belakang, dan level panduan lokal.
+/// - Menyediakan beberapa opsi pengaturan seperti Info Profil, Privasi, FAQ, Komunitas, Rencana Perjalanan, dan Keluar.
+///
+/// Metode:
+/// - `initState`: Memanggil `getDataUser` untuk mengambil data pengguna saat inisialisasi.
+/// - `getDataUser`: Mengambil detail pengguna dari `UserStore` dan memperbarui state dengan nama depan dan nama belakang pengguna.
+/// - `build`: Membangun tampilan halaman akun dengan berbagai widget.
+///
+/// Ekstensi:
+/// - `StringExtension`: Menyediakan metode untuk mengubah string menjadi huruf kapital dan huruf judul.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/controllers/auth_controller.dart';
