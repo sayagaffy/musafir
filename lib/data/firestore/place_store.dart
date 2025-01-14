@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart'; // Import debugPrint
 
 import 'package:musafir/base/dialog_helper.dart';
-
 import 'package:musafir/shared/theme.dart';
 
 class PlacesStore {
@@ -12,6 +12,9 @@ class PlacesStore {
   final CollectionReference dbPlaces =
       FirebaseFirestore.instance.collection('places');
 
+  /// Mengambil daftar tempat berdasarkan countryId dan cityId.
+  /// Metode ini mengembalikan daftar tempat yang sesuai dengan countryId dan cityId yang diberikan.
+  /// Jika terjadi kesalahan selama pengambilan data, kesalahan akan dicetak ke konsol.
   Future placesList(int countryId, int cityId) async {
     dynamic review;
 
@@ -21,12 +24,15 @@ class PlacesStore {
         .get()
         .then(
           (QuerySnapshot querySnapshot) => {review = querySnapshot},
-          onError: (e) => print("Error completing: $e"),
+          onError: (e) => debugPrint("Error completing: $e"),
         );
 
     return review;
   }
 
+  /// Mengambil daftar tempat berdasarkan countryId, cityId, dan halalstatus.
+  /// Metode ini mengembalikan daftar tempat yang sesuai dengan countryId, cityId, dan halalstatus yang diberikan.
+  /// Jika terjadi kesalahan selama pengambilan data, kesalahan akan dicetak ke konsol.
   Future placesListWhere(int countryId, int cityId, int halalstatus) async {
     dynamic review;
 
@@ -40,17 +46,21 @@ class PlacesStore {
             review = querySnapshot
             // for (var element in querySnapshot.docs) { return element.data()},
           },
-          onError: (e) => print("Error completing: $e"),
+          onError: (e) => debugPrint("Error completing: $e"),
         );
     return review;
   }
 
   Future checkPlaces(String placeid) async {
+    // Memulai fungsi asinkron yang mengembalikan Future
     return await dbPlaces.where("place_id", isEqualTo: placeid).get().then(
       (value) {
+        // Melakukan query ke database untuk mencari dokumen dengan "place_id" yang sesuai dengan placeid
         return value.docs.length;
+        // Mengembalikan jumlah dokumen yang ditemukan
       },
-      onError: (e) => print("Error completing: $e"),
+      onError: (e) => debugPrint("Error completing: $e"),
+      // Menangani kesalahan dengan mencetak pesan error ke debug console
     );
   }
 
@@ -63,7 +73,7 @@ class PlacesStore {
           place.add(i.data());
         }
       },
-      onError: (e) => print("Error completing: $e"),
+      onError: (e) => debugPrint("Error completing: $e"),
     );
 
     return place.last;
@@ -81,12 +91,12 @@ class PlacesStore {
         backgroundColor: kSuccessMain,
       );
 
-      return 'SUCCESS';
+      return 'SUCCESS ADD PLACE';
     }).catchError((error) {
       DialogHelper.hideLoading();
       DialogHelper.showErroDialog(description: error.toString());
 
-      return 'Error';
+      return 'Error Add Place';
     });
   }
 }

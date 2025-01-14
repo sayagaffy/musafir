@@ -26,6 +26,7 @@ class _RestoranFormPageState extends State<RestoranFormPage> {
   final TextEditingController _fromTimeController = TextEditingController();
   final TextEditingController _toTimeController = TextEditingController();
 
+  // ignore: unused_field
   LatLng? _selectedLocation;
   XFile? _selectedImage;
   String? _halalStatus;
@@ -94,7 +95,8 @@ class _RestoranFormPageState extends State<RestoranFormPage> {
       }
     } catch (e) {
       // Tangani kesalahan
-      print('Error picking image: $e');
+      // print('Error picking image: $e');
+      debugPrint('Error picking image: $e');
     }
   }
 
@@ -104,6 +106,7 @@ class _RestoranFormPageState extends State<RestoranFormPage> {
     if (permission == LocationPermission.denied ||
         permission == LocationPermission.deniedForever) {
       // Tangani jika izin lokasi ditolak
+      debugPrint('Permission denied');
       return;
     }
 
