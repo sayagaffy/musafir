@@ -114,12 +114,18 @@ class _DetailCardState extends State<DetailCard> {
   }
 
   Widget addPlace() {
+    // Mendeklarasikan variabel 'placeLeng' yang menyimpan hasil dari pemanggilan metode 'checkPlaces' pada 'PlacesStore' dengan parameter 'widget.pageId'
     dynamic placeLeng = PlacesStore().checkPlaces(widget.pageId);
 
+    // Mengembalikan widget FutureBuilder yang akan membangun UI berdasarkan status future 'placeLeng'
     return FutureBuilder(
+      // Menetapkan future yang akan digunakan oleh FutureBuilder
       future: placeLeng,
+      // Menetapkan builder yang akan membangun UI berdasarkan snapshot dari future
       builder: ((context, snapshot) {
+        // Memeriksa apakah future telah selesai
         if (snapshot.connectionState == ConnectionState.done) {
+          // Jika data dari future adalah 0, maka menampilkan ikon tambah
           if (snapshot.data == 0) {
             return Icon(
               Icons.add_circle,
@@ -128,6 +134,7 @@ class _DetailCardState extends State<DetailCard> {
             );
           }
         }
+        // Jika future belum selesai atau data bukan 0, mengembalikan widget SizedBox kosong
         return const SizedBox();
       }),
     );

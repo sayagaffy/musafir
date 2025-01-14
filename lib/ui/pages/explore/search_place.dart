@@ -49,30 +49,41 @@ class _SearchPlaceState extends State<SearchPlace> {
     });
   }
 
+  //Kode ini adalah sebuah fungsi check yang menerima satu parameter placeId dan mengembalikan nilai Future<bool?>. Fungsi ini digunakan untuk memeriksa apakah placeId tertentu ada dalam daftar selectedFood di objek expC. Jika ada, maka fungsi ini akan mengembalikan nilai true, jika tidak, maka akan mengembalikan nilai false.
+
   Future<bool?> check(String placeId) async {
+    //Fungsi check dideklarasikan sebagai async, yang berarti fungsi ini akan mengembalikan sebuah Future. Fungsi ini menerima satu parameter placeId yang merupakan ID tempat yang akan diperiksa. Fungsi ini akan mengembalikan nilai boolean yang menunjukkan apakah tempat tersebut ada dalam daftar selectedFood atau tidak.
     bool status = false;
+    //Variabel status diinisialisasi dengan nilai false.
 
     var check = expC.selectedFood.where((x) => x['place_id'] == placeId);
+    //Variabel check menyimpan hasil dari pencarian dalam daftar selectedFood yang memiliki place_id yang sama dengan placeId.
 
     if (check.isNotEmpty) {
       status = true;
     } else {
       status = false;
     }
+    //Jika hasil pencarian tidak kosong, maka status diubah menjadi true, jika tidak, maka status tetap false.
 
     return status;
+    //Fungsi mengembalikan nilai status.
   }
 
   void getPlacesData() async {
     if (expC.nearbyFood.isNotEmpty) {
+      // Memeriksa apakah daftar nearbyFood tidak kosong
       for (var i in expC.nearbyFood) {
+        // Melakukan iterasi pada setiap item di nearbyFood
         var destination =
             '${homeC.filterDot(i.geometry.location.lat.toString())},${homeC.filterDot(i.geometry.location.lng.toString())}';
-
+        // Membuat string tujuan dari koordinat lokasi
         await homeC
+            // Memanggil fungsi distance dan menunggu hasilnya
             .distance('${expC.latlng!.latitude}, ${expC.latlng!.longitude}',
                 destination)
             .then((value) async {
+          // Membuat peta data baru dengan informasi tempat
           Map<String, dynamic> newdata = {
             "place_id": i.placeId,
             'title': i.name,
@@ -81,10 +92,12 @@ class _SearchPlaceState extends State<SearchPlace> {
             'selected': await check(i.placeId),
             'photos': i.photos != null ? i.photos.first.photoReference : 'none',
           };
+          // Menambahkan data baru ke dalam daftar placesData
           setState(() {
             placesData.add(newdata);
           });
         });
+        // Mengatur status isLoad menjadi true
         setState(() {
           isLoad = true;
         });
@@ -350,7 +363,7 @@ class _SearchPlaceState extends State<SearchPlace> {
         onTap: () {
           setState(() {
             placesData[index]['selected'] = !placesData[index]['selected'];
-
+            // index adalah indeks dari item dalam daftar placesData yang sedang diubah. Jika selected bernilai true, maka item tersebut akan ditambahkan ke dalam daftar selectedFood, jika selected bernilai false, maka item tersebut akan dihapus dari daftar selectedFood.
             if (placesData[index]['selected'] == true) {
               expC.selectedFood.add({
                 'place_id': placeId,

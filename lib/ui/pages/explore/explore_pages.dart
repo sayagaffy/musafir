@@ -1,3 +1,17 @@
+/// Halaman ini menampilkan daftar item yang diambil dari API.
+///
+/// Pada bagian awal, terdapat inisialisasi variabel dan fungsi untuk mengambil data dari API.
+/// Fungsi `fetchItems` digunakan untuk mengambil data dari API dan menyimpannya dalam variabel `items`.
+///
+/// Setelah data berhasil diambil, halaman ini akan menampilkan daftar item dalam bentuk ListView.
+/// Setiap item dalam daftar ditampilkan menggunakan widget ListTile yang berisi judul dan deskripsi item.
+///
+/// Jika terjadi kesalahan saat mengambil data dari API, halaman ini akan menampilkan pesan kesalahan.
+///
+/// Selain itu, terdapat juga indikator loading yang ditampilkan saat data sedang diambil dari API.
+/// Indikator loading ini akan hilang setelah data berhasil diambil atau terjadi kesalahan.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/controllers/auth_controller.dart';

@@ -1,6 +1,26 @@
 // import 'package:intl/intl.dart';
 // ignore_for_file: avoid_print
 
+/// Halaman ini menampilkan daftar item yang dapat dipilih oleh pengguna.
+///
+/// Pengguna dapat memilih satu atau beberapa item dari daftar.
+/// Setiap item dalam daftar memiliki nama dan deskripsi.
+///
+/// Fitur utama:
+/// - Menampilkan daftar item
+/// - Memungkinkan pengguna untuk memilih item
+/// - Menampilkan detail item yang dipilih
+///
+/// Cara penggunaan:
+/// 1. Buka halaman ini untuk melihat daftar item.
+/// 2. Pilih item yang diinginkan dengan mengkliknya.
+/// 3. Detail item yang dipilih akan ditampilkan di bagian bawah halaman.
+///
+/// Catatan:
+/// - Pastikan untuk memeriksa koneksi internet sebelum menggunakan halaman ini.
+/// - Jika terjadi kesalahan, coba muat ulang halaman.
+library;
+
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';

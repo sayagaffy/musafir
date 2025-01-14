@@ -1,3 +1,19 @@
+/// Halaman ini menampilkan daftar item yang diambil dari sumber data.
+///
+/// Pada bagian atas halaman, terdapat sebuah `AppBar` dengan judul yang
+/// menunjukkan nama halaman. Di bawah `AppBar`, terdapat sebuah `ListView`
+/// yang menampilkan daftar item dalam bentuk kartu (`Card`).
+///
+/// Setiap kartu menampilkan informasi item seperti nama, deskripsi, dan
+/// gambar. Informasi ini diambil dari sebuah daftar yang diinisialisasi
+/// sebelumnya. Jika daftar kosong, akan ditampilkan pesan bahwa tidak ada
+/// item yang tersedia.
+///
+/// Pengguna dapat menggulir daftar untuk melihat semua item yang tersedia.
+/// Jika pengguna mengetuk sebuah item, akan ditampilkan detail lebih lanjut
+/// tentang item tersebut di halaman baru.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/controllers/explore_controller.dart';
