@@ -1,3 +1,12 @@
+/// Halaman ini menampilkan daftar item dalam bentuk ListView.
+/// Setiap item dalam daftar diwakili oleh widget ListTile yang berisi teks.
+/// Daftar item diambil dari sebuah sumber data yang berupa list.
+/// Pengguna dapat menggulir daftar untuk melihat semua item yang tersedia.
+/// Jika daftar item kosong, akan ditampilkan pesan bahwa tidak ada data.
+/// Halaman ini juga mendukung penyegaran data dengan menarik daftar ke bawah.
+///
+library;
+
 import 'dart:async';
 
 import 'package:dropdown_search/dropdown_search.dart';
@@ -1711,7 +1720,8 @@ class _AddPlaceState extends State<AddPlace> {
       backgroundColor: kWhiteColor,
       body: GetBuilder<HomeController>(builder: (home) {
         return home.loading
-            ? SingleChildScrollView(
+            ? SafeArea(
+                child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Column(
                   children: [
@@ -1721,7 +1731,6 @@ class _AddPlaceState extends State<AddPlace> {
                         left: 18,
                         right: 18,
                         bottom: 14,
-                        top: 20,
                       ),
                       child: Column(
                         children: [
@@ -1731,6 +1740,7 @@ class _AddPlaceState extends State<AddPlace> {
                               GestureDetector(
                                   onTap: () {
                                     Get.back();
+                                    // kembali ke halaman sebelumnya / tutup dialog.
                                   },
                                   child: const Icon(
                                       Icons.keyboard_backspace_rounded)),
@@ -1766,17 +1776,17 @@ class _AddPlaceState extends State<AddPlace> {
                                   const SizedBox(
                                     width: 20,
                                   ),
-                                  Expanded(
-                                    child: TextFieldText(
-                                      textController: placeidController,
-                                      hintText: 'Id',
-                                      label: 'Place Id',
-                                      icon: Icons.email,
-                                      activeBg: true,
-                                      padding: false,
-                                      readOnly: true,
-                                    ),
-                                  ),
+                                  // Expanded(
+                                  //   child: TextFieldText(
+                                  //     textController: placeidController,
+                                  //     hintText: 'Id',
+                                  //     label: 'Place Id',
+                                  //     icon: Icons.email,
+                                  //     activeBg: true,
+                                  //     padding: false,
+                                  //     readOnly: true,
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                               const SizedBox(
@@ -2075,7 +2085,7 @@ class _AddPlaceState extends State<AddPlace> {
                     ),
                   ],
                 ),
-              )
+              ))
             : const SizedBox();
       }),
     );
