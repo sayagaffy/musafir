@@ -671,7 +671,7 @@ class _CheckBoxWidget extends StatefulWidget {
   final bool? isSelected;
   final ValueChanged<bool?>? onChanged;
 
-  _CheckBoxWidget({required this.child, this.isSelected, this.onChanged});
+  const _CheckBoxWidget({required this.child, this.isSelected, this.onChanged});
 
   @override
   CheckBoxState createState() => CheckBoxState();
@@ -716,7 +716,7 @@ class CheckBoxState extends State<_CheckBoxWidget> {
                   value: isSelected,
                   tristate: true,
                   onChanged: (bool? v) {
-                    if (v == null) v = false;
+                    v ??= false;
                     setState(() {
                       isSelected = v;
                       if (widget.onChanged != null) widget.onChanged!(v);
