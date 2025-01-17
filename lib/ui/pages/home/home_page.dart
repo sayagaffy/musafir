@@ -65,138 +65,140 @@ class _HomePageState extends State<HomePage> {
             children: [
               Expanded(
                 child: SizedBox(
-                  height: 20,
-                  child: FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child: Row(
-                      children: [
-                        name != null
-                            ? Text(
-                                'Assalamualaikum $name',
-                                style: blackTextStyle.copyWith(
-                                  fontWeight: extraBold,
-                                  fontSize: 20,
-                                  height: 0.7,
-                                  color: kBlueColorHover,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              )
-                            : const SkeletonText(
-                                size: 20,
+                  height: 17,
+                  child: Row(
+                    children: [
+                      name != null
+                          ? Text(
+                              'Assalamualaikum $name',
+                              style: blackTextStyle.copyWith(
+                                fontWeight: extraBold,
+                                fontSize: 20,
+                                height: 0.8,
+                                color: kBlueColorHover,
                               ),
-                        // GestureDetector(
-                        //   onTap: () async {
-                        //     print('halo');
+                              overflow: TextOverflow.ellipsis,
+                            )
+                          : const SkeletonText(
+                              size: 12,
+                            ),
+                      // GestureDetector(
+                      //   onTap: () async {
+                      //     print('halo');
 
-                        //     print(homeC.nearbyFood.length);
-                        //     print(homeC.localPlace.length);
+                      //     print(homeC.nearbyFood.length);
+                      //     print(homeC.localPlace.length);
 
-                        //     // for (var lokal in homeC.localPlace) {
-                        //     //   homeC.nearbyFood.removeWhere(
-                        //     //       (item) => item.placeId == lokal['place_id']);
-                        //     // }
+                      //     // for (var lokal in homeC.localPlace) {
+                      //     //   homeC.nearbyFood.removeWhere(
+                      //     //       (item) => item.placeId == lokal['place_id']);
+                      //     // }
 
-                        //     // print(homeC.nearbyFood.length);
-                        //     // print(homeC.localPlace.length);
+                      //     // print(homeC.nearbyFood.length);
+                      //     // print(homeC.localPlace.length);
 
-                        //     await homeC.testRemoveDuplicate();
+                      //     await homeC.testRemoveDuplicate();
 
-                        //     print(homeC.nearbyFood.length);
-                        //     print(homeC.localPlace.length);
-                        //   },
-                        //   child: Padding(
-                        //     padding: const EdgeInsets.only(left: 2),
-                        //     child: Icon(
-                        //       Icons.filter,
-                        //       size: 20,
-                        //       color: kBlackColor,
-                        //     ),
-                        //   ),
-                        // )
-                      ],
-                    ),
+                      //     print(homeC.nearbyFood.length);
+                      //     print(homeC.localPlace.length);
+                      //   },
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.only(left: 2),
+                      //     child: Icon(
+                      //       Icons.filter,
+                      //       size: 20,
+                      //       color: kBlackColor,
+                      //     ),
+                      //   ),
+                      // )
+                    ],
                   ),
                 ),
               ),
             ],
           ),
-          Container(
-              width: double.infinity,
-              margin: const EdgeInsets.only(
-                top: 5,
-                bottom: 15,
-              ),
-              child: address != "none"
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.location_on_rounded,
-                          size: 15,
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          'Kamu sedang berada di ',
-                          style: blackTextStyle.copyWith(
-                              fontSize: 12, fontWeight: regular),
-                        ),
-                        GestureDetector(
+          Column(
+            spacing: 10,
+            children: [
+              Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(
+                    top: 5,
+                    bottom: 15,
+                  ),
+                  child: address != "none"
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.location_on_rounded,
+                              size: 15,
+                            ),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              'Kamu berada di ',
+                              style: blackTextStyle.copyWith(
+                                  fontSize: 12, fontWeight: regular),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Get.toNamed(RouteHelper.getLocationPage());
+                              },
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 200,
+                                    child: Text(
+                                      ' $address',
+                                      style: blackTextStyle.copyWith(
+                                        fontSize: 12,
+                                        fontWeight: bold,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.expand_more_rounded,
+                                    size: 18,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
+                      : GestureDetector(
                           onTap: () {
                             Get.toNamed(RouteHelper.getLocationPage());
                           },
                           child: Row(
                             children: [
-                              SizedBox(
-                                width: 220,
-                                child: Text(
-                                  ' $address',
-                                  style: blackTextStyle.copyWith(
-                                    fontSize: 12,
-                                    fontWeight: bold,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
+                              const Icon(
+                                Icons.my_location_rounded,
+                                size: 15,
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                'Lokasi kamu belum di perbaharui,',
+                                style: blackTextStyle.copyWith(
+                                  fontSize: 12,
                                 ),
                               ),
-                              const Icon(
-                                Icons.expand_more_rounded,
-                                size: 18,
-                              )
+                              Text(
+                                ' ubah disini.',
+                                style: blackTextStyle.copyWith(
+                                  fontSize: 12,
+                                  fontWeight: bold,
+                                ),
+                              ),
                             ],
                           ),
-                        ),
-                      ],
-                    )
-                  : GestureDetector(
-                      onTap: () {
-                        Get.toNamed(RouteHelper.getLocationPage());
-                      },
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.my_location_rounded,
-                            size: 15,
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                            'Lokasi kamu belum di perbaharui,',
-                            style: blackTextStyle.copyWith(
-                              fontSize: 12,
-                            ),
-                          ),
-                          Text(
-                            ' ubah disini.',
-                            style: blackTextStyle.copyWith(
-                              fontSize: 12,
-                              fontWeight: bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
+                        )),
+            ],
+          ),
           SizedBox(
             height: 32,
             child: GestureDetector(
