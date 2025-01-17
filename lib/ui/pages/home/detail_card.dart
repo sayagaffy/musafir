@@ -9,6 +9,7 @@ import 'package:musafir/data/firestore/place_store.dart';
 import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
+import 'package:musafir/ui/widgets/bottom_sheet_menu.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
 import 'package:musafir/ui/widgets/location_text.dart';
 import 'package:musafir/utilitis/apps_constants.dart';
@@ -676,7 +677,7 @@ class _DetailCardState extends State<DetailCard> {
                             : DecorationImage(
                                 fit: BoxFit.cover,
                                 image: NetworkImage(
-                                    '${AppConstans.PLACE_PHOTO}${home.placeDtl.photos[index].photoReference}'),
+                                    '${AppConstans.PLACE_PHOTO}${home.placeDtl.photos[index % home.placeDtl.photos.length].photoReference}'),
                               ),
                       ),
                     );
@@ -1136,6 +1137,14 @@ class _DetailCardState extends State<DetailCard> {
               )
             : const SizedBox();
       }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _displayBottomSheet(context);
+        },
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
@@ -1422,4 +1431,11 @@ class _DetailCardState extends State<DetailCard> {
       },
     );
   }
+}
+
+Future _displayBottomSheet(BuildContext context) {
+  return showModalBottomSheet(
+    context: context,
+    builder: (context) => const BottomSheetMenu(),
+  );
 }
