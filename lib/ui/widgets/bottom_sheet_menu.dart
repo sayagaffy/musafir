@@ -45,7 +45,7 @@ class BottomSheetMenu extends StatelessWidget {
 
   void _navigateToInfoPage(BuildContext context, String selectedValue) {
     if (selectedValue == 'Restoran') {
-      Get.to(() => RestoranFormPage());
+      Get.to(() => const RestoranFormPage());
     } else if (selectedValue == 'Masjid') {
       Get.to(() => MasjidFormPage());
     } else if (selectedValue == 'Prayer Space') {
