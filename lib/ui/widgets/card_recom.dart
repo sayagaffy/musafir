@@ -39,145 +39,149 @@ class CardRecom extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             spreadRadius: 1,
             blurRadius: 2,
             offset: const Offset(1.5, 2),
           ),
         ],
       ),
-      child: Column(
-        children: [
-          Container(
-            height: 90,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(8),
-                topRight: Radius.circular(8),
-              ),
-              image: imgUrl == 'none'
-                  ? const DecorationImage(
-                      fit: BoxFit.contain,
-                      image: AssetImage('assets/brandBlue.png'),
-                    )
-                  : DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(imgUrl),
-                    ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.only(
-              left: 10,
-              right: 10,
-              top: 5,
-              bottom: 10,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name.toTitleCase(),
-                  maxLines: 1,
-                  style: blackTextStyle.copyWith(
-                    fontSize: 14,
-                    fontWeight: extraBold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            Container(
+              height: 90,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  topRight: Radius.circular(8),
                 ),
-                Container(
-                  margin: const EdgeInsets.only(top: 1),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        city,
-                        style: blackTextStyle.copyWith(
-                          fontSize: 12,
+                image: imgUrl == 'none'
+                    ? const DecorationImage(
+                        fit: BoxFit.contain,
+                        image: AssetImage('assets/brandBlue.png'),
+                      )
+                    : DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(imgUrl),
+                      ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.only(
+                left: 10,
+                right: 10,
+                top: 5,
+                bottom: 10,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name.toTitleCase(),
+                    maxLines: 1,
+                    style: blackTextStyle.copyWith(
+                      fontSize: 14,
+                      fontWeight: extraBold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 1),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          city,
+                          style: blackTextStyle.copyWith(
+                            fontSize: 12,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: !isMasjid ? 2 : 3,
                         ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: !isMasjid ? 2 : 3,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const SizedBox(
-                        height: 1,
-                      ),
-                      SizedBox(
-                        child: !isMasjid
-                            ? Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: 16,
-                                        height: 16,
-                                        margin: const EdgeInsets.only(
-                                          right: 3,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: AssetImage(halalStatus == '1'
-                                                ? 'assets/icon_halal.png'
-                                                : halalStatus == '2'
-                                                    ? 'assets/icon_halal_blue.png'
-                                                    : 'assets/icon_halal_black.png'),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const SizedBox(
+                          height: 1,
+                        ),
+                        SizedBox(
+                          child: !isMasjid
+                              ? Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Container(
+                                          width: 16,
+                                          height: 16,
+                                          margin: const EdgeInsets.only(
+                                            right: 3,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: AssetImage(halalStatus ==
+                                                      '1'
+                                                  ? 'assets/icon_halal.png'
+                                                  : halalStatus == '2'
+                                                      ? 'assets/icon_halal_blue.png'
+                                                      : 'assets/icon_halal_black.png'),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      Text(
-                                        halalStatus == '1'
-                                            ? 'Halal Certified'
-                                            : halalStatus == '2'
-                                                ? 'Halal Friendly'
-                                                : 'Halal',
-                                        style: blackTextStyle.copyWith(
-                                          fontSize: 12,
-                                          fontWeight: bold,
-                                          color: halalStatus == '1'
-                                              ? kGreenHover
+                                        Text(
+                                          halalStatus == '1'
+                                              ? 'Halal Certified'
                                               : halalStatus == '2'
-                                                  ? kBlueColorHover
-                                                  : kBlackColor,
+                                                  ? 'Halal Friendly'
+                                                  : 'Halal',
+                                          style: blackTextStyle.copyWith(
+                                            fontSize: 12,
+                                            fontWeight: bold,
+                                            color: halalStatus == '1'
+                                                ? kGreenHover
+                                                : halalStatus == '2'
+                                                    ? kBlueColorHover
+                                                    : kBlackColor,
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      destination != 'none' &&
-                                              destination != 'ZERO_RESULTS'
-                                          ? Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.location_on_rounded,
-                                                  size: 16,
-                                                  color: kRedMain,
-                                                ),
-                                                Text(
-                                                  '${destination}Km',
-                                                  style: blackTextStyle
-                                                      .copyWith(fontSize: 11),
-                                                ),
-                                              ],
-                                            )
-                                          : const SizedBox(),
-                                    ],
-                                  ),
-                                ],
-                              )
-                            : const SizedBox(
-                                height: 1,
-                              ),
-                      ),
-                    ],
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        destination != 'none' &&
+                                                destination != 'ZERO_RESULTS'
+                                            ? Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.location_on_rounded,
+                                                    size: 16,
+                                                    color: kRedMain,
+                                                  ),
+                                                  Text(
+                                                    '${destination}Km',
+                                                    style: blackTextStyle
+                                                        .copyWith(fontSize: 11),
+                                                  ),
+                                                ],
+                                              )
+                                            : const SizedBox(),
+                                      ],
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox(
+                                  height: 1,
+                                ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
