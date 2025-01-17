@@ -409,10 +409,10 @@ class HomeController extends GetxController implements GetxService {
   }
 
   Future<void> getPlaceMarks() async {
-    //check address is empty or not then get latlang from firestore, if null get from geolocation and then return
+    // Check address is empty or not then get latlng from Firestore, if null get from geolocation and then return
     String ltlng = await UserStore().getUserDetail().then((val) async {
       if (locationC.latlng == null) {
-        locationC.determinePosition();
+        await locationC.determinePosition();
       }
 
       return val['lat'] != null
@@ -420,7 +420,10 @@ class HomeController extends GetxController implements GetxService {
           : locationC.latlng.toString();
     });
 
-    //process if address is not empty
+    // Debugging: Print the ltlng value
+    print('ltlng: $ltlng');
+
+    // Process if address is not empty
     if (ltlng.isNotEmpty || locationC.latlng != null) {
       var lat;
       var lng;
@@ -429,18 +432,58 @@ class HomeController extends GetxController implements GetxService {
           .replaceAll(RegExp('LatLng'), '')
           .replaceAll(RegExp(r'\(|\)'), '')
           .split(',');
-      final Map<int, String> values = {
-        for (int i = 0; i < split.length; i++) i: split[i]
-      };
 
-      lat = values[0];
-      lng = values[1];
+      // Debugging: Print the split values
+      print('split: $split');
 
-      setAddress(double.parse(lat), double.parse(lng), 'set');
+      if (split.length == 2) {
+        lat = split[0];
+        lng = split[1];
+
+        // Debugging: Print the lat and lng values
+        print('lat: $lat, lng: $lng');
+
+        await setAddress(double.parse(lat), double.parse(lng), 'set');
+      } else {
+        print('Error: Invalid ltlng format');
+      }
     } else {
-      print('error latlang null');
+      print('Error: ltlng is empty or null');
     }
   }
+  // Future<void> getPlaceMarks() async {
+  //   //check address is empty or not then get latlang from firestore, if null get from geolocation and then return
+  //   String ltlng = await UserStore().getUserDetail().then((val) async {
+  //     if (locationC.latlng == null) {
+  //       locationC.determinePosition();
+  //     }
+
+  //     return val['lat'] != null
+  //         ? '${val['lat']},${val['lng']}'
+  //         : locationC.latlng.toString();
+  //   });
+
+  //   //process if address is not empty
+  //   if (ltlng.isNotEmpty || locationC.latlng != null) {
+  //     var lat;
+  //     var lng;
+
+  //     final split = ltlng
+  //         .replaceAll(RegExp('LatLng'), '')
+  //         .replaceAll(RegExp(r'\(|\)'), '')
+  //         .split(',');
+  //     final Map<int, String> values = {
+  //       for (int i = 0; i < split.length; i++) i: split[i]
+  //     };
+
+  //     lat = values[0];
+  //     lng = values[1];
+
+  //     setAddress(double.parse(lat), double.parse(lng), 'set');
+  //   } else {
+  //     print('error latlang null');
+  //   }
+  // }
 
   Future<void> setAddress(double lat, double lng, String type) async {
     List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
