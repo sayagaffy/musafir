@@ -34,8 +34,8 @@ class MainPage extends StatelessWidget {
             tabs: buildTabConfigs(),
           ),
           Positioned(
-            bottom: 100, // Jarak tombol dari bawah tab navigasi.
-            right: 24, // Jarak tombol dari kanan.
+            bottom: 75, // Jarak tombol dari bawah tab navigasi.
+            right: 20, // Jarak tombol dari kanan.
             child: FloatingActionButton(
               onPressed: () {
                 _displayBottomSheet(context);
