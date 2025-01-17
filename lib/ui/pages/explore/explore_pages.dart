@@ -66,7 +66,7 @@ class _ExplorePageState extends State<ExplorePage> {
   void navigasiPeta(int indexParent) async {
     final availableMaps = await MapLauncher.installedMaps;
 
-    print(dataPlans[indexParent]);
+    debugPrint(dataPlans[indexParent]);
 
     await availableMaps.first.showMarker(
       coords:

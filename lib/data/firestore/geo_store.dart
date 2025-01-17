@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class GeoStore {
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -21,7 +22,7 @@ class GeoStore {
             country = querySnapshot
             // for (var element in querySnapshot.docs) { return element.data()},
           },
-          onError: (e) => print("Error completing: $e"),
+          onError: (e) => debugPrint("Error completing: $e"),
         );
     return country;
   }
@@ -34,7 +35,7 @@ class GeoStore {
             province = querySnapshot
             // for (var element in querySnapshot.docs) { return element.data()},
           },
-          onError: (e) => print("Error completing: $e"),
+          onError: (e) => debugPrint("Error completing: $e"),
         );
     return province;
   }
@@ -47,7 +48,7 @@ class GeoStore {
             city = querySnapshot
             // for (var element in querySnapshot.docs) { return element.data()},
           },
-          onError: (e) => print("Error completing: $e"),
+          onError: (e) => debugPrint("Error completing: $e"),
         );
     return city;
   }

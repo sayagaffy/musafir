@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musafir/base/dialog_helper.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
@@ -346,7 +347,7 @@ class UserStore {
         .where("email", isEqualTo: auth.currentUser!.email)
         .get()
         .then((QuerySnapshot querySnapshot) => {explorePlan = querySnapshot},
-            onError: (e) => print("Error completing: $e"));
+            onError: (e) => debugPrint("Error completing: $e"));
     return explorePlan;
   }
 }

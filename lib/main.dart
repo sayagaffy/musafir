@@ -17,7 +17,7 @@ Future<void> main() async {
     await dep.init();
     runApp(MainApp());
   } catch (e) {
-    print('terjadi kesalahan ketika initialize firebase: $e');
+    debugPrint('terjadi kesalahan ketika initialize firebase: $e');
   }
 }
 
