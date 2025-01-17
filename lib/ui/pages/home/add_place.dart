@@ -1773,26 +1773,13 @@ class _AddPlaceState extends State<AddPlace> {
                                       padding: false,
                                     ),
                                   ),
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
-                                  // Expanded(
-                                  //   child: TextFieldText(
-                                  //     textController: placeidController,
-                                  //     hintText: 'Id',
-                                  //     label: 'Place Id',
-                                  //     icon: Icons.email,
-                                  //     activeBg: true,
-                                  //     padding: false,
-                                  //     readOnly: true,
-                                  //   ),
-                                  // ),
                                 ],
                               ),
                               const SizedBox(
                                 height: 10,
                               ),
                               Row(
+                                spacing: 20,
                                 children: [
                                   Expanded(
                                     child: TextFieldText(
@@ -1804,9 +1791,6 @@ class _AddPlaceState extends State<AddPlace> {
                                       padding: false,
                                       readOnly: true,
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    width: 20,
                                   ),
                                   Expanded(
                                     child: TextFieldText(
