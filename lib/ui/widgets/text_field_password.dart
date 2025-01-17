@@ -54,7 +54,7 @@ class _TextFieldPasswordState extends State<TextFieldPassword> {
                   blurRadius: 3,
                   spreadRadius: 1,
                   offset: const Offset(1, 1),
-                  color: Colors.grey.withOpacity(0.2),
+                  color: Colors.grey.withValues(alpha: 0.2),
                 ),
               ],
             ),

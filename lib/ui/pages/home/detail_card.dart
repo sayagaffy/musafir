@@ -152,8 +152,8 @@ class _DetailCardState extends State<DetailCard> {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.black.withOpacity(.1),
-                Colors.black.withOpacity(.8),
+                Colors.black.withValues(alpha: .1),
+                Colors.black.withValues(alpha: .8),
               ],
             ),
           ),

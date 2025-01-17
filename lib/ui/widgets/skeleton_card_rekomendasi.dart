@@ -15,7 +15,7 @@ class SkeletonCardRekomendasi extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Colors.grey.withValues(alpha: 0.2),
             spreadRadius: 1,
             blurRadius: 2,
             offset: const Offset(1.4, 2),
