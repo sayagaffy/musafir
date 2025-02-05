@@ -1137,14 +1137,20 @@ class _DetailCardState extends State<DetailCard> {
               )
             : const SizedBox();
       }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _displayBottomSheet(context);
-        },
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: GetBuilder<HomeController>(builder: (home) {
+        return FloatingActionButton(
+          onPressed: () {
+            Get.toNamed(RouteHelper.getaddPlace(
+              widget.pageId,
+              home.placeDtl.geometry.location.lat,
+              home.placeDtl.geometry.location.lng,
+            ));
+          },
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+          child: const Icon(Icons.edit),
+        );
+      }),
     );
   }
 
@@ -1433,9 +1439,9 @@ class _DetailCardState extends State<DetailCard> {
   }
 }
 
-Future _displayBottomSheet(BuildContext context) {
-  return showModalBottomSheet(
-    context: context,
-    builder: (context) => const BottomSheetMenu(),
-  );
-}
+// Future _displayBottomSheet(BuildContext context) {
+//   return showModalBottomSheet(
+//     context: context,
+//     builder: (context) => const BottomSheetMenu(),
+//   );
+// }

@@ -5,7 +5,70 @@ import 'package:musafir/ui/pages/prayer_space/prayer_space_form_page.dart';
 import 'package:musafir/ui/pages/restoran/restoran_form_page.dart';
 
 class BottomSheetMenu extends StatelessWidget {
+  // final String currentPage;
   const BottomSheetMenu({super.key});
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Container(
+  //     child: _getMenuForPage(currentPage),
+  //   );
+  // }
+
+  // Widget _getMenuForPage(String page) {
+  //   switch (page) {
+  //     case 'Restoran':
+  //       return _getRestoranMenu();
+  //     case 'Masjid':
+  //       return _getMasjidMenu();
+  //     case 'Prayer Space':
+  //       return _getPrayerSpaceMenu();
+  //     default:
+  //       return _getRestoranMenu();
+  //   }
+  // }
+
+  // Widget _getRestoranMenu() {
+  //   return Column(
+  //     children: [
+  //       ListTile(
+  //         leading: const Icon(Icons.restaurant),
+  //         title: const Text('Add Restoran'),
+  //         onTap: () {
+  //           Get.to(() => const RestoranFormPage());
+  //         },
+  //       ),
+  //     ],
+  //   );
+  // }
+
+  // Widget _getMasjidMenu() {
+  //   return Column(
+  //     children: [
+  //       ListTile(
+  //         leading: const Icon(Icons.mosque),
+  //         title: const Text('Add Masjid'),
+  //         onTap: () {
+  //           Get.to(() => MasjidFormPage());
+  //         },
+  //       ),
+  //     ],
+  //   );
+  // }
+
+  // Widget _getPrayerSpaceMenu() {
+  //   return Column(
+  //     children: [
+  //       ListTile(
+  //         leading: const Icon(Icons.back_hand),
+  //         title: const Text('Add Prayer Space'),
+  //         onTap: () {
+  //           Get.to(() => PrayerSpaceFormPage());
+  //         },
+  //       ),
+  //     ],
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
