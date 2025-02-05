@@ -15,6 +15,7 @@ import 'package:get/get.dart';
 import 'package:musafir/base/dialog_helper.dart';
 import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/data/firestore/place_store.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/models/address_model.dart';
@@ -146,16 +147,6 @@ class _AddPlaceState extends State<AddPlace> {
         "iso": "ID",
         "name": "indonesia",
       },
-      {
-        "id": "44",
-        "iso": "CN",
-        "name": "china",
-      },
-      {
-        "id": "107",
-        "iso": "JP",
-        "name": "japan",
-      },
     ];
 
     if (dataku.isNotEmpty) {
@@ -167,6 +158,128 @@ class _AddPlaceState extends State<AddPlace> {
 
   Future<List<ProvinceModel>> getDataProvinci(filter) async {
     List province = [
+      {"id": "11", "name": "Aceh", "country_id": "100"},
+      {"id": "141", "name": "Yamanashi", "country_id": "107"},
+    ];
+
+    List provinceFilter = province
+        .where((item) => item['country_id'] == countryId.toString())
+        .toList();
+
+    if (province.isNotEmpty) {
+      return ProvinceModel.fromJsonList(provinceFilter);
+    }
+
+    return [];
+  }
+
+  Future<List<CityModel>> getDataCity(filter) async {
+    List city = [
+      {"id": 1101, "province_id": 11, "name": "Kabupaten Simeulue"},
+      {"id": 10287, "province_id": 141, "name": "ChÅ«Å"}
+    ];
+
+    List cityFilter =
+        city.where((item) => item['province_id'] == provinceId).toList();
+
+    if (city.isNotEmpty) {
+      return CityModel.fromJsonList(cityFilter);
+    }
+
+    return [];
+  }
+
+  Future getPhotos() async {
+    List photos = homeC.placeDtl?.photos != null ? homeC.placeDtl.photos : [];
+
+    List photosFilter = photos.map((item) => item.photoReference).toList();
+
+    return photosFilter;
+  }
+
+  Future<void> addplace() async {
+    int id = await PlacesStore().placesId().then((value) => value['id']);
+    List photos = await getPhotos();
+
+    var now = DateTime.now();
+    var formatter = DateFormat('dd/MM/yyyy kk:mm');
+    String formattedDate = formatter.format(now);
+
+    if (countryId == null) {
+      DialogHelper.showSnackBar(
+        'Pilih Negara Terlebih Dahulu',
+        title: 'Select Country',
+        backgroundColor: kWarningMain,
+      );
+    } else if (provinceId == null) {
+      DialogHelper.showSnackBar(
+        'Pilih Provinsi Terlebih Dahulu',
+        title: 'Select Provinsi',
+        backgroundColor: kWarningMain,
+      );
+    } else if (cityId == null) {
+      DialogHelper.showSnackBar(
+        'Pilih Kota Terlebih Dahulu',
+        title: 'Select City',
+        backgroundColor: kWarningMain,
+      );
+    } else if (halalCode == null) {
+      DialogHelper.showSnackBar(
+        'Pilih Status Halal Terlebih Dahulu',
+        title: 'Select Halal Status ',
+        backgroundColor: kWarningMain,
+      );
+    } else {
+      var placeInfo = {
+        'id': id + 1,
+        'title': nameController.text.trim(),
+        'place_id': placeidController.text.trim(),
+        'lat': latController.text.trim(),
+        'lng': lngController.text.trim(),
+        'subtitle': subtitleController.text.trim(),
+        'phone_number': phoneController.text.trim(),
+        'address': addressController.text.trim(),
+        'website': webController.text.trim(),
+        'country_id': countryId,
+        'province_id': provinceId,
+        'city_id': cityId,
+        'halal_status': halalCode,
+        'active_inactive_status': 1,
+        'created_at': formattedDate,
+        'updated_at': formattedDate,
+        'image_banner': photos.take(4),
+      };
+
+      await PlacesStore().addPlaceToInternal(placeInfo).then((value) async {
+        if (value == 'SUCCESS') {
+          await homeC.getPlaceMarks();
+          Timer(const Duration(seconds: 3), () {
+            Get.toNamed(RouteHelper.getHomeDetailPage(
+                widget.placeid, homeC.placeDtl?.name, 'addplace', 'food'));
+          });
+        }
+      });
+    }
+  }
+
+  // upload ke firestore
+  bool isUploading = false;
+  // buat loading ketika upload+insert ke firestore
+  Future<void> insertDataToFirestore() async {
+    // mulai loading
+    setState(() {
+      isUploading = true;
+    });
+
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    List<Map<String, dynamic>> countries = [
+      {"id": "100", "iso": "ID", "name": "Indonesia"},
+      {"id": "44", "iso": "CN", "name": "China"},
+      {"id": "107", "iso": "JP", "name": "Japan"},
+    ];
+
+    List<Map<String, dynamic>> provinces = [
       {"id": "11", "name": "Aceh", "country_id": "100"},
       {"id": "12", "name": "Sumatera Utara", "country_id": "100"},
       {"id": "13", "name": "Sumatera Barat", "country_id": "100"},
@@ -250,19 +363,7 @@ class _AddPlaceState extends State<AddPlace> {
       {"id": "141", "name": "Yamanashi", "country_id": "107"},
     ];
 
-    List provinceFilter = province
-        .where((item) => item['country_id'] == countryId.toString())
-        .toList();
-
-    if (province.isNotEmpty) {
-      return ProvinceModel.fromJsonList(provinceFilter);
-    }
-
-    return [];
-  }
-
-  Future<List<CityModel>> getDataCity(filter) async {
-    List city = [
+    List<Map<String, dynamic>> cities = [
       {"id": 1101, "province_id": 11, "name": "Kabupaten Simeulue"},
       {"id": 1102, "province_id": 11, "name": "Kabupaten Aceh Singkil"},
       {"id": 1103, "province_id": 11, "name": "Kabupaten Aceh Selatan"},
@@ -1631,88 +1732,69 @@ class _AddPlaceState extends State<AddPlace> {
       {"id": 10287, "province_id": 141, "name": "ChÅ«Å"}
     ];
 
-    List cityFilter =
-        city.where((item) => item['province_id'] == provinceId).toList();
+    try {
+      // Insert Countries
+      for (var country in countries) {
+        await firestore.collection("countries").doc(country['id']).set({
+          "id": country['id'],
+          "iso": country['iso'],
+          "name": country['name'],
+        });
+      }
 
-    if (city.isNotEmpty) {
-      return CityModel.fromJsonList(cityFilter);
-    }
+      // Insert Provinces
+      for (var province in provinces) {
+        await firestore
+            .collection("countries")
+            .doc(province['country_id'])
+            .collection("provinces")
+            .doc(province['id'])
+            .set({
+          "id": province['id'],
+          "name": province['name'],
+        });
+      }
 
-    return [];
-  }
+      // Insert Cities
+      for (var city in cities) {
+        // Di dalam loop penyimpanan kota:
+        String provinceIdStr = city['province_id'].toString();
+        String countryId =
+            getCountryIdForProvince(provinces, city['province_id']);
 
-  Future getPhotos() async {
-    List photos = homeC.placeDtl?.photos != null ? homeC.placeDtl.photos : [];
+        await firestore
+            .collection("countries")
+            .doc(countryId)
+            .collection("provinces")
+            .doc(provinceIdStr) // Gunakan string
+            .collection("cities")
+            .doc(city['id'].toString())
+            .set({
+          "id": city['id'],
+          "name": city['name'],
+        });
+      }
 
-    List photosFilter = photos.map((item) => item.photoReference).toList();
-
-    return photosFilter;
-  }
-
-  Future<void> addplace() async {
-    int id = await PlacesStore().placesId().then((value) => value['id']);
-    List photos = await getPhotos();
-
-    var now = DateTime.now();
-    var formatter = DateFormat('dd/MM/yyyy kk:mm');
-    String formattedDate = formatter.format(now);
-
-    if (countryId == null) {
-      DialogHelper.showSnackBar(
-        'Pilih Negara Terlebih Dahulu',
-        title: 'Select Country',
-        backgroundColor: kWarningMain,
-      );
-    } else if (provinceId == null) {
-      DialogHelper.showSnackBar(
-        'Pilih Provinsi Terlebih Dahulu',
-        title: 'Select Provinsi',
-        backgroundColor: kWarningMain,
-      );
-    } else if (cityId == null) {
-      DialogHelper.showSnackBar(
-        'Pilih Kota Terlebih Dahulu',
-        title: 'Select City',
-        backgroundColor: kWarningMain,
-      );
-    } else if (halalCode == null) {
-      DialogHelper.showSnackBar(
-        'Pilih Status Halal Terlebih Dahulu',
-        title: 'Select Halal Status ',
-        backgroundColor: kWarningMain,
-      );
-    } else {
-      var placeInfo = {
-        'id': id + 1,
-        'title': nameController.text.trim(),
-        'place_id': placeidController.text.trim(),
-        'lat': latController.text.trim(),
-        'lng': lngController.text.trim(),
-        'subtitle': subtitleController.text.trim(),
-        'phone_number': phoneController.text.trim(),
-        'address': addressController.text.trim(),
-        'website': webController.text.trim(),
-        'country_id': countryId,
-        'province_id': provinceId,
-        'city_id': cityId,
-        'halal_status': halalCode,
-        'active_inactive_status': 1,
-        'created_at': formattedDate,
-        'updated_at': formattedDate,
-        'image_banner': photos.take(4),
-      };
-
-      await PlacesStore().addPlaceToInternal(placeInfo).then((value) async {
-        if (value == 'SUCCESS') {
-          await homeC.getPlaceMarks();
-          Timer(const Duration(seconds: 3), () {
-            Get.toNamed(RouteHelper.getHomeDetailPage(
-                widget.placeid, homeC.placeDtl?.name, 'addplace', 'food'));
-          });
-        }
-      });
+      print("✅ Data berhasil diupload ke Firestore!");
+      Get.snackbar("Sukses", "Data berhasil diupload ke Firestore!");
+    } catch (e) {
+      print("❌ Error saat upload data: $e");
+      Get.snackbar("Error", "Gagal upload data: $e");
+    } finally {
+      isUploading = false;
     }
   }
+
+  String getCountryIdForProvince(
+      List<Map<String, dynamic>> provinces, int provinceId) {
+    String provinceIdStr = provinceId.toString();
+    var province = provinces.firstWhere(
+      (p) => p['id'] == provinceIdStr,
+      orElse: () => {},
+    );
+    return province.isNotEmpty ? province['country_id'] : "";
+  }
+  // mulai UI
 
   @override
   Widget build(BuildContext context) {
@@ -1748,7 +1830,7 @@ class _AddPlaceState extends State<AddPlace> {
                                 width: 20,
                               ),
                               Text(
-                                'Add Place ',
+                                'Edit Place ',
                                 style: blackTextStyle.copyWith(
                                   fontSize: 18,
                                   fontWeight: extraBold,
@@ -1865,7 +1947,7 @@ class _AddPlaceState extends State<AddPlace> {
                                         showSearchBox: true,
                                       ),
                                       items: const [
-                                        "Halal Frendly",
+                                        "Halal Friendly",
                                         "Halal Certified",
                                         "Halal",
                                       ],
@@ -2058,9 +2140,27 @@ class _AddPlaceState extends State<AddPlace> {
                               ),
                               CustomButton(
                                 title: 'Simpan Place',
-                                onPressed: () {
-                                  addplace();
-                                },
+                                onPressed: () {},
+                              ),
+                              ElevatedButton(
+                                onPressed: isUploading
+                                    ? null
+                                    : () async {
+                                        await insertDataToFirestore();
+                                      },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue, // Warna tombol
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 12),
+                                ),
+                                child: isUploading
+                                    ? const CircularProgressIndicator(
+                                        color: Colors.white)
+                                    : const Text(
+                                        "Upload Data ke Firestore",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 16),
+                                      ),
                               ),
                             ],
                           ),
