@@ -7,6 +7,7 @@ import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
+import 'package:musafir/ui/pages/home/utils/halal_status_util.dart';
 import 'package:musafir/ui/widgets/card_recom.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
 import 'package:musafir/ui/widgets/rekomendasi_title.dart';
@@ -172,7 +173,7 @@ class _SearchPlaceState extends State<SearchPlace> {
   Widget card20() {
     return isLoad && latlang != null
         ? Container(
-            padding: const EdgeInsets.only(top: 20, bottom: 20),
+            padding: const EdgeInsets.only(top: 30, bottom: 20),
             child: placesData.isNotEmpty
                 ? GridView.builder(
                     padding:
@@ -187,14 +188,16 @@ class _SearchPlaceState extends State<SearchPlace> {
                     itemCount: placesData.length,
                     itemBuilder: (BuildContext ctx, index) {
                       final item = placesData[index];
+                      final statusInfo = HalalStatusUtil.getStatusInfo(
+                          int.tryParse(
+                              item['halal_status']?.toString() ?? '0'));
 
                       return GestureDetector(
                         onTap: () {
                           var homecontroller = Get.find<HomeController>();
-
                           homecontroller
                               .placeDetail(item['place_id'].toString());
-                          Get.offNamed(RouteHelper.getHomeDetailPage(
+                          Get.toNamed(RouteHelper.getHomeDetailPage(
                             item['place_id'].toString(),
                             item['title'],
                             widget.type,
@@ -202,15 +205,15 @@ class _SearchPlaceState extends State<SearchPlace> {
                           ));
                         },
                         child: CardRecom(
-                          name: item['title'],
-                          city: item['address'],
+                          name: item['title'] ?? '',
+                          city: item['address'] ?? '',
                           imgUrl: item['image_banner'] != null
                               ? '${AppConstans.PLACE_PHOTO}${item['image_banner'].first}'
                               : 'none',
                           margin: const EdgeInsets.only(right: 0),
-                          origin: latlang.toString(),
-                          halalStatus: item['halal_status'].toString(),
-                          destination: item['jarak'],
+                          halalStatus: item['halal_status']?.toString() ?? '0',
+                          destination: item['jarak']?.toString() ?? '0',
+                          statusInfo: statusInfo,
                         ),
                       );
                     },

@@ -47,7 +47,6 @@ class UserMode {
 
 class CountryModel {
   final String id;
-
   final String name;
   final String iso;
 
@@ -59,33 +58,15 @@ class CountryModel {
 
   factory CountryModel.fromJson(Map<String, dynamic> json) {
     return CountryModel(
-      id: json["id"],
-      name: json["name"],
-      iso: json["iso"],
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      iso: json['iso'] ?? '',
     );
   }
-
-  static List<CountryModel> fromJsonList(List list) {
-    return list.map((item) => CountryModel.fromJson(item)).toList();
-  }
-
-  ///this method will prevent the override of toString
-  String userAsString() {
-    return '#${this.id} ${this.name}';
-  }
-
-  ///custom comparing function to check if two users are equal
-  bool isEqual(CountryModel model) {
-    return this.id == model.id;
-  }
-
-  @override
-  String toString() => name.toUpperCase();
 }
 
 class ProvinceModel {
   final String id;
-
   final String name;
   final String countryId;
 
@@ -97,34 +78,20 @@ class ProvinceModel {
 
   factory ProvinceModel.fromJson(Map<String, dynamic> json) {
     return ProvinceModel(
-      id: json["id"],
-      name: json["name"],
-      countryId: json["country_id"],
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      countryId: json['country_id'] ?? '',
     );
   }
 
-  static List<ProvinceModel> fromJsonList(List list) {
-    return list.map((item) => ProvinceModel.fromJson(item)).toList();
-  }
-
-  ///this method will prevent the override of toString
-  String userAsString() {
-    return '#${this.id} ${this.name} ${this.countryId}';
-  }
-
-  ///custom comparing function to check if two users are equal
-  bool isEqual(ProvinceModel model) {
-    return this.id == model.id;
-  }
-
-  @override
-  String toString() => name;
+  /// Fungsi pembanding untuk DropdownSearch
+  //bool isEqual(ProvinceModel other) => id == other.id;
 }
 
 class CityModel {
-  final int id;
+  final String id;
   final String name;
-  final int provinceId;
+  final String provinceId;
 
   CityModel({
     required this.id,
@@ -134,28 +101,11 @@ class CityModel {
 
   factory CityModel.fromJson(Map<String, dynamic> json) {
     return CityModel(
-      id: json["id"],
-      name: json["name"],
-      provinceId: json["province_id"],
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      provinceId: json['province_id'] ?? '',
     );
   }
-
-  static List<CityModel> fromJsonList(List list) {
-    return list.map((item) => CityModel.fromJson(item)).toList();
-  }
-
-  ///this method will prevent the override of toString
-  String userAsString() {
-    return '#${this.id} ${this.name} ${this.provinceId}';
-  }
-
-  ///custom comparing function to check if two users are equal
-  bool isEqual(CityModel model) {
-    return this.id == model.id;
-  }
-
-  @override
-  String toString() => name;
 }
 
 extension StringExtension on String {

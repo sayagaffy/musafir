@@ -42,10 +42,11 @@ class _TextFieldPasswordState extends State<TextFieldPassword> {
           ),
           Container(
             margin: const EdgeInsets.only(
-              top: 10,
+              top: 5,
+              bottom: 5,
             ),
             padding: const EdgeInsets.only(bottom: 3),
-            height: 40,
+            height: 55,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(6.0),
               color: kWhiteColor,

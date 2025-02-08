@@ -5,6 +5,7 @@ import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:musafir/ui/pages/home/utils/halal_status_util.dart';
 import 'package:musafir/ui/widgets/card_recom.dart';
 import 'package:musafir/ui/widgets/rekomendasi_card.dart';
 import 'package:musafir/ui/widgets/rekomendasi_title.dart';
@@ -302,54 +303,56 @@ class _HomePageState extends State<HomePage> {
   Widget verified() {
     return GetBuilder<HomeController>(
       builder: (place) {
-        if (place.localPlace.isNotEmpty) {
-          return Container(
-            padding: EdgeInsets.only(
-              left: defaultMargin,
-              bottom: 20,
-            ),
-            width: double.infinity,
-            child: SizedBox(
-              height: 180,
-              width: double.infinity,
-              child: place.nearbyFood.isNotEmpty
-                  ? ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      clipBehavior: Clip.none,
-                      shrinkWrap: true,
-                      itemCount: place.localPlace.isNotEmpty &&
-                              place.localPlace.length > 4
-                          ? 4
-                          : place.localPlace.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final item = place.localPlace[index];
-
-                        return GestureDetector(
-                          onTap: () {
-                            homeC.placeDetail(item['place_id'].toString());
-
-                            Get.toNamed(RouteHelper.getHomeDetailPage(
-                              item['place_id'].toString(),
-                              item['title'],
-                              'homePage',
-                              'food',
-                            ));
-                          },
-                          child: CardRecom(
-                            name: item['title'],
-                            city: item['address'],
-                            halalStatus: item['halal_status'].toString(),
-                            destination: item['jarak'],
-                          ),
-                        );
-                      },
-                    )
-                  : const SizedBox(),
-            ),
-          );
+        if (place.localPlace.isEmpty) {
+          return const SizedBox();
         }
 
-        return const SizedBox();
+        return Container(
+          padding: EdgeInsets.only(
+            left: defaultMargin,
+            bottom: 20,
+          ),
+          width: double.infinity,
+          child: SizedBox(
+            height: 180,
+            width: double.infinity,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              clipBehavior: Clip.none,
+              shrinkWrap: true,
+              itemCount:
+                  place.localPlace.length > 4 ? 4 : place.localPlace.length,
+              itemBuilder: (BuildContext context, int index) {
+                final item = place.localPlace[index];
+                final statusInfo = HalalStatusUtil.getStatusInfo(
+                    int.tryParse(item['halal_status']?.toString() ?? '0'));
+
+                return GestureDetector(
+                  onTap: () {
+                    place.placeDetail(item['place_id'].toString());
+                    Get.toNamed(RouteHelper.getHomeDetailPage(
+                      item['place_id'].toString(),
+                      item['title'],
+                      'homePage',
+                      'food',
+                    ));
+                  },
+                  child: CardRecom(
+                    name: item['title'] ?? '',
+                    city: item['address'] ?? '',
+                    halalStatus: item['halal_status']?.toString() ?? '0',
+                    destination: item['jarak']?.toString() ?? '0',
+                    imgUrl: item['image_banner'] ?? 'none',
+                    margin: EdgeInsets.only(
+                      right: index == (place.localPlace.length - 1) ? 0 : 15,
+                    ),
+                    statusInfo: statusInfo, // Pass the status info to CardRecom
+                  ),
+                );
+              },
+            ),
+          ),
+        );
       },
     );
   }

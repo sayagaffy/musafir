@@ -553,75 +553,59 @@ class HomeController extends GetxController implements GetxService {
 
   Future<void> setIdPlace(
       String isoCountry, String cityName, String latlng) async {
-    //get country code province code and city code from firestore with variable from placemarks/place derail
-    print(isoCountry);
-    print(cityName);
-    print(latlng);
-
-    await GeoStore().placesCountry(isoCountry).then((payload) async {
-      for (var i in payload.docs) {
-        countryId = int.parse(i.data()['id']);
-      }
-    });
-
-    await GeoStore().placesCity(cityName).then((payload) async {
-      if (payload.docs.length != 0) {
+    try {
+      await GeoStore().placesCountry(isoCountry).then((payload) {
         for (var i in payload.docs) {
-          cityId = i.data()['id'];
-          provinceId = i.data()['province_id'];
+          countryId = int.parse(i.data()['id']);
         }
-      } else {
-        cityId = 0;
-        provinceId = 0;
-      }
-    });
+      });
 
-    update();
-
-    // print(cityId);
-    // print(provinceId);
-    // print(countryId);
-
-    // print(localPlace);
-
-    _isLoadedlocal = false;
-
-    await PlacesStore().placesList(countryId, cityId).then((payload) async {
-      // print(countryId);
-      // print('testTrigger HAHAHAH');
-      // print(cityId);
-
-      if (payload.docs.length != 0) {
-        _localPlace.clear();
-        for (var i in payload.docs) {
-          var destination =
-              '${filterDot(i.data()['lat'])},${filterDot(i.data()['lng'])}';
-
-          await distance(latlng, destination).then((value) {
-            Map<String, dynamic> newplace = {
-              "place_id": i.data()['place_id'],
-              'title': i.data()['title'],
-              'halal_status': i.data()['halal_status'],
-              'address': i.data()['address'],
-              'jarak': value.replaceAll('km', ''),
-            };
-
-            _localPlace.add(newplace);
-          });
+      await GeoStore().placesCity(cityName).then((payload) {
+        if (payload.docs.isNotEmpty) {
+          for (var i in payload.docs) {
+            cityId = i.data()['id'];
+            provinceId = i.data()['province_id'];
+          }
+        } else {
+          cityId = 0;
+          provinceId = 0;
         }
-
-        testRemoveDuplicate();
-      } else {
-        _localPlace.clear();
-      }
-      print(payload.docs.length);
+      });
 
       update();
-    });
+      _isLoadedlocal = false;
 
-    _isLoadedlocal = true;
+      await PlacesStore().placesList(countryId, cityId).then((payload) async {
+        if (payload.docs.isNotEmpty) {
+          _localPlace.clear();
+          for (var i in payload.docs) {
+            var destination =
+                '${filterDot(i.data()['lat'])},${filterDot(i.data()['lng'])}';
 
-    update();
+            await distance(latlng, destination).then((value) {
+              Map<String, dynamic> newplace = {
+                "place_id": i.data()['place_id'],
+                'title': i.data()['title'],
+                'halal_status': i.data()['halal_status'],
+                'address': i.data()['address'],
+                'jarak': value.replaceAll('km', ''),
+              };
+              _localPlace.add(newplace);
+            });
+          }
+          await testRemoveDuplicate();
+        } else {
+          _localPlace.clear();
+        }
+      });
+
+      _isLoadedlocal = true;
+      update();
+    } catch (e) {
+      debugPrint("Error in setIdPlace: $e");
+      _isLoadedlocal = true;
+      update();
+    }
   }
 }
 

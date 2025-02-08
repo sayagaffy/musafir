@@ -47,9 +47,9 @@ class TextFieldText extends StatelessWidget {
               top: 10,
             ),
             // padding: EdgeInsets.only(bottom: activeBg ? 0 : 3),
-            height: 40,
+            height: 55,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6.0),
+              borderRadius: BorderRadius.circular(3.0),
               color: activeBg ? bgcolor : kWhiteColor,
               boxShadow: [
                 BoxShadow(
@@ -72,7 +72,7 @@ class TextFieldText extends StatelessWidget {
                     controller: textController,
                     decoration: InputDecoration(
                       isCollapsed: true,
-                      contentPadding: const EdgeInsets.only(left: 8, right: 8),
+                      contentPadding: const EdgeInsets.all(8.0),
                       hintText: hintText,
                       hintStyle: noColorTextStyle.copyWith(
                         fontSize: 14,

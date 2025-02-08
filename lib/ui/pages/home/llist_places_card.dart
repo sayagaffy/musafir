@@ -8,6 +8,7 @@ import 'package:musafir/data/firestore/place_store.dart';
 import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
+import 'package:musafir/ui/pages/home/utils/halal_status_util.dart';
 import 'package:musafir/ui/pages/home/widgets/checkbox.dart';
 import 'package:musafir/ui/pages/home/widgets/dropdown.dart';
 import 'package:musafir/ui/widgets/card_recom.dart';
@@ -368,11 +369,13 @@ class _ListPlacesCardState extends State<ListPlacesCard> {
                     itemCount: placesData.length,
                     itemBuilder: (BuildContext ctx, index) {
                       final item = placesData[index];
+                      final statusInfo = HalalStatusUtil.getStatusInfo(
+                          int.tryParse(
+                              item['halal_status']?.toString() ?? '0'));
 
                       return GestureDetector(
                         onTap: () {
                           var homecontroller = Get.find<HomeController>();
-
                           homecontroller
                               .placeDetail(item['place_id'].toString());
                           Get.toNamed(RouteHelper.getHomeDetailPage(
@@ -383,15 +386,15 @@ class _ListPlacesCardState extends State<ListPlacesCard> {
                           ));
                         },
                         child: CardRecom(
-                          name: item['title'],
-                          city: item['address'],
+                          name: item['title'] ?? '',
+                          city: item['address'] ?? '',
                           imgUrl: item['image_banner'] != null
                               ? '${AppConstans.PLACE_PHOTO}${item['image_banner'].first}'
                               : 'none',
                           margin: const EdgeInsets.only(right: 0),
-                          origin: latlang.toString(),
-                          halalStatus: item['halal_status'].toString(),
-                          destination: item['jarak'],
+                          halalStatus: item['halal_status']?.toString() ?? '0',
+                          destination: item['jarak']?.toString() ?? '0',
+                          statusInfo: statusInfo,
                         ),
                       );
                     },

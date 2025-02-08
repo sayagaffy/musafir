@@ -34,21 +34,20 @@ class PlacesStore {
   /// Metode ini mengembalikan daftar tempat yang sesuai dengan countryId, cityId, dan halalstatus yang diberikan.
   /// Jika terjadi kesalahan selama pengambilan data, kesalahan akan dicetak ke konsol.
   Future placesListWhere(int countryId, int cityId, int halalstatus) async {
-    dynamic review;
+    try {
+      final snapshot = await dbPlaces
+          .where("country_id", isEqualTo: countryId)
+          .where("city_id", isEqualTo: cityId)
+          .where("halal_status", isEqualTo: halalstatus)
+          .get();
 
-    await dbPlaces
-        .where("country_id", isEqualTo: countryId)
-        .where("city_id", isEqualTo: cityId)
-        .where("halal_status", isEqualTo: halalstatus)
-        .get()
-        .then(
-          (QuerySnapshot querySnapshot) => {
-            review = querySnapshot
-            // for (var element in querySnapshot.docs) { return element.data()},
-          },
-          onError: (e) => debugPrint("Error completing: $e"),
-        );
-    return review;
+      return snapshot.docs
+          .map((doc) => {'id': doc.id, ...doc.data() as Map<String, dynamic>})
+          .toList();
+    } catch (e) {
+      debugPrint("Error fetching places: $e");
+      return [];
+    }
   }
 
   Future checkPlaces(String placeid) async {

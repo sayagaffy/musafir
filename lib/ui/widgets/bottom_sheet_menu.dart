@@ -73,7 +73,7 @@ class BottomSheetMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200,
+      height: 100,
       color: Colors.white,
       child: Center(
         child: Column(
@@ -86,20 +86,20 @@ class BottomSheetMenu extends StatelessWidget {
                 _navigateToInfoPage(context, 'Restoran');
               },
             ),
-            ListTile(
-              title: const Text('Add Masjid'),
-              onTap: () {
-                Navigator.pop(context); // Close the bottom sheet
-                _navigateToInfoPage(context, 'Masjid');
-              },
-            ),
-            ListTile(
-              title: const Text('Add Prayer Space'),
-              onTap: () {
-                Navigator.pop(context); // Close the bottom sheet
-                _navigateToInfoPage(context, 'Prayer Space');
-              },
-            ),
+            // ListTile(
+            //   title: const Text('Add Masjid'),
+            //   onTap: () {
+            //     Navigator.pop(context); // Close the bottom sheet
+            //     _navigateToInfoPage(context, 'Masjid');
+            //   },
+            // ),
+            // ListTile(
+            //   title: const Text('Add Prayer Space'),
+            //   onTap: () {
+            //     Navigator.pop(context); // Close the bottom sheet
+            //     _navigateToInfoPage(context, 'Prayer Space');
+            //   },
+            // ),
           ],
         ),
       ),

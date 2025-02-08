@@ -9,10 +9,12 @@ import 'package:musafir/data/firestore/place_store.dart';
 import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
+import 'package:musafir/ui/pages/home/utils/halal_status_util.dart';
 import 'package:musafir/ui/widgets/bottom_sheet_menu.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
 import 'package:musafir/ui/widgets/location_text.dart';
 import 'package:musafir/utilitis/apps_constants.dart';
+
 // ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -496,6 +498,22 @@ class _DetailCardState extends State<DetailCard> {
   }
 
   Widget content(home) {
+    final localPlaceData = home.localPlace.firstWhere(
+      (place) {
+        debugPrint(
+            "Comparing ${place['place_id']} with ${home.placeDtl?.placeId}");
+        return place['place_id'] == home.placeDtl?.placeId;
+      },
+      orElse: () => {'halal_status': null},
+    );
+
+    debugPrint("Found local place data: $localPlaceData");
+
+    final int? halalStatus = localPlaceData['halal_status'];
+    final lastUpdate = localPlaceData['last_update'] ?? 'Belum ada update';
+    final verifiedBy = localPlaceData['verified_by'] ?? 'Belum diverifikasi';
+    final statusInfo = HalalStatusUtil.getStatusInfo(halalStatus);
+
     return Container(
       padding: const EdgeInsets.only(left: 25, right: 23),
       margin: const EdgeInsets.only(top: 19),
@@ -516,11 +534,11 @@ class _DetailCardState extends State<DetailCard> {
               horizontal: 10,
               vertical: 8,
             ),
-            height: 52,
+            height: 64,
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              color: kSuccessSurface,
+              color: statusInfo['background'],
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -528,12 +546,10 @@ class _DetailCardState extends State<DetailCard> {
                 Container(
                   width: 20,
                   height: 20,
-                  margin: const EdgeInsets.only(
-                    right: 4,
-                  ),
-                  decoration: const BoxDecoration(
+                  margin: const EdgeInsets.only(right: 4),
+                  decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/icon_halal.png'),
+                      image: AssetImage(statusInfo['icon']),
                     ),
                   ),
                 ),
@@ -542,32 +558,51 @@ class _DetailCardState extends State<DetailCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Halal Certified',
+                        statusInfo['displayText'],
                         style: blackTextStyle.copyWith(
                           fontSize: 14,
                           fontWeight: bold,
                           height: 1.4,
-                          color: kSuccessHover,
+                          color: statusInfo['text'],
                         ),
                       ),
                       Text(
-                        'Update terakhir: 21 Januari 2024',
+                        'Update terakhir: $lastUpdate',
                         style: blackTextStyle.copyWith(fontSize: 10),
-                      )
+                      ),
+                      Text(
+                        'Oleh: $verifiedBy',
+                        style: blackTextStyle.copyWith(fontSize: 10),
+                      ),
                     ],
                   ),
                 ),
-                Icon(
-                  Icons.info_rounded,
-                  size: 20,
-                  color: kBlackColor,
-                )
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(statusInfo['displayText']),
+                        content: Text(statusInfo['description']),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Tutup'),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  child: Icon(
+                    Icons.info_rounded,
+                    size: 20,
+                    color: kBlackColor,
+                  ),
+                ),
               ],
             ),
           ),
-          const SizedBox(
-            height: 30,
-          ),
+          const SizedBox(height: 30),
           Text(
             'Alamat',
             style: blackTextStyle.copyWith(
@@ -576,9 +611,7 @@ class _DetailCardState extends State<DetailCard> {
               fontWeight: bold,
             ),
           ),
-          const SizedBox(
-            height: 10,
-          ),
+          const SizedBox(height: 10),
           Text(
             home.placeDtl.formattedAddress,
             style: blackTextStyle.copyWith(
@@ -1119,39 +1152,39 @@ class _DetailCardState extends State<DetailCard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kBackgroundColor,
-      body: GetBuilder<HomeController>(builder: (home) {
-        return home.loading
-            ? Skeletonizer(
-                enabled: home.placeDtl.name == null,
-                child: ListView(children: [
-                  backgroundImage(context, home),
-                  tileReview(home),
-                  content(home),
-                  mapLocation(home),
-                  titleRekomendasi(home),
-                  foto(home),
-                  rating(home),
-                  ulasan(home),
-                ]),
-              )
-            : const SizedBox();
-      }),
-      floatingActionButton: GetBuilder<HomeController>(builder: (home) {
-        return FloatingActionButton(
-          onPressed: () {
-            Get.toNamed(RouteHelper.getaddPlace(
-              widget.pageId,
-              home.placeDtl.geometry.location.lat,
-              home.placeDtl.geometry.location.lng,
-            ));
-          },
-          backgroundColor: Colors.blue,
-          foregroundColor: Colors.white,
-          child: const Icon(Icons.edit),
+        backgroundColor: kBackgroundColor,
+        body: GetBuilder<HomeController>(builder: (home) {
+          return home.loading
+              ? Skeletonizer(
+                  enabled: home.placeDtl.name == null,
+                  child: ListView(children: [
+                    backgroundImage(context, home),
+                    tileReview(home),
+                    content(home),
+                    mapLocation(home),
+                    titleRekomendasi(home),
+                    foto(home),
+                    rating(home),
+                    ulasan(home),
+                  ]),
+                )
+              : const SizedBox();
+        })
+        // floatingActionButton: GetBuilder<HomeController>(builder: (home) {
+        // return FloatingActionButton(
+        //   onPressed: () {
+        //     // Get.toNamed(RouteHelper.getaddPlace(
+        //     //   widget.pageId,
+        //     //   home.placeDtl.geometry.location.lat,
+        //     //   home.placeDtl.geometry.location.lng,
+        //     // ));
+        //   },
+        //   backgroundColor: Colors.blue,
+        //   foregroundColor: Colors.white,
+        //   child: const Icon(Icons.edit),
+        // );
+        // }),
         );
-      }),
-    );
   }
 
   Future<void> _reportBuilder(BuildContext context) {
