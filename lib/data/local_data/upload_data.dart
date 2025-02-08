@@ -50,7 +50,7 @@ Future<void> insertDataToFirestore() async {
     });
   }
 
-  print("Data successfully uploaded to Firestore!");
+  debugPrint("Data successfully uploaded to Firestore!");
 }
 
 String getCountryIdForProvince(
