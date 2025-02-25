@@ -10,6 +10,7 @@ class ListTileCard extends StatelessWidget {
   final String status;
   final double rating;
   final int price;
+  final int? halalStatus;
 
   const ListTileCard(
       {super.key,
@@ -19,7 +20,21 @@ class ListTileCard extends StatelessWidget {
       this.km = '1.4',
       this.status = 'halal',
       this.rating = 4.5,
-      this.price = 0});
+      this.price = 0,
+      this.halalStatus});
+
+  String _getHalalIcon() {
+    switch (halalStatus) {
+      case 1: // Halal Certified
+        return 'assets/icon_halal.png';
+      case 2: // Halal Friendly
+        return 'assets/icon_halal_blue.png';
+      case 3: // Limited Halal Options
+        return 'assets/icon_halal_blue.png';
+      default:
+        return 'assets/icon_halal_black.png'; // Default icon
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,9 +122,11 @@ class ListTileCard extends StatelessWidget {
                         margin: const EdgeInsets.only(
                           right: 3,
                         ),
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: AssetImage('assets/icon_halal.png'),
+                            image: AssetImage(
+                              _getHalalIcon(),
+                            ),
                           ),
                         ),
                       ),
