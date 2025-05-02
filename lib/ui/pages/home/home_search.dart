@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:musafir/controllers/home_controller.dart';
 import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/data/firestore/user_store.dart';
-import 'package:musafir/models/nearby_model.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/widgets/list_tile_card.dart';
@@ -39,23 +38,6 @@ class _HomeSearchState extends State<HomeSearch> {
             : locationController.latlng.toString();
       });
     });
-  }
-
-  int? _getHalalStatusForPlace(String placeId) {
-    // Get the HomeController instance
-    final homeController = Get.find<HomeController>();
-
-    // Find the place in localPlace list
-    final place = homeController.localPlace.firstWhere(
-      (item) => item['place_id'] == placeId,
-      orElse: () => {'halal_status': null},
-    );
-
-    // Extract and return the halal_status
-    if (place['halal_status'] != null) {
-      return int.tryParse(place['halal_status'].toString());
-    }
-    return null;
   }
 
   Widget header(BuildContext context) {
@@ -176,7 +158,6 @@ class _HomeSearchState extends State<HomeSearch> {
                               : 'none',
                           rating: item.rating,
                           price: item.priceLevel,
-                          halalStatus: _getHalalStatusForPlace(item.placeId),
                         ),
                       );
                     })
