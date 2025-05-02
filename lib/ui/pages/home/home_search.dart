@@ -301,7 +301,7 @@ class _HomeSearchState extends State<HomeSearch> {
       child: GetBuilder<HomeController>(builder: (place) {
         return place.isLoadedFood
             ? SizedBox(
-                height: 206,
+                height: 230,
                 width: double.infinity,
                 child: ListView.builder(
                     scrollDirection: Axis.horizontal,

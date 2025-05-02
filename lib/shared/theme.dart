@@ -56,6 +56,9 @@ TextStyle redTextStyle = GoogleFonts.manrope(
 TextStyle purpleTextStyle = GoogleFonts.manrope(
   color: kPrimaryColor,
 );
+TextStyle blueTextStyle = GoogleFonts.manrope(
+  color: kBlueColor,
+);
 
 TextStyle noColorTextStyle = GoogleFonts.manrope();
 

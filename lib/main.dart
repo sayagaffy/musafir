@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart'; // di comment dulu sementara mau debuging
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -52,15 +52,3 @@ class MainApp extends StatelessWidget {
     );
   }
 }
-
-//RouteHelper.getaddPlace('ChIJUdoG4cgBMTARE4jspjaeF_8', 3.1110831, 98.5024141)
-
-// addplace?placeid=ChIJjWkS22UBMTARfGscubrO6Bg&lat=3.1126785&lng=98.5032119
-
-//  RouteHelper.getHomeDetailPage('ChIJQYgSer8BMTARCNr6qN-yZME',
-//                     'RUMAH MAKAN MUSLIM WULAN', 'homePage', 'food')
-
-//  ? RouteHelper.getaddPlace(
-//                     'ChIJjWkS22UBMTARfGscubrO6Bg', 3.1126785, 98.5032119)
-
-// mulai kode untuk bypass login

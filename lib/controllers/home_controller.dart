@@ -19,6 +19,7 @@ import 'package:musafir/shared/theme.dart';
 
 class HomeController extends GetxController implements GetxService {
   GoogleRepo googleRepo;
+  PlacesStore placesStore = PlacesStore();
   HomeController({required this.googleRepo});
 
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -406,6 +407,33 @@ class HomeController extends GetxController implements GetxService {
     }
 
     return 'zero';
+  }
+
+  Future<int> getHalalStatusForPlace(String placeId) async {
+    try {
+      // Check if the place exists in the local database
+      final placeExists = await placesStore.checkPlaces(placeId);
+
+      if (placeExists > 0) {
+        // If place exists, query its halal status
+        final placeQuery = await placesStore.dbPlaces
+            .where('place_id', isEqualTo: placeId)
+            .get();
+
+        if (placeQuery.docs.isNotEmpty) {
+          // Return the halal status, defaulting to 0 if not found
+          return int.tryParse(
+                  placeQuery.docs.first['halal_status']?.toString() ?? '0') ??
+              0;
+        }
+      }
+
+      // If no place found or no halal status, return 0
+      return 0;
+    } catch (e) {
+      print('Error getting halal status for place $placeId: $e');
+      return 0;
+    }
   }
 
   Future<void> getPlaceMarks() async {

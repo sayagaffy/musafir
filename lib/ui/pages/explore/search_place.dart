@@ -50,41 +50,28 @@ class _SearchPlaceState extends State<SearchPlace> {
     });
   }
 
-  //Kode ini adalah sebuah fungsi check yang menerima satu parameter placeId dan mengembalikan nilai Future<bool?>. Fungsi ini digunakan untuk memeriksa apakah placeId tertentu ada dalam daftar selectedFood di objek expC. Jika ada, maka fungsi ini akan mengembalikan nilai true, jika tidak, maka akan mengembalikan nilai false.
-
   Future<bool?> check(String placeId) async {
-    //Fungsi check dideklarasikan sebagai async, yang berarti fungsi ini akan mengembalikan sebuah Future. Fungsi ini menerima satu parameter placeId yang merupakan ID tempat yang akan diperiksa. Fungsi ini akan mengembalikan nilai boolean yang menunjukkan apakah tempat tersebut ada dalam daftar selectedFood atau tidak.
     bool status = false;
-    //Variabel status diinisialisasi dengan nilai false.
-
     var check = expC.selectedFood.where((x) => x['place_id'] == placeId);
-    //Variabel check menyimpan hasil dari pencarian dalam daftar selectedFood yang memiliki place_id yang sama dengan placeId.
 
     if (check.isNotEmpty) {
       status = true;
     } else {
       status = false;
     }
-    //Jika hasil pencarian tidak kosong, maka status diubah menjadi true, jika tidak, maka status tetap false.
 
     return status;
-    //Fungsi mengembalikan nilai status.
   }
 
   void getPlacesData() async {
     if (expC.nearbyFood.isNotEmpty) {
-      // Memeriksa apakah daftar nearbyFood tidak kosong
       for (var i in expC.nearbyFood) {
-        // Melakukan iterasi pada setiap item di nearbyFood
         var destination =
             '${homeC.filterDot(i.geometry.location.lat.toString())},${homeC.filterDot(i.geometry.location.lng.toString())}';
-        // Membuat string tujuan dari koordinat lokasi
         await homeC
-            // Memanggil fungsi distance dan menunggu hasilnya
             .distance('${expC.latlng!.latitude}, ${expC.latlng!.longitude}',
                 destination)
             .then((value) async {
-          // Membuat peta data baru dengan informasi tempat
           Map<String, dynamic> newdata = {
             "place_id": i.placeId,
             'title': i.name,
@@ -93,12 +80,10 @@ class _SearchPlaceState extends State<SearchPlace> {
             'selected': await check(i.placeId),
             'photos': i.photos != null ? i.photos.first.photoReference : 'none',
           };
-          // Menambahkan data baru ke dalam daftar placesData
           setState(() {
             placesData.add(newdata);
           });
         });
-        // Mengatur status isLoad menjadi true
         setState(() {
           isLoad = true;
         });
@@ -260,10 +245,14 @@ class _SearchPlaceState extends State<SearchPlace> {
       elevation: 1,
       shadowColor: kNeutral20,
       color: kBackgroundColor,
+      margin:
+          const EdgeInsets.symmetric(vertical: 4), // Reduced vertical margin
       child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12, vertical: 4), // Reduced padding
         leading: Container(
-          width: 70.0,
-          height: 70.0,
+          width: 50.0, // Reduced width
+          height: 50.0, // Reduced height
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             image: photos == 'none'
@@ -279,94 +268,93 @@ class _SearchPlaceState extends State<SearchPlace> {
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min, // Prevent unnecessary expansion
           children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 5),
-              child:
-                  Text(title, style: blackTextStyle.copyWith(fontWeight: bold)),
+            Text(
+              title,
+              style: blackTextStyle.copyWith(
+                  fontWeight: bold, fontSize: 12 // Reduced font size
+                  ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Text(
-                address,
-                style: blackTextStyle.copyWith(fontSize: 11),
-                maxLines: 2,
-              ),
+            const SizedBox(height: 2), // Reduced spacing
+            Text(
+              address,
+              style: blackTextStyle.copyWith(fontSize: 10), // Reduced font size
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
         subtitle: Padding(
-          padding: const EdgeInsets.only(bottom: 5),
-          child: SizedBox(
-            child: Row(
-              children: [
-                Container(
-                  width: 16,
-                  height: 16,
-                  margin: const EdgeInsets.only(
-                    right: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(halalStatus == '1'
-                          ? 'assets/icon_halal.png'
-                          : halalStatus == '2'
-                              ? 'assets/icon_halal_blue.png'
-                              : 'assets/icon_halal_black.png'),
-                    ),
-                  ),
-                ),
-                Text(
-                  halalStatus == '1'
-                      ? 'Halal Certified'
-                      : halalStatus == '2'
-                          ? 'Halal Friendly'
-                          : 'Halal',
-                  style: blackTextStyle.copyWith(
-                    fontSize: 12,
-                    fontWeight: bold,
-                    color: halalStatus == '1'
-                        ? kGreenHover
+          padding: const EdgeInsets.only(top: 2), // Reduced padding
+          child: Row(
+            children: [
+              Container(
+                width: 14, // Reduced width
+                height: 14, // Reduced height
+                margin: const EdgeInsets.only(right: 3),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(halalStatus == '1'
+                        ? 'assets/icon_halal.png'
                         : halalStatus == '2'
-                            ? kBlueColorHover
-                            : kBlackColor,
+                            ? 'assets/icon_halal_blue.png'
+                            : 'assets/icon_halal_black.png'),
                   ),
                 ),
-                const SizedBox(
-                  width: 10,
+              ),
+              Text(
+                halalStatus == '1'
+                    ? 'Halal Certified'
+                    : halalStatus == '2'
+                        ? 'Halal Friendly'
+                        : 'Halal',
+                style: blackTextStyle.copyWith(
+                  fontSize: 10, // Reduced font size
+                  fontWeight: bold,
+                  color: halalStatus == '1'
+                      ? kGreenHover
+                      : halalStatus == '2'
+                          ? kBlueColorHover
+                          : kBlackColor,
                 ),
-                destination != 'none' && destination != 'ZERO_RESULTS'
-                    ? Row(
-                        children: [
-                          Icon(
-                            Icons.location_on_rounded,
-                            size: 16,
-                            color: kRedMain,
-                          ),
-                          Text(
-                            '${destination}Km',
-                            style: blackTextStyle.copyWith(fontSize: 11),
-                          ),
-                        ],
-                      )
-                    : const SizedBox(),
-              ],
-            ),
+              ),
+              const SizedBox(width: 6), // Reduced spacing
+              destination != 'none' && destination != 'ZERO_RESULTS'
+                  ? Row(
+                      children: [
+                        Icon(
+                          Icons.location_on_rounded,
+                          size: 12, // Reduced icon size
+                          color: kRedMain,
+                        ),
+                        Text(
+                          '${destination}Km',
+                          style: blackTextStyle.copyWith(
+                              fontSize: 9), // Reduced font size
+                        ),
+                      ],
+                    )
+                  : const SizedBox(),
+            ],
           ),
         ),
         trailing: isSelected
             ? Icon(
                 Icons.check_circle,
                 color: Colors.green[700],
+                size: 18, // Reduced icon size
               )
             : const Icon(
                 Icons.check_circle_outline,
                 color: Colors.grey,
+                size: 18, // Reduced icon size
               ),
         onTap: () {
           setState(() {
             placesData[index]['selected'] = !placesData[index]['selected'];
-            // index adalah indeks dari item dalam daftar placesData yang sedang diubah. Jika selected bernilai true, maka item tersebut akan ditambahkan ke dalam daftar selectedFood, jika selected bernilai false, maka item tersebut akan dihapus dari daftar selectedFood.
             if (placesData[index]['selected'] == true) {
               expC.selectedFood.add({
                 'place_id': placeId,
@@ -404,7 +392,7 @@ class _SearchPlaceState extends State<SearchPlace> {
                 itemBuilder: (BuildContext context, int index) {
                   return Padding(
                     padding: const EdgeInsets.only(
-                      bottom: 10,
+                      bottom: 4, // Further reduced bottom padding
                       left: 18,
                       right: 18,
                     ),

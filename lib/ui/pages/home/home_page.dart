@@ -71,10 +71,10 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       name != null
                           ? Text(
-                              'Assalamualaikum $name',
+                              'Assalamualaikum, $name',
                               style: blackTextStyle.copyWith(
-                                fontWeight: extraBold,
-                                fontSize: 20,
+                                fontWeight: bold,
+                                fontSize: 18,
                                 height: 0.8,
                                 color: kBlueColorHover,
                               ),
@@ -83,39 +83,24 @@ class _HomePageState extends State<HomePage> {
                           : const SkeletonText(
                               size: 12,
                             ),
-                      // GestureDetector(
-                      //   onTap: () async {
-                      //     print('halo');
-
-                      //     print(homeC.nearbyFood.length);
-                      //     print(homeC.localPlace.length);
-
-                      //     // for (var lokal in homeC.localPlace) {
-                      //     //   homeC.nearbyFood.removeWhere(
-                      //     //       (item) => item.placeId == lokal['place_id']);
-                      //     // }
-
-                      //     // print(homeC.nearbyFood.length);
-                      //     // print(homeC.localPlace.length);
-
-                      //     await homeC.testRemoveDuplicate();
-
-                      //     print(homeC.nearbyFood.length);
-                      //     print(homeC.localPlace.length);
-                      //   },
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.only(left: 2),
-                      //     child: Icon(
-                      //       Icons.filter,
-                      //       size: 20,
-                      //       color: kBlackColor,
-                      //     ),
-                      //   ),
-                      // )
                     ],
                   ),
                 ),
               ),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Column(
+            spacing: 5,
+            children: [
+              Text(
+                'kamu berada di',
+                style: blackTextStyle.copyWith(
+                  fontSize: 11,
+                ),
+              )
             ],
           ),
           Column(
@@ -138,11 +123,6 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(
                               width: 5,
                             ),
-                            Text(
-                              'Kamu berada di ',
-                              style: blackTextStyle.copyWith(
-                                  fontSize: 12, fontWeight: regular),
-                            ),
                             GestureDetector(
                               onTap: () {
                                 Get.toNamed(RouteHelper.getLocationPage());
@@ -153,7 +133,7 @@ class _HomePageState extends State<HomePage> {
                                     width: 200,
                                     child: Text(
                                       ' $address',
-                                      style: blackTextStyle.copyWith(
+                                      style: blueTextStyle.copyWith(
                                         fontSize: 12,
                                         fontWeight: bold,
                                       ),
@@ -314,7 +294,7 @@ class _HomePageState extends State<HomePage> {
           ),
           width: double.infinity,
           child: SizedBox(
-            height: 180,
+            height: 200,
             width: double.infinity,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -384,7 +364,7 @@ class _HomePageState extends State<HomePage> {
         builder: (place) {
           if (place.isLoadedFood && latlang != null) {
             return SizedBox(
-              height: 206,
+              height: 240,
               width: double.infinity,
               child: place.nearbyFood.isNotEmpty
                   ? ListView.builder(
@@ -406,17 +386,23 @@ class _HomePageState extends State<HomePage> {
                               'food',
                             ));
                           },
-                          child: RekomendasiCard(
-                            name: item.name,
-                            city: item.vicinity,
-                            imgUrl: item.photos != null
-                                ? '${AppConstans.PLACE_PHOTO}${item.photos.first.photoReference}'
-                                : 'none',
-                            rating: item.rating,
-                            ulasan: item.userRatingsTotal,
-                            origin: latlang.toString(),
-                            destination:
-                                '${item.geometry.location.lat.toString()}, ${item.geometry.location.lng.toString()}',
+                          child: FutureBuilder<int>(
+                            future: homeC.getHalalStatusForPlace(item.placeId),
+                            builder: (context, snapshot) {
+                              return RekomendasiCard(
+                                name: item.name,
+                                city: item.vicinity,
+                                imgUrl: item.photos != null
+                                    ? '${AppConstans.PLACE_PHOTO}${item.photos.first.photoReference}'
+                                    : 'none',
+                                rating: item.rating,
+                                ulasan: item.userRatingsTotal,
+                                origin: latlang.toString(),
+                                destination:
+                                    '${item.geometry.location.lat.toString()}, ${item.geometry.location.lng.toString()}',
+                                halalStatus: snapshot.data ?? 0,
+                              );
+                            },
                           ),
                         );
                       },
@@ -590,7 +576,7 @@ class _HomePageState extends State<HomePage> {
         builder: (place) {
           if (place.isLoadedMosque && latlang != null) {
             return SizedBox(
-              height: 180,
+              height: 200,
               width: double.infinity,
               child: place.nearbyMosque.isNotEmpty
                   ? ListView.builder(

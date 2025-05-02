@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:musafir/shared/theme.dart';
+import 'package:musafir/ui/pages/home/utils/halal_status_util.dart';
 
 class RekomendasiCard extends StatelessWidget {
   final String name;
@@ -12,6 +13,7 @@ class RekomendasiCard extends StatelessWidget {
   final String km;
   final String origin;
   final String destination;
+  final int halalStatus;
 
   const RekomendasiCard({
     super.key,
@@ -25,189 +27,155 @@ class RekomendasiCard extends StatelessWidget {
     this.km = '0.4 km',
     this.origin = 'none',
     this.destination = 'none',
+    this.halalStatus = 0,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 178,
-      height: !isMasjid ? 206 : 175,
-      margin: margin,
-      decoration: BoxDecoration(
-        color: kWhiteColor,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.3),
-            spreadRadius: 1,
-            blurRadius: 2,
-            offset: const Offset(1.5, 2),
-          ),
-        ],
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        maxWidth: 200,
+        minWidth: 160,
+        maxHeight: 320, // Reduced max height
+        minHeight: 220, // Added minimum height
       ),
-      child: Column(
-        children: [
-          Container(
-            height: 90,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(8),
-                topRight: Radius.circular(8),
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        margin: margin,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(8),
               ),
-              image: imgUrl == 'none'
-                  ? const DecorationImage(
-                      fit: BoxFit.contain,
-                      image: AssetImage('assets/brandBlue.png'),
-                    )
-                  : DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(imgUrl),
-                    ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.only(
-              left: 10,
-              right: 10,
-              top: 5,
-              bottom: 10,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: blackTextStyle.copyWith(
-                    fontSize: 14,
-                    fontWeight: extraBold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Container(
-                  margin: const EdgeInsets.only(top: 1),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        city,
-                        style: blackTextStyle.copyWith(
-                          fontSize: 12,
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: imgUrl == 'none'
+                    ? Image.asset(
+                        'assets/brandBlue.png',
+                        fit: BoxFit.contain,
+                      )
+                    : Image.network(
+                        imgUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            Image.asset(
+                          'assets/brandBlue.png',
+                          fit: BoxFit.contain,
                         ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: !isMasjid ? 2 : 3,
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      // Row(
-                      //   children: [
-                      //     Icon(
-                      //       Icons.location_on_rounded,
-                      //       size: 16,
-                      //       color: kRedMain,
-                      //     ),
-                      //     GetLocationText(
-                      //       origin: origin,
-                      //       destination: destination,
-                      //     ),
-                      //   ],
-                      // ),
-                      // const SizedBox(
-                      //   height: 1,
-                      // ),
-                      SizedBox(
-                        child: !isMasjid
-                            ? Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: 16,
-                                        height: 16,
-                                        margin: const EdgeInsets.only(
-                                          right: 3,
-                                        ),
-                                        decoration: const BoxDecoration(
-                                          image: DecorationImage(
-                                            image: AssetImage(
-                                                'assets/icon_halal.png'),
-                                          ),
-                                        ),
-                                      ),
-                                      Text(
-                                        'Halal Certified',
-                                        style: blackTextStyle.copyWith(
-                                          fontSize: 12,
-                                          fontWeight: bold,
-                                          color: kGreenHover,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 1,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Container(
-                                            width: 16,
-                                            height: 16,
-                                            margin:
-                                                const EdgeInsets.only(right: 3),
-                                            decoration: const BoxDecoration(
-                                              image: DecorationImage(
-                                                image: AssetImage(
-                                                    'assets/icon_star.png'),
-                                              ),
-                                            ),
-                                          ),
-                                          Text(
-                                            rating.toString(),
-                                            style: greyTextStyle.copyWith(
-                                                fontSize: 12),
-                                          ),
-                                          Text(
-                                            ' |',
-                                            style: blackTextStyle.copyWith(
-                                                fontSize: 12),
-                                          ),
-                                          Text(
-                                            ' $ulasan ulasan ',
-                                            style: greyTextStyle.copyWith(
-                                                fontSize: 12),
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        width: 14,
-                                        height: 14,
-                                        decoration: const BoxDecoration(
-                                          image: DecorationImage(
-                                            image: AssetImage(
-                                                'assets/icon_dots.png'),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              )
-                            : const SizedBox(
-                                height: 1,
-                              ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    name,
+                    style: blackTextStyle.copyWith(
+                      fontSize: 14,
+                      fontWeight: extraBold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.fade,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    city,
+                    style: blackTextStyle.copyWith(
+                      fontSize: 12,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.fade,
+                  ),
+                  const SizedBox(height: 8),
+                  if (!isMasjid) ...[
+                    Row(
+                      children: [
+                        Container(
+                          width: 16,
+                          height: 16,
+                          margin: const EdgeInsets.only(right: 4),
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(
+                                HalalStatusUtil.getStatusInfo(
+                                    halalStatus)['icon'],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            HalalStatusUtil.getStatusInfo(
+                                halalStatus)['displayText'],
+                            style: blackTextStyle.copyWith(
+                              fontSize: 12,
+                              fontWeight: bold,
+                              color: HalalStatusUtil.getStatusInfo(
+                                  halalStatus)['text'],
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 16,
+                                height: 16,
+                                margin: const EdgeInsets.only(right: 4),
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage('assets/icon_star.png'),
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                rating.toString(),
+                                style: greyTextStyle.copyWith(fontSize: 12),
+                                overflow: TextOverflow.fade,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  ' | $ulasan ulasan',
+                                  style: greyTextStyle.copyWith(fontSize: 12),
+                                  overflow: TextOverflow.fade,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          width: 14,
+                          height: 14,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/icon_dots.png'),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ]
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
