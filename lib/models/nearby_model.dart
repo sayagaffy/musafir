@@ -44,6 +44,7 @@ class NearbyPlaceModel {
   List<Photos>? photos;
   PlusCode? plusCode;
   int? priceLevel;
+  int? halal_status;
 
   NearbyPlaceModel({
     this.formattedAddress,
@@ -94,6 +95,9 @@ class NearbyPlaceModel {
     plusCode =
         json['plus_code'] != null ? PlusCode.fromJson(json['plus_code']) : null;
     priceLevel = json['price_level'] ?? 0;
+    halal_status = json['halal_status'] != null
+        ? int.tryParse(json['halal_status'].toString())
+        : 0;
   }
 }
 

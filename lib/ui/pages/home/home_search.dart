@@ -132,35 +132,106 @@ class _HomeSearchState extends State<HomeSearch> {
                     itemCount: place.searchPlace.length,
                     itemBuilder: (BuildContext context, int index) {
                       var item = place.searchPlace[index];
+
+                      // Check if item is a Map (from Firebase) or NearbyPlaceModel (from Google API)
+                      bool isMap = item is Map;
+
+                      String placeId = isMap ? item['place_id'] : item.placeId;
+                      String name = isMap ? item['name'] : item.name;
+                      String address = isMap
+                          ? (item['formatted_address'] ?? '')
+                          : (item.formattedAddress ?? '');
+                      List<dynamic> types = isMap ? item['types'] : item.types;
+
+                      String type = 'place';
+                      if (types.contains('mosque')) {
+                        type = 'mosque';
+                      } else if (types.contains('food')) {
+                        type = 'food';
+                      }
+
+                      // Get photo reference
+                      String imgUrl = 'none';
+                      if (isMap) {
+                        if (item['photos'] != null &&
+                            item['photos'].isNotEmpty) {
+                          imgUrl = item['photos'][0]['photo_reference'];
+                        }
+                      } else {
+                        if (item.photos != null && item.photos.isNotEmpty) {
+                          imgUrl = item.photos.first.photoReference;
+                        }
+                      }
+
+                      // Get location coordinates
+                      double? lat, lng;
+                      if (isMap) {
+                        // Handle potential string values by converting to double
+                        var latValue = item['geometry']?['location']?['lat'];
+                        var lngValue = item['geometry']?['location']?['lng'];
+
+                        // Convert to double if string
+                        if (latValue is String) {
+                          lat = double.tryParse(latValue) ?? 0.0;
+                        } else {
+                          lat = latValue?.toDouble() ?? 0.0;
+                        }
+
+                        if (lngValue is String) {
+                          lng = double.tryParse(lngValue) ?? 0.0;
+                        } else {
+                          lng = lngValue?.toDouble() ?? 0.0;
+                        }
+                      } else {
+                        lat = item.geometry?.location?.lat;
+                        lng = item.geometry?.location?.lng;
+                      }
+
+                      // Get rating and price
+                      double rating;
+                      if (isMap) {
+                        var ratingValue = item['rating'];
+                        if (ratingValue is String) {
+                          rating = double.tryParse(ratingValue) ?? 0.0;
+                        } else {
+                          rating = (ratingValue as num?)?.toDouble() ?? 0.0;
+                        }
+                      } else {
+                        rating = item.rating ?? 0.0;
+                      }
+
+                      int price;
+                      if (isMap) {
+                        var priceValue = item['price_level'];
+                        if (priceValue is String) {
+                          price = int.tryParse(priceValue) ?? 0;
+                        } else {
+                          price = (priceValue as num?)?.toInt() ?? 0;
+                        }
+                      } else {
+                        price = item.priceLevel ?? 0;
+                      }
+
                       return GestureDetector(
                         onTap: () {
-                          String type = 'place';
-                          if (item.types.contains('mosque')) {
-                            type = 'mosque';
-                          } else if (item.types.contains('food')) {
-                            type = 'food';
-                          }
-
-                          place.placeDetail(item.placeId);
+                          place.placeDetail(placeId);
 
                           Get.toNamed(RouteHelper.getHomeDetailPage(
-                            item.placeId.toString(),
-                            item.name,
+                            placeId,
+                            name,
                             'homePage_search',
                             type,
                           ));
                         },
                         child: ListTileCard(
-                          title: item.name,
-                          address: item.formattedAddress ?? '',
-                          placeId: item.placeId,
-                          placeLat: item.geometry?.location?.lat,
-                          placeLng: item.geometry?.location?.lng,
-                          imgUrl: item.photos != null
-                              ? item.photos.first.photoReference
-                              : 'none',
-                          rating: item.rating ?? 0.0,
-                          price: item.priceLevel ?? 0,
+                          title: name,
+                          address: address,
+                          placeId: placeId,
+                          placeLat: lat,
+                          placeLng: lng,
+                          imgUrl: imgUrl,
+                          rating: rating,
+                          price: price,
                         ),
                       );
                     })

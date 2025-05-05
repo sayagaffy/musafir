@@ -498,18 +498,35 @@ class _DetailCardState extends State<DetailCard> {
   }
 
   Widget content(home) {
-    final localPlaceData = home.localPlace.firstWhere(
-      (place) {
-        debugPrint(
-            "Comparing ${place['place_id']} with ${home.placeDtl?.placeId}");
-        return place['place_id'] == home.placeDtl?.placeId;
-      },
-      orElse: () => {'halal_status': null},
-    );
+    // First try to get halal status from local place data
+    Map<String, dynamic> localPlaceData = {'halal_status': null};
 
-    debugPrint("Found local place data: $localPlaceData");
+    try {
+      if (home.localPlace.isNotEmpty) {
+        localPlaceData = home.localPlace.firstWhere(
+          (place) {
+            debugPrint(
+                "Comparing ${place['place_id']} with ${home.placeDtl?.placeId}");
+            return place['place_id'] == home.placeDtl?.placeId;
+          },
+          orElse: () => {'halal_status': null},
+        );
+        debugPrint("Found local place data: $localPlaceData");
+      }
+    } catch (e) {
+      debugPrint("Error finding local place data: $e");
+    }
 
-    final int? halalStatus = localPlaceData['halal_status'];
+    // Check if the place detail has halal_status directly (from search results)
+    int? halalStatus;
+    if (home.placeDtl.halal_status != null) {
+      halalStatus = home.placeDtl.halal_status;
+      debugPrint("Using halal_status from place detail: $halalStatus");
+    } else {
+      halalStatus = localPlaceData['halal_status'];
+      debugPrint("Using halal_status from local place data: $halalStatus");
+    }
+
     final lastUpdate = localPlaceData['last_update'] ?? 'Belum ada update';
     final verifiedBy = localPlaceData['verified_by'] ?? 'Belum diverifikasi';
     final statusInfo = HalalStatusUtil.getStatusInfo(halalStatus);

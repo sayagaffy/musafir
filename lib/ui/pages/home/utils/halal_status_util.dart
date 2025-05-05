@@ -7,7 +7,7 @@ class HalalStatusUtil {
     switch (status) {
       case 1:
         return {
-          'background': kSuccessSurface,
+          'background': const Color(0xFFF5F5F5),
           'text': kSuccessHover,
           'icon': 'assets/icon_halal.png',
           'displayText': 'Halal-Certified',
@@ -16,7 +16,7 @@ class HalalStatusUtil {
         };
       case 2:
         return {
-          'background': kBlueColor,
+          'background': const Color(0xFFF5F5F5),
           'text': kBlueColor,
           'icon': 'assets/icon_halal_blue.png',
           'displayText': 'Halal-Friendly',
@@ -24,7 +24,7 @@ class HalalStatusUtil {
         };
       case 3:
         return {
-          'background': kBluePressed,
+          'background': const Color(0xFFF5F5F5),
           'text': kBluePressed,
           'icon': 'assets/muslim_friendly.png',
           'displayText': 'Muslim-Friendly',

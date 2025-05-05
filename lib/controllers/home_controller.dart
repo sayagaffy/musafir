@@ -278,6 +278,30 @@ class HomeController extends GetxController implements GetxService {
       // _geoCode.addAll(Geocode.fromJson(response.body).results);
 
       _placeDtl = PlaceDetail.fromJson(response.body).result;
+
+      // Check if the place exists in Firebase to get halal_status
+      try {
+        var placeExists = await placesStore.checkPlaces(placeId);
+        if (placeExists > 0) {
+          var placeQuery = await placesStore.dbPlaces
+              .where('place_id', isEqualTo: placeId)
+              .get();
+
+          if (placeQuery.docs.isNotEmpty) {
+            var placeData =
+                placeQuery.docs.first.data() as Map<String, dynamic>;
+            // Set halal_status in the place detail
+            _placeDtl?.halal_status = placeData['halal_status'] != null
+                ? int.tryParse(placeData['halal_status'].toString())
+                : 0;
+
+            print('Found halal_status in Firebase: ${_placeDtl?.halal_status}');
+          }
+        }
+      } catch (e) {
+        print('Error getting halal status for place detail: $e');
+      }
+
       _loading = true;
       update();
     }
@@ -344,6 +368,7 @@ class HomeController extends GetxController implements GetxService {
                 'Firebase place: ${place['name']} (halal_status: ${place['halal_status']})');
           }
 
+          // Use the raw Map objects directly
           _searchPlace = firebasePlaces;
           _nextPageSearchPlace = 'null';
           _isLoadedSearch = true;
@@ -358,6 +383,36 @@ class HomeController extends GetxController implements GetxService {
         if (response.statusCode == 200) {
           _searchPlace = [];
           _searchPlace.addAll(NearbyPlace.fromJson(response.body).results);
+
+          // For each search result from Google API, check if it exists in Firebase
+          // to get the halal_status
+          for (var place in _searchPlace) {
+            try {
+              var placeExists =
+                  await placesStore.checkPlaces(place.placeId ?? '');
+              if (placeExists > 0) {
+                var placeQuery = await placesStore.dbPlaces
+                    .where('place_id', isEqualTo: place.placeId)
+                    .get();
+
+                if (placeQuery.docs.isNotEmpty) {
+                  var placeData =
+                      placeQuery.docs.first.data() as Map<String, dynamic>;
+                  // Set halal_status in the place
+                  place.halal_status = placeData['halal_status'] != null
+                      ? int.tryParse(placeData['halal_status'].toString())
+                      : 0;
+
+                  print(
+                      'Found halal_status in Firebase for ${place.name}: ${place.halal_status}');
+                }
+              }
+            } catch (e) {
+              print(
+                  'Error getting halal status for place ${place.placeId}: $e');
+            }
+          }
+
           _nextPageSearchPlace = response.body['next_page_token'] ?? 'null';
           _isLoadedSearch = true;
           print('Google API results: ${_searchPlace.length}');
@@ -386,9 +441,11 @@ class HomeController extends GetxController implements GetxService {
           allPlacesSnapshot.docs.where((doc) {
         final data = doc.data() as Map<String, dynamic>;
         final name = data['name'] as String? ?? '';
+        final title = data['title'] as String? ?? '';
 
-        // Case-insensitive contains check
-        return name.toLowerCase().contains(textSearch.toLowerCase());
+        // Case-insensitive contains check on both name and title fields
+        return name.toLowerCase().contains(textSearch.toLowerCase()) ||
+            title.toLowerCase().contains(textSearch.toLowerCase());
       }).toList();
 
       print('Matching places found: ${matchingDocs.length}');
@@ -398,24 +455,38 @@ class HomeController extends GetxController implements GetxService {
         final data = doc.data() as Map<String, dynamic>;
         final docId = doc.id; // Get the document ID
 
-        print('Found match: ${data['name']} (ID: $docId)');
+        print(
+            'Found match: ${data['title'] ?? data['name'] ?? 'null'} (ID: $docId)');
 
         return {
           'place_id': data['place_id'] ?? '',
-          'name': data['name'] ?? '',
+          'name': data['title'] ?? data['name'] ?? '',
           'formatted_address': data['address'] ?? '',
           'geometry': {
-            'location': {'lat': data['lat'] ?? 0.0, 'lng': data['lng'] ?? 0.0}
+            'location': {
+              'lat': data['lat'] is String
+                  ? double.tryParse(data['lat']) ?? 0.0
+                  : data['lat'] ?? 0.0,
+              'lng': data['lng'] is String
+                  ? double.tryParse(data['lng']) ?? 0.0
+                  : data['lng'] ?? 0.0
+            }
           },
           'types': [data['type'] ?? 'place'],
-          'rating': data['rating'] ?? 0.0,
-          'user_ratings_total': data['user_ratings_total'] ?? 0,
+          'rating': data['rating'] is String
+              ? double.tryParse(data['rating']) ?? 0.0
+              : data['rating'] ?? 0.0,
+          'user_ratings_total': data['user_ratings_total'] is String
+              ? int.tryParse(data['user_ratings_total']) ?? 0
+              : data['user_ratings_total'] ?? 0,
           'photos': data['photos'] != null
               ? [
                   {'photo_reference': data['photos']}
                 ]
               : null,
-          'halal_status': data['halal_status'] ?? 0, // Include halal_status
+          'halal_status': data['halal_status'] is String
+              ? data['halal_status']
+              : data['halal_status']?.toString() ?? '0', // Include halal_status
           'doc_id': docId // Include the document ID
         };
       }).toList();

@@ -66,19 +66,68 @@ class _SearchPlaceState extends State<SearchPlace> {
   void getPlacesData() async {
     if (expC.nearbyFood.isNotEmpty) {
       for (var i in expC.nearbyFood) {
-        var destination =
-            '${homeC.filterDot(i.geometry.location.lat.toString())},${homeC.filterDot(i.geometry.location.lng.toString())}';
+        // Check if i is a Map (from Firebase) or NearbyPlaceModel (from Google API)
+        bool isMap = i is Map;
+
+        String placeId = isMap ? i['place_id'] : i.placeId;
+        String name = isMap ? i['name'] : i.name;
+        String vicinity = isMap
+            ? (i['formatted_address'] ?? i['address'] ?? '')
+            : (i.vicinity ?? '');
+
+        // Get location coordinates
+        String lat, lng;
+        if (isMap) {
+          var latValue = i['geometry']?['location']?['lat'];
+          var lngValue = i['geometry']?['location']?['lng'];
+
+          // Handle different types
+          if (latValue is String) {
+            lat = latValue;
+          } else {
+            lat = (latValue?.toString() ?? '0.0');
+          }
+
+          if (lngValue is String) {
+            lng = lngValue;
+          } else {
+            lng = (lngValue?.toString() ?? '0.0');
+          }
+        } else {
+          lat = i.geometry?.location?.lat?.toString() ?? '0.0';
+          lng = i.geometry?.location?.lng?.toString() ?? '0.0';
+        }
+
+        var destination = '${homeC.filterDot(lat)},${homeC.filterDot(lng)}';
+
         await homeC
             .distance('${expC.latlng!.latitude}, ${expC.latlng!.longitude}',
                 destination)
             .then((value) async {
+          // Get photo reference
+          String photos = 'none';
+          if (isMap) {
+            if (i['photos'] != null && i['photos'].isNotEmpty) {
+              photos = i['photos'][0]['photo_reference'] ?? 'none';
+            }
+          } else {
+            if (i.photos != null && i.photos.isNotEmpty) {
+              photos = i.photos.first.photoReference ?? 'none';
+            }
+          }
+
           Map<String, dynamic> newdata = {
-            "place_id": i.placeId,
-            'title': i.name,
-            'address': i.vicinity,
+            "place_id": placeId,
+            'title': name,
+            'address': vicinity,
             'jarak': value.replaceAll('km', ''),
-            'selected': await check(i.placeId),
-            'photos': i.photos != null ? i.photos.first.photoReference : 'none',
+            'selected': await check(placeId),
+            'photos': photos,
+            'halal_status': isMap
+                ? (i['halal_status'] is String
+                    ? i['halal_status']
+                    : (i['halal_status']?.toString() ?? '0'))
+                : (i.halal_status?.toString() ?? '0'),
           };
           setState(() {
             placesData.add(newdata);

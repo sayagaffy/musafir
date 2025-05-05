@@ -58,6 +58,7 @@ class PlaceDetailModel {
   int? utcOffset;
   String? vicinity;
   String? website;
+  int? halal_status;
 
   PlaceDetailModel(
       {this.addressComponents,
@@ -150,6 +151,7 @@ class PlaceDetailModel {
     utcOffset = json['utc_offset'];
     vicinity = json['vicinity'];
     website = json['website'];
+    halal_status = json['halal_status'];
   }
 }
 

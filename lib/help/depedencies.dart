@@ -7,6 +7,7 @@ import 'package:musafir/controllers/location_controller.dart';
 import 'package:musafir/controllers/main_page_controller.dart';
 import 'package:musafir/data/api/api_client.dart';
 import 'package:musafir/data/api/api_google.dart';
+import 'package:musafir/data/firestore/place_store.dart';
 import 'package:musafir/data/repository/auth_repo.dart';
 
 import 'package:musafir/data/repository/google_repo.dart';
@@ -29,7 +30,9 @@ Future<void> init() async {
   ///[Controllers]
   Get.lazyPut(() => MainPageController());
   Get.lazyPut(() => AuthController(authRepo: Get.find()));
-  Get.lazyPut(() => ExploreController(googleRepo: Get.find()));
+  Get.lazyPut(() => PlacesStore());
+  Get.lazyPut(
+      () => ExploreController(googleRepo: Get.find(), placesStore: Get.find()));
   Get.lazyPut(() => LocationController(googleRepo: Get.find()));
   Get.lazyPut(() => HomeController(googleRepo: Get.find()));
 
