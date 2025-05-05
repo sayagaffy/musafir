@@ -37,13 +37,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _navigateToHome();
-  }
-
-  void _navigateToHome() async {
-    await Future.delayed(
-        const Duration(seconds: 20)); // Total time for all slides
-    Get.offAll(() => const SplashPage());
   }
 
   @override

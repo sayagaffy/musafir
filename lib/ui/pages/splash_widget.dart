@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:musafir/ui/pages/auth/sign_in_page.dart';
 import 'package:musafir/ui/pages/auth/sign_up_page.dart';
 import '../../shared/theme.dart';
+import '../../routes/routes_helper.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -45,11 +46,7 @@ class _SplashPageState extends State<SplashPage> {
                   ),
                 ),
                 onPressed: () {
-                  Get.to(
-                    () => const SignInPage1(),
-                    transition: Transition.fadeIn,
-                    duration: const Duration(milliseconds: 300),
-                  );
+                  Get.toNamed(RouteHelper.getsigInPage());
                 },
                 child: Text(
                   'Masuk',
@@ -76,11 +73,7 @@ class _SplashPageState extends State<SplashPage> {
                   ),
                 ),
                 onPressed: () {
-                  Get.to(
-                    () => const SignUpPage1(),
-                    transition: Transition.fadeIn,
-                    duration: const Duration(milliseconds: 300),
-                  );
+                  Get.toNamed(RouteHelper.getsignUpPage());
                 },
                 child: Text(
                   'Daftar',

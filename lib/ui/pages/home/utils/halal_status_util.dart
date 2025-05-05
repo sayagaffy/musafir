@@ -16,17 +16,17 @@ class HalalStatusUtil {
         };
       case 2:
         return {
-          'background': const Color(0xFFE6F0FF),
-          'text': const Color(0xFF0052CC),
+          'background': kBlueColor,
+          'text': kBlueColor,
           'icon': 'assets/icon_halal_blue.png',
           'displayText': 'Halal-Friendly',
           'description': 'Restoran ini menyajikan menu halal',
         };
       case 3:
         return {
-          'background': const Color(0xFFF5F5F5),
-          'text': kBlackColor,
-          'icon': 'assets/icon_halal_black.png',
+          'background': kBluePressed,
+          'text': kBluePressed,
+          'icon': 'assets/muslim_friendly.png',
           'displayText': 'Muslim-Friendly',
           'description': 'Restoran ini ramah muslim',
         };

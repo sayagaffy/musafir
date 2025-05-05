@@ -324,23 +324,107 @@ class HomeController extends GetxController implements GetxService {
     }
   }
 
-  ///['FUNCTION SEAARCH PLACE']
+  ///['FUNCTION SEARCH PLACE']
   Future<void> getSearchPlace(
     String textSearch,
     String latlang,
   ) async {
     debouncer.run(() async {
-      Response response = await googleRepo.getTextSearch(latlang, textSearch);
+      try {
+        print('===== SEARCH STARTED: "$textSearch" =====');
 
-      if (response.statusCode == 200) {
-        _searchPlace = [];
-        _searchPlace.addAll(NearbyPlace.fromJson(response.body).results);
-        _nextPageSearchPlace = response.body['next_page_token'] ?? 'null';
-        _isLoadedSearch = true;
+        // First, search in Firebase places
+        List<dynamic> firebasePlaces = await _searchFirebasePlaces(textSearch);
 
+        print('Firebase search results: ${firebasePlaces.length}');
+        if (firebasePlaces.isNotEmpty) {
+          print('Using Firebase results');
+          for (var place in firebasePlaces) {
+            print(
+                'Firebase place: ${place['name']} (halal_status: ${place['halal_status']})');
+          }
+
+          _searchPlace = firebasePlaces;
+          _nextPageSearchPlace = 'null';
+          _isLoadedSearch = true;
+          update();
+          return;
+        }
+
+        // If no Firebase results, fall back to Google API
+        print('No Firebase results, falling back to Google API');
+        Response response = await googleRepo.getTextSearch(latlang, textSearch);
+
+        if (response.statusCode == 200) {
+          _searchPlace = [];
+          _searchPlace.addAll(NearbyPlace.fromJson(response.body).results);
+          _nextPageSearchPlace = response.body['next_page_token'] ?? 'null';
+          _isLoadedSearch = true;
+          print('Google API results: ${_searchPlace.length}');
+
+          update();
+        }
+      } catch (e) {
+        print('Error in getSearchPlace: $e');
+        _isLoadedSearch = false;
         update();
       }
     });
+  }
+
+  /// Search places in Firebase by name
+  Future<List<dynamic>> _searchFirebasePlaces(String textSearch) async {
+    try {
+      print('Searching Firebase for: $textSearch');
+
+      // Get all places from Firebase first
+      QuerySnapshot allPlacesSnapshot = await placesStore.dbPlaces.get();
+      print('Total places in Firebase: ${allPlacesSnapshot.docs.length}');
+
+      // Filter places that contain the search text (case-insensitive)
+      List<QueryDocumentSnapshot> matchingDocs =
+          allPlacesSnapshot.docs.where((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        final name = data['name'] as String? ?? '';
+
+        // Case-insensitive contains check
+        return name.toLowerCase().contains(textSearch.toLowerCase());
+      }).toList();
+
+      print('Matching places found: ${matchingDocs.length}');
+
+      // Convert to the format expected by the UI
+      List<dynamic> results = matchingDocs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        final docId = doc.id; // Get the document ID
+
+        print('Found match: ${data['name']} (ID: $docId)');
+
+        return {
+          'place_id': data['place_id'] ?? '',
+          'name': data['name'] ?? '',
+          'formatted_address': data['address'] ?? '',
+          'geometry': {
+            'location': {'lat': data['lat'] ?? 0.0, 'lng': data['lng'] ?? 0.0}
+          },
+          'types': [data['type'] ?? 'place'],
+          'rating': data['rating'] ?? 0.0,
+          'user_ratings_total': data['user_ratings_total'] ?? 0,
+          'photos': data['photos'] != null
+              ? [
+                  {'photo_reference': data['photos']}
+                ]
+              : null,
+          'halal_status': data['halal_status'] ?? 0, // Include halal_status
+          'doc_id': docId // Include the document ID
+        };
+      }).toList();
+
+      return results;
+    } catch (e) {
+      print('Error searching Firebase places: $e');
+      return [];
+    }
   }
 
   void clearSearchPlace() {

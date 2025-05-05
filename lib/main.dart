@@ -36,7 +36,7 @@ class MainApp extends StatelessWidget {
             home: const MainPage(),
             initialRoute: snapshot.data != null && snapshot.data!.emailVerified
                 ? RouteHelper.getInitial()
-                : RouteHelper.getSplashPage(),
+                : RouteHelper.getSplashScreen(),
             getPages: RouteHelper.routes,
           );
         }

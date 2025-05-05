@@ -27,6 +27,7 @@ import 'package:musafir/ui/pages/home/set_location.dart';
 import 'package:musafir/ui/pages/main_page.dart';
 import 'package:musafir/ui/pages/search/textfield_search_google.dart';
 import 'package:musafir/ui/pages/splash_widget.dart';
+import 'package:musafir/ui/pages/splash_screen.dart';
 
 class RouteHelper {
   ///INITIAL
@@ -35,6 +36,7 @@ class RouteHelper {
   static const String initial = "/main";
 
   ///[SPLASH SCREEN]
+  static const String splashScreen = "/splash-screen";
   static const String splashPage = "/splash-page";
 
   ///[AUTH]
@@ -81,6 +83,7 @@ class RouteHelper {
   static String getInitial() => '$initial';
 
   ///[SPLASH SCREEN]
+  static String getSplashScreen() => '$splashScreen';
   static String getSplashPage() => '$splashPage';
 
   ///[AUTH]
@@ -141,8 +144,14 @@ class RouteHelper {
 
     ///[SPLASH SCREEN]
     GetPage(
+      name: splashScreen,
+      page: () => const SplashScreen(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
       name: splashPage,
       page: () => const SplashPage(),
+      transition: Transition.fadeIn,
     ),
 
     ///[AUTH]

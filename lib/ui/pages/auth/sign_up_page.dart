@@ -92,7 +92,7 @@ class SignUpPage1 extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Get.toNamed(RouteHelper.getSplashPage());
+                        Get.back(); // Use standard back navigation
                       },
                       child: Icon(
                         Icons.west_rounded,
