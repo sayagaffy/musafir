@@ -37,7 +37,7 @@ class _ListTileCardState extends State<ListTileCard> {
   final locationController = Get.find<LocationController>();
 
   RxInt halalStatus = 0.obs;
-  RxString distance = '1.4 km'.obs;
+  RxString distance = '?? km'.obs;
 
   @override
   void initState() {
