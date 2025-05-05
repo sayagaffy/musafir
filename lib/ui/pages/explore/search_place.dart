@@ -401,7 +401,7 @@ class _SearchPlaceState extends State<SearchPlace> {
                       placesData[index]['address'],
                       placesData[index]['selected'],
                       index,
-                      '3',
+                      placesData[index]['halal_status']?.toString() ?? '0',
                       placesData[index]['jarak'],
                       placesData[index]['photos'],
                       placesData[index]['place_id'],

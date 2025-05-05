@@ -152,12 +152,15 @@ class _HomeSearchState extends State<HomeSearch> {
                         },
                         child: ListTileCard(
                           title: item.name,
-                          address: item.formattedAddress,
+                          address: item.formattedAddress ?? '',
+                          placeId: item.placeId,
+                          placeLat: item.geometry?.location?.lat,
+                          placeLng: item.geometry?.location?.lng,
                           imgUrl: item.photos != null
                               ? item.photos.first.photoReference
                               : 'none',
-                          rating: item.rating,
-                          price: item.priceLevel,
+                          rating: item.rating ?? 0.0,
+                          price: item.priceLevel ?? 0,
                         ),
                       );
                     })

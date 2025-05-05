@@ -25,7 +25,7 @@ class FavoriteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 178,
-      height: 175,
+      height: 180,
       margin: margin,
       decoration: BoxDecoration(
         color: kWhiteColor,
@@ -42,7 +42,7 @@ class FavoriteCard extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: 90,
+            height: 80,
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(

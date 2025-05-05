@@ -93,7 +93,7 @@ class _TextfieldDatetimePickState extends State<TextfieldDatetimePick> {
       ),
       is24HourMode: true,
       isShowSeconds: false,
-      minutesInterval: 5,
+      minutesInterval: 1,
       secondsInterval: 1,
       borderRadius: const BorderRadius.all(Radius.circular(4)),
       // constraints: const BoxConstraints(
@@ -120,7 +120,7 @@ class _TextfieldDatetimePickState extends State<TextfieldDatetimePick> {
     );
 
     if (_picked != null) {
-      String formattedDate = DateFormat('dd/MM/yyyy HH:MM').format(_picked);
+      String formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(_picked);
       setState(() {
         textController!.text = formattedDate;
         stringText!.text = _picked.toString();
