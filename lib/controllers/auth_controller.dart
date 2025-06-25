@@ -33,11 +33,27 @@ class AuthController extends GetxController {
   String? _tokenGoogle;
   String? get tokenGoogle => _tokenGoogle;
 
+  /// List of admin emails with access to admin features
+  final List<String> adminEmails = [
+    'admin@musafir.com',
+    'developer@musafir.com',
+    'rgaffyagb7@gmail.com',
+  ];
+
+  /// Check if the current user has admin privileges
+  bool checkIsAdmin() {
+    final user = _auth.currentUser;
+    if (user == null) return false;
+
+    final userEmail = user.email?.toLowerCase() ?? '';
+    return adminEmails.contains(userEmail);
+  }
+
   void showLoading(context) {
     showDialog(
       context: context,
       builder: (context) {
-        return Center(
+        return const Center(
             child: CircularProgressIndicator(
           color: kBlueColor,
         ));

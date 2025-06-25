@@ -240,64 +240,75 @@ class _ReportPlacePageState extends State<ReportPlacePage> {
                         'Description: ${_descriptionController.text.trim()}');
                     debugPrint('Form Valid: $isFormValid');
 
-                    return ElevatedButton(
-                      onPressed: (reportController
-                                  .selectedReportType.isNotEmpty &&
-                              _descriptionController.text.trim().isNotEmpty &&
-                              !reportController.isSubmitting)
-                          ? () async {
-                              // Unfocus any active text fields to dismiss keyboard
-                              FocusScope.of(context).unfocus();
+                    return Obx(() => ElevatedButton(
+                          onPressed:
+                              (reportController.selectedReportType.isNotEmpty &&
+                                      _descriptionController.text
+                                          .trim()
+                                          .isNotEmpty &&
+                                      !reportController.isSubmitting)
+                                  ? () async {
+                                      // Unfocus any active text fields to dismiss keyboard
+                                      FocusScope.of(context).unfocus();
 
-                              final success =
-                                  await reportController.submitReport(
-                                placeId: widget.placeId,
-                                placeName: widget.placeName,
-                                reportType: reportController.selectedReportType,
-                                description: _descriptionController.text.trim(),
-                              );
+                                      final success =
+                                          await reportController.submitReport(
+                                        placeId: widget.placeId,
+                                        placeName: widget.placeName,
+                                        reportType:
+                                            reportController.selectedReportType,
+                                        description:
+                                            _descriptionController.text.trim(),
+                                      );
 
-                              if (success) {
-                                // Show success animation
-                                await _showSuccessAnimation(context);
+                                      if (success) {
+                                        // Show success animation
+                                        await _showSuccessAnimation(context);
 
-                                // Navigate back after a brief delay
-                                await Future.delayed(
-                                    const Duration(milliseconds: 500));
-                                Get.back();
-                              }
-                            }
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: isFormValid
-                            ? kBlueColor
-                            : kBlueColor.withOpacity(0.5),
-                        minimumSize: const Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: reportController.isSubmitting
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                color: kWhiteColor,
-                                strokeWidth: 3,
-                              ),
-                            )
-                          : Text(
-                              isFormValid
-                                  ? 'Submit Report'
-                                  : 'Select Report Type & Description',
-                              style: whiteTextStyle.copyWith(
-                                fontWeight: semiBold,
-                                color: isFormValid
-                                    ? kWhiteColor
-                                    : kWhiteColor.withOpacity(0.7),
-                              ),
+                                        // Clear form fields
+                                        reportController.setReportType('');
+                                        _descriptionController.clear();
+                                        reportController.selectedImages.clear();
+
+                                        // Navigate back after a brief delay
+                                        await Future.delayed(
+                                            const Duration(milliseconds: 500));
+                                        Get.back();
+                                      }
+                                    }
+                                  : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                isFormValid && !reportController.isSubmitting
+                                    ? kBlueColor
+                                    : kBlueColor.withOpacity(0.5),
+                            minimumSize: const Size(double.infinity, 50),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                    );
+                          ),
+                          child: reportController.isSubmitting
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    color: kWhiteColor,
+                                    strokeWidth: 3,
+                                  ),
+                                )
+                              : Text(
+                                  isFormValid
+                                      ? 'Submit Report'
+                                      : 'Select Report Type & Description',
+                                  style: whiteTextStyle.copyWith(
+                                    fontWeight: semiBold,
+                                    color: isFormValid &&
+                                            !reportController.isSubmitting
+                                        ? kWhiteColor
+                                        : kWhiteColor.withOpacity(0.7),
+                                  ),
+                                ),
+                        ));
                   },
                 ),
               ],

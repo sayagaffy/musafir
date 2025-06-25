@@ -22,6 +22,7 @@ import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/widgets/roundedBox_title.dart';
 import 'package:musafir/ui/pages/account/my_reports.dart';
+import 'package:musafir/controllers/auth_controller.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -206,6 +207,26 @@ class _AccountPageState extends State<AccountPage> {
                                 size: 19,
                               ),
                             ),
+                          ),
+                          // Conditionally show admin dashboard
+                          GetBuilder<AuthController>(
+                            builder: (authController) {
+                              return authController.checkIsAdmin()
+                                  ? GestureDetector(
+                                      onTap: () {
+                                        Get.toNamed(
+                                            RouteHelper.getAdminReports());
+                                      },
+                                      child: const RoundedBoxTitle(
+                                        title: 'Admin Dashboard',
+                                        icon: Icon(
+                                          Icons.admin_panel_settings,
+                                          size: 19,
+                                        ),
+                                      ),
+                                    )
+                                  : const SizedBox.shrink();
+                            },
                           ),
                           GestureDetector(
                             onTap: () {
