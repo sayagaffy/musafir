@@ -12,7 +12,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 
-class AuthController extends GetxController implements GetxService {
+class AuthController extends GetxController {
   final AuthRepo authRepo;
 
   AuthController({
@@ -100,16 +100,6 @@ class AuthController extends GetxController implements GetxService {
   void checkUserSignin() async {
     final user = auth.currentUser;
 
-    // for (final providerProfile in user!.providerData) {
-    //   // ID of the provider (google.com, apple.com, etc.)
-
-    //   print(providerProfile.providerId);
-    //   print(providerProfile.displayName);
-    //   print(providerProfile.email);
-    // }
-
-    // print(auth.currentUser);
-
     var contain = user?.providerData.where((e) => e.providerId == "google.com");
 
     if (contain!.isNotEmpty) {
@@ -126,44 +116,117 @@ class AuthController extends GetxController implements GetxService {
     try {
       showLoading(context);
 
+      // Clear any previous sign-in state
+      await GoogleSignIn().signOut();
+
       GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
+      // Handle user cancellation
+      if (googleUser == null) {
+        Get.back(closeOverlays: true);
+        showCustomSnackBar("Sign in was cancelled", title: "Cancelled");
+        return;
+      }
+
       // Obtain the auth details from the request
-      GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+      GoogleSignInAuthentication? googleAuth = await googleUser.authentication;
+
+      // Validate auth tokens
+      if (googleAuth.accessToken == null || googleAuth.idToken == null) {
+        Get.back(closeOverlays: true);
+        showCustomSnackBar("Failed to get authentication tokens",
+            title: "Authentication Error");
+        return;
+      }
 
       // Create a new credential
       OAuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
 
-      _tokenGoogle = googleAuth?.accessToken;
+      _tokenGoogle = googleAuth.accessToken;
 
       UserCredential userCredential =
           await _auth.signInWithCredential(credential);
-
       User? user = userCredential.user;
+
       if (user != null) {
-        if (userCredential.additionalUserInfo!.isNewUser) {
-          await UserStore().createUser(
-            username: user.email?.split('@')[0],
-            provider: 'Google',
-            photoURL: user.photoURL,
-          );
+        // Validate user data
+        if (user.email == null || user.email!.isEmpty) {
+          Get.back(closeOverlays: true);
+          showCustomSnackBar("Unable to get email from Google account",
+              title: "Account Error");
+          return;
         }
 
+        if (userCredential.additionalUserInfo!.isNewUser) {
+          // Enhanced user creation with validation
+          await _createNewGoogleUser(user);
+        }
+
+        // Initialize home data if needed
         var homeC = Get.find<HomeController>();
         if (homeC.nearbyFood.isEmpty) {
           homeC.refreshHome();
         }
 
-        ///[turn off loading indicator]
         Get.back(closeOverlays: true);
         Get.offNamed(RouteHelper.getInitial());
+      } else {
+        Get.back(closeOverlays: true);
+        showCustomSnackBar("Failed to sign in with Google",
+            title: "Sign In Error");
       }
     } catch (e) {
       Get.back(closeOverlays: true);
-      showCustomSnackBar(e.toString());
+      print('Google Sign-In Error: $e');
+
+      // Enhanced error messages
+      String errorMessage = _getGoogleSignInErrorMessage(e);
+      showCustomSnackBar(errorMessage, title: "Sign In Failed");
+    }
+  }
+
+  Future<void> _createNewGoogleUser(User user) async {
+    try {
+      // Split display name safely
+      String firstName = '';
+      String lastName = '';
+
+      if (user.displayName != null) {
+        List<String> nameParts = user.displayName!.split(' ');
+        firstName = nameParts.isNotEmpty ? nameParts.first : '';
+        lastName = nameParts.length > 1 ? nameParts.skip(1).join(' ') : '';
+      }
+
+      await UserStore().createUser(
+        username: user.email?.split('@')[0] ??
+            'user_${DateTime.now().millisecondsSinceEpoch}',
+        provider: 'Google',
+        photoURL: user.photoURL,
+        firstName: firstName,
+        lastName: lastName,
+      );
+    } catch (e) {
+      print('Error creating user: $e');
+      // Continue with sign-in even if user creation fails
+    }
+  }
+
+  String _getGoogleSignInErrorMessage(dynamic error) {
+    String errorString = error.toString().toLowerCase();
+
+    if (errorString.contains('network')) {
+      return "Network error. Please check your internet connection.";
+    } else if (errorString.contains('cancelled')) {
+      return "Sign in was cancelled.";
+    } else if (errorString.contains('invalid')) {
+      return "Invalid credentials. Please try again.";
+    } else if (errorString.contains('disabled')) {
+      return "Google Sign-In is temporarily disabled.";
+    } else {
+      return "Sign in failed. Please try again later.";
     }
   }
 
