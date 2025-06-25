@@ -181,21 +181,27 @@ class _AccountPageState extends State<AccountPage> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              var mainPageC = Get.find<MainPageController>();
+                              mainPageC.menuTabController.value = 1;
+                            },
                             child: const RoundedBoxTitle(
-                              title: 'Komunitas',
+                              title: 'Itinerary',
                               icon: Icon(
-                                Icons.group_outlined,
+                                Icons.near_me_outlined,
                                 size: 19,
                               ),
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              // TODO: Navigate to user reports page
+                              // Get.toNamed(RouteHelper.getUserReportsPage());
+                            },
                             child: const RoundedBoxTitle(
-                              title: 'Rencana Perjalanan',
+                              title: 'Laporan Saya',
                               icon: Icon(
-                                Icons.near_me_outlined,
+                                Icons.report_outlined,
                                 size: 19,
                               ),
                             ),
@@ -208,7 +214,7 @@ class _AccountPageState extends State<AccountPage> {
                               authC.logout();
                             },
                             child: const RoundedBoxTitle(
-                              title: 'Keluar',
+                              title: 'Log out',
                               icon: Icon(
                                 Icons.logout_rounded,
                                 size: 19,
