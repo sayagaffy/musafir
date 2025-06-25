@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
   Widget header() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(
+      padding: const EdgeInsets.only(
         left: defaultMargin,
         top: 20,
         right: 18,
@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
                                 fontWeight: bold,
                                 fontSize: 18,
                                 height: 0.8,
-                                color: kBlueColorHover,
+                                color: kBluePressed,
                               ),
                               overflow: TextOverflow.ellipsis,
                             )
@@ -227,7 +227,7 @@ class _HomePageState extends State<HomePage> {
               top: 30,
               bottom: 20,
             ),
-            padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+            padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
             child: GetBuilder<HomeController>(
               builder: (place) {
                 if (place.localPlace.isNotEmpty) {
@@ -256,7 +256,7 @@ class _HomePageState extends State<HomePage> {
               top: 30,
               bottom: 20,
             ),
-            padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+            padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
             child: GetBuilder<HomeController>(
               builder: (place) {
                 if (place.localPlace.isNotEmpty) {
@@ -288,7 +288,7 @@ class _HomePageState extends State<HomePage> {
         }
 
         return Container(
-          padding: EdgeInsets.only(
+          padding: const EdgeInsets.only(
             left: defaultMargin,
             bottom: 20,
           ),
@@ -343,7 +343,7 @@ class _HomePageState extends State<HomePage> {
         top: 30,
         bottom: 20,
       ),
-      padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+      padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
       child: RekomendasiTitle(
         title: 'Rekomendasi Resto Terdekat',
         onTap: () {
@@ -355,7 +355,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget rekomendasi() {
     return Container(
-      padding: EdgeInsets.only(
+      padding: const EdgeInsets.only(
         left: defaultMargin,
         bottom: 20,
       ),
@@ -437,7 +437,7 @@ class _HomePageState extends State<HomePage> {
         top: 20,
         bottom: 20,
       ),
-      padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+      padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
       child: RekomendasiTitle(
         title: 'Kategori',
         onTap: () {
@@ -449,7 +449,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget kategoriMakanan() {
     return Container(
-      padding: EdgeInsets.only(left: defaultMargin, bottom: 20),
+      padding: const EdgeInsets.only(left: defaultMargin, bottom: 20),
       width: double.infinity,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -570,7 +570,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget rekomendasiMasjid() {
     return Container(
-      padding: EdgeInsets.only(left: defaultMargin, bottom: 50),
+      padding: const EdgeInsets.only(left: defaultMargin, bottom: 50),
       width: double.infinity,
       child: GetBuilder<HomeController>(
         builder: (place) {
