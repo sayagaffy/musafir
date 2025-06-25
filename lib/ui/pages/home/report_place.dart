@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:musafir/controllers/report_controller.dart';
 import 'package:musafir/help/depedencies.dart' as dependencies;
@@ -33,6 +34,44 @@ class _ReportPlacePageState extends State<ReportPlacePage> {
   void dispose() {
     _descriptionController.dispose();
     super.dispose();
+  }
+
+  // Success animation method
+  Future<void> _showSuccessAnimation(BuildContext context) async {
+    final overlay = Overlay.of(context);
+    final overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: MediaQuery.of(context).size.height / 2 - 50,
+        left: MediaQuery.of(context).size.width / 2 - 50,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            width: 100,
+            height: 100,
+            decoration: const BoxDecoration(
+              color: kBlueColor,
+              shape: BoxShape.circle,
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.check,
+                color: kWhiteColor,
+                size: 60,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Insert the overlay
+    overlay.insert(overlayEntry);
+
+    // Animate the overlay
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    // Remove the overlay
+    overlayEntry.remove();
   }
 
   @override
@@ -183,33 +222,83 @@ class _ReportPlacePageState extends State<ReportPlacePage> {
 
                 // Submit Button
                 const SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: reportController.selectedReportType.isNotEmpty
-                      ? () async {
-                          final success = await reportController.submitReport(
-                            placeId: widget.placeId,
-                            placeName: widget.placeName,
-                            reportType: reportController.selectedReportType,
-                            description: _descriptionController.text.trim(),
-                          );
-                          if (success) {
-                            Get.back(); // Close the report page
-                          }
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kBlueColor,
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: Text(
-                    'Submit Report',
-                    style: whiteTextStyle.copyWith(
-                      fontWeight: semiBold,
-                    ),
-                  ),
+                AnimatedBuilder(
+                  animation: Listenable.merge([
+                    ValueNotifier(reportController.isSubmitting),
+                    ValueNotifier(reportController.selectedReportType),
+                    ValueNotifier(_descriptionController.text),
+                  ]),
+                  builder: (context, child) {
+                    final isFormValid =
+                        reportController.selectedReportType.isNotEmpty &&
+                            _descriptionController.text.trim().isNotEmpty;
+
+                    // Explicitly log form validation state for debugging
+                    debugPrint(
+                        'Report Type: ${reportController.selectedReportType}');
+                    debugPrint(
+                        'Description: ${_descriptionController.text.trim()}');
+                    debugPrint('Form Valid: $isFormValid');
+
+                    return ElevatedButton(
+                      onPressed: (reportController
+                                  .selectedReportType.isNotEmpty &&
+                              _descriptionController.text.trim().isNotEmpty &&
+                              !reportController.isSubmitting)
+                          ? () async {
+                              // Unfocus any active text fields to dismiss keyboard
+                              FocusScope.of(context).unfocus();
+
+                              final success =
+                                  await reportController.submitReport(
+                                placeId: widget.placeId,
+                                placeName: widget.placeName,
+                                reportType: reportController.selectedReportType,
+                                description: _descriptionController.text.trim(),
+                              );
+
+                              if (success) {
+                                // Show success animation
+                                await _showSuccessAnimation(context);
+
+                                // Navigate back after a brief delay
+                                await Future.delayed(
+                                    const Duration(milliseconds: 500));
+                                Get.back();
+                              }
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isFormValid
+                            ? kBlueColor
+                            : kBlueColor.withOpacity(0.5),
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: reportController.isSubmitting
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                color: kWhiteColor,
+                                strokeWidth: 3,
+                              ),
+                            )
+                          : Text(
+                              isFormValid
+                                  ? 'Submit Report'
+                                  : 'Select Report Type & Description',
+                              style: whiteTextStyle.copyWith(
+                                fontWeight: semiBold,
+                                color: isFormValid
+                                    ? kWhiteColor
+                                    : kWhiteColor.withOpacity(0.7),
+                              ),
+                            ),
+                    );
+                  },
                 ),
               ],
             ),

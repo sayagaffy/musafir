@@ -18,8 +18,9 @@ class _MyReportsPageState extends State<MyReportsPage> {
   @override
   void initState() {
     super.initState();
-    // Gunakan dependency injection yang sudah ada
-    reportController = Get.find<ReportController>();
+    // Ensure ReportController is registered and initialized
+    reportController = Get.put(
+        ReportController(firestoreHelper: dependencies.firestoreHelper));
     reportController.getUserReports();
   }
 
@@ -173,37 +174,16 @@ class _MyReportsPageState extends State<MyReportsPage> {
     );
   }
 
+  // Use the methods from ReportController
   Color _getStatusColor(String status) {
-    switch (status) {
-      case 'pending':
-        return kNeutral30;
-      case 'reviewed':
-        return kBlueColor;
-      case 'resolved':
-        return kSuccessMain;
-      case 'rejected':
-        return kErrorMain;
-      default:
-        return kNeutral60;
-    }
+    return reportController.getStatusColor(status);
   }
 
   String _getStatusText(String status) {
-    switch (status) {
-      case 'pending':
-        return 'Pending';
-      case 'reviewed':
-        return 'Reviewed';
-      case 'resolved':
-        return 'Resolved';
-      case 'rejected':
-        return 'Rejected';
-      default:
-        return 'Unknown';
-    }
+    return reportController.getStatusText(status);
   }
 
   String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
+    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
   }
 }

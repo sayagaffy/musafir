@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:musafir/base/show_custom_snackbar.dart';
 import 'package:musafir/data/firestore/firestore_helper.dart';
+import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/models/report_model.dart';
 import 'package:musafir/models/report_types.dart';
 
@@ -93,19 +95,24 @@ class ReportController extends GetxController {
     try {
       _isSubmitting.value = true;
 
-      // TODO: Replace with actual user retrieval
-      final currentUser = {
-        'id': 'sample_user_id',
-        'email': 'user@example.com',
-        'name': 'Sample User'
-      };
+      // Check if user is authenticated
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        showCustomSnackBar('Please log in to submit a report', isError: true);
+        return false;
+      }
+
+      // Get additional user details
+      final userStore = UserStore();
+      final userDetails = await userStore.getUserDetail();
 
       final report = ReportModel(
         placeId: placeId,
         placeName: placeName,
-        userId: currentUser['id']!,
-        userEmail: currentUser['email']!,
-        userName: currentUser['name']!,
+        userId: currentUser.uid,
+        userEmail: currentUser.email ?? '',
+        userName:
+            userDetails['username'] ?? currentUser.displayName ?? 'Anonymous',
         reportType: reportType,
         description: description.trim(),
         photoUrls: _photoUrls,
@@ -140,25 +147,66 @@ class ReportController extends GetxController {
     try {
       _isLoading.value = true;
 
-      // TODO: Replace with actual user retrieval
-      final currentUser = {
-        'id': 'sample_user_id',
-      };
+      // Check if user is authenticated
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        showCustomSnackBar('Please log in to view your reports', isError: true);
+        _userReports.clear();
+        return;
+      }
 
+      debugPrint('Fetching reports for user: ${currentUser.uid}');
+
+      // Use a simpler query without ordering
       final querySnapshot = await FirebaseFirestore.instance
           .collection(FirestoreHelper.REPORTS_COLLECTION)
-          .where('user_id', isEqualTo: currentUser['id'])
-          .orderBy('created_at', descending: true)
+          .where('user_id', isEqualTo: currentUser.uid)
+          .get();
+
+      debugPrint('Total reports found: ${querySnapshot.docs.length}');
+
+      // Convert and sort reports client-side
+      _userReports.value = querySnapshot.docs.map((doc) {
+        final reportData = doc.data();
+        debugPrint('Report data: $reportData');
+        return ReportModel.fromJson(reportData, doc.id);
+      }).toList()
+        // Sort by created_at in descending order
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+      debugPrint('Loaded reports: ${_userReports.length}');
+    } catch (e, stackTrace) {
+      debugPrint('Error fetching user reports: $e');
+      debugPrint('Stacktrace: $stackTrace');
+
+      // Fallback method to fetch reports
+      await _fetchReportsWithFallback();
+    } finally {
+      _isLoading.value = false;
+    }
+  }
+
+  /// Fallback method to fetch reports with more flexible approach
+  Future<void> _fetchReportsWithFallback() async {
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) return;
+
+      // Fetch all reports and filter client-side
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection(FirestoreHelper.REPORTS_COLLECTION)
           .get();
 
       _userReports.value = querySnapshot.docs
           .map((doc) => ReportModel.fromJson(doc.data(), doc.id))
-          .toList();
+          .where((report) => report.userId == currentUser.uid)
+          .toList()
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+      debugPrint('Fallback - Loaded reports: ${_userReports.length}');
     } catch (e) {
-      debugPrint('Error fetching user reports: $e');
+      debugPrint('Fallback method failed: $e');
       showCustomSnackBar('Failed to load reports', isError: true);
-    } finally {
-      _isLoading.value = false;
     }
   }
 
