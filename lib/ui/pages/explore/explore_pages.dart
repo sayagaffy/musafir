@@ -130,20 +130,13 @@ class _ExplorePageState extends State<ExplorePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Buat Rencana Perjalanan\nPertamamu!',
+            'Temukan & simpan resto dan tempat shalat di kota tujuanmu, di seluruh dunia!',
             style: blackTextStyle.copyWith(
               fontWeight: extraBold,
-              fontSize: 18,
+              fontSize: 16,
               height: 1.3,
               letterSpacing: 0.7,
             ),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            'Kamu bisa merencanakan perjalanan dan resto tujuanmu supaya kamu nggak bingung',
-            style: greyTextStyle.copyWith(fontSize: 12),
           ),
           const SizedBox(
             height: 10,

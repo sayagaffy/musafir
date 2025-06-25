@@ -33,18 +33,18 @@ class MainPage extends StatelessWidget {
             },
             tabs: buildTabConfigs(),
           ),
-          Positioned(
-            bottom: 75, // Jarak tombol dari bawah tab navigasi.
-            right: 20, // Jarak tombol dari kanan.
-            child: FloatingActionButton(
-              onPressed: () {
-                _displayBottomSheet(context);
-              },
-              backgroundColor: kBlueColor,
-              foregroundColor: kWhiteColor,
-              child: const Icon(Icons.add),
-            ),
-          ),
+          // Positioned(
+          //   bottom: 75, // Jarak tombol dari bawah tab navigasi.
+          //   right: 20, // Jarak tombol dari kanan.
+          //   child: FloatingActionButton(
+          //     onPressed: () {
+          //       _displayBottomSheet(context);
+          //     },
+          //     backgroundColor: kBlueColor,
+          //     foregroundColor: kWhiteColor,
+          //     child: const Icon(Icons.add),
+          //   ),
+          // ),
         ],
       ),
     );
