@@ -28,6 +28,7 @@ import 'package:musafir/ui/pages/main_page.dart';
 import 'package:musafir/ui/pages/search/textfield_search_google.dart';
 import 'package:musafir/ui/pages/splash_widget.dart';
 import 'package:musafir/ui/pages/splash_screen.dart';
+import 'package:musafir/ui/pages/admin/admin_reports_dashboard.dart';
 
 class RouteHelper {
   ///INITIAL
@@ -76,6 +77,9 @@ class RouteHelper {
 
   ///[ACCOUNT]
   static const String custom = "/custom";
+
+  ///[ADMIN]
+  static const String adminReports = "/admin-reports";
 
   ///INITIAL PARAM
 
@@ -131,6 +135,9 @@ class RouteHelper {
 
   ///[CUSTOM]
   static String getCustom() => '$custom';
+
+  ///[ADMIN]
+  static String getAdminReports() => '$adminReports';
 
   ///[SET SCREEN AND SET PARAM]
 
@@ -341,6 +348,13 @@ class RouteHelper {
     GetPage(
       name: custom,
       page: () => const DropDownCust(),
+      transition: Transition.fade,
+    ),
+
+    ///[ADMIN]
+    GetPage(
+      name: adminReports,
+      page: () => AdminReportsDashboard(),
       transition: Transition.fade,
     ),
   ];
