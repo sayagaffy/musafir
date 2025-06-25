@@ -66,11 +66,11 @@ class _ExplorePageState extends State<ExplorePage> {
   void navigasiPeta(int indexParent) async {
     final availableMaps = await MapLauncher.installedMaps;
 
-    debugPrint(dataPlans[indexParent]);
+    String lat = dataPlans[indexParent]['lat'].toString();
+    String lng = dataPlans[indexParent]['lng'].toString();
 
     await availableMaps.first.showMarker(
-      coords:
-          Coords(dataPlans[indexParent]['lat'], dataPlans[indexParent]['lng']),
+      coords: Coords(double.parse(lat), double.parse(lng)),
       title: "${dataPlans[indexParent]['place_name']}",
     );
   }
@@ -326,34 +326,8 @@ class _ExplorePageState extends State<ExplorePage> {
               horizontal: 18,
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                SizedBox(
-                  height: 30,
-                  width: 80,
-                  child: TextButton(
-                    onPressed: () {
-                      navigasiPeta(indexParent);
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: kBlueColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
-                    child: Text(
-                      'Lihat Peta ',
-                      style: whiteTextStyle.copyWith(
-                        fontSize: 12,
-                        fontWeight: bold,
-                        letterSpacing: 0.7,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
                 SizedBox(
                   height: 30,
                   width: 80,
@@ -411,6 +385,7 @@ class _ExplorePageState extends State<ExplorePage> {
                                     dataPlans[indexParent]['resto'].length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return contactItem(
+                                    indexParent,
                                     dataPlans[indexParent]['resto'][index]
                                         ['title'],
                                     dataPlans[indexParent]['resto'][index]
@@ -471,6 +446,7 @@ class _ExplorePageState extends State<ExplorePage> {
                                     dataPlans[indexParent]['mosque'].length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return contactItem2(
+                                    indexParent,
                                     dataPlans[indexParent]['mosque'][index]
                                         ['title'],
                                     dataPlans[indexParent]['mosque'][index]
@@ -497,8 +473,8 @@ class _ExplorePageState extends State<ExplorePage> {
     );
   }
 
-  Widget contactItem(String title, String address, String halalStatus,
-      String destination, String photos, String placeId) {
+  Widget contactItem(int indexParent, String title, String address,
+      String halalStatus, String destination, String photos, String placeId) {
     return Card(
       elevation: 1,
       shadowColor: kNeutral20,
@@ -509,15 +485,7 @@ class _ExplorePageState extends State<ExplorePage> {
           height: 70.0,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            image: photos == 'none'
-                ? const DecorationImage(
-                    fit: BoxFit.cover,
-                    image: AssetImage('assets/image_destination1.png'),
-                  )
-                : DecorationImage(
-                    fit: BoxFit.cover,
-                    image: NetworkImage('${AppConstans.PLACE_PHOTO}$photos'),
-                  ),
+            image: _getImageDecoration(photos),
           ),
         ),
         title: Column(
@@ -578,6 +546,24 @@ class _ExplorePageState extends State<ExplorePage> {
                 const SizedBox(
                   width: 10,
                 ),
+                TextButton(
+                  onPressed: () async {
+                    final availableMaps = await MapLauncher.installedMaps;
+                    await availableMaps.first.showMarker(
+                      coords: Coords(
+                          double.parse(dataPlans[indexParent]['lat']),
+                          double.parse(dataPlans[indexParent]['lng'])),
+                      title: title,
+                    );
+                  },
+                  child: Text(
+                    'Lihat Tujuan',
+                    style: TextStyle(color: kBlueColor),
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
                 destination != 'none' && destination != 'ZERO_RESULTS'
                     ? Row(
                         children: [
@@ -602,8 +588,35 @@ class _ExplorePageState extends State<ExplorePage> {
     );
   }
 
-  Widget contactItem2(String title, String address, String destination,
-      String photos, String placeId) {
+  DecorationImage _getImageDecoration(String photos) {
+    if (photos == 'none' || photos.isEmpty) {
+      return const DecorationImage(
+        fit: BoxFit.cover,
+        image: AssetImage('assets/image_destination1.png'),
+      );
+    }
+
+    try {
+      // Validate photo reference before constructing URL
+      final photoUrl = '${AppConstans.PLACE_PHOTO}$photos';
+      return DecorationImage(
+        fit: BoxFit.cover,
+        image: NetworkImage(photoUrl),
+        onError: (exception, stackTrace) {
+          print('Error loading photo: $exception');
+        },
+      );
+    } catch (e) {
+      print('Invalid photo reference: $photos');
+      return const DecorationImage(
+        fit: BoxFit.cover,
+        image: AssetImage('assets/image_destination1.png'),
+      );
+    }
+  }
+
+  Widget contactItem2(int indexParent, String title, String address,
+      String destination, String photos, String placeId) {
     return Card(
       elevation: 1,
       shadowColor: kNeutral20,
@@ -622,6 +635,9 @@ class _ExplorePageState extends State<ExplorePage> {
                 : DecorationImage(
                     fit: BoxFit.cover,
                     image: NetworkImage('${AppConstans.PLACE_PHOTO}$photos'),
+                    onError: (exception, stackTrace) {
+                      print('Error loading mosque photo: $exception');
+                    },
                   ),
           ),
         ),
@@ -648,6 +664,44 @@ class _ExplorePageState extends State<ExplorePage> {
           child: SizedBox(
             child: Row(
               children: [
+                Container(
+                  width: 16,
+                  height: 16,
+                  margin: const EdgeInsets.only(
+                    right: 3,
+                  ),
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/icon_halal_black.png'),
+                    ),
+                  ),
+                ),
+                Text(
+                  'Masjid',
+                  style: blackTextStyle.copyWith(
+                    fontSize: 12,
+                    fontWeight: bold,
+                    color: kBlackColor,
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                TextButton(
+                  onPressed: () async {
+                    final availableMaps = await MapLauncher.installedMaps;
+                    await availableMaps.first.showMarker(
+                      coords: Coords(
+                          double.parse(dataPlans[indexParent]['lat']),
+                          double.parse(dataPlans[indexParent]['lng'])),
+                      title: title,
+                    );
+                  },
+                  child: Text(
+                    'Lihat Tujuan',
+                    style: TextStyle(color: kBlueColor),
+                  ),
+                ),
                 const SizedBox(
                   width: 10,
                 ),
