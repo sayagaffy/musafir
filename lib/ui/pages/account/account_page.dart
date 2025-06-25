@@ -21,6 +21,7 @@ import 'package:musafir/data/firestore/user_store.dart';
 import 'package:musafir/routes/routes_helper.dart';
 import 'package:musafir/shared/theme.dart';
 import 'package:musafir/ui/widgets/roundedBox_title.dart';
+import 'package:musafir/ui/pages/account/my_reports.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -196,7 +197,7 @@ class _AccountPageState extends State<AccountPage> {
                           GestureDetector(
                             onTap: () {
                               // TODO: Navigate to user reports page
-                              // Get.toNamed(RouteHelper.getUserReportsPage());
+                              Get.to(() => const MyReportsPage());
                             },
                             child: const RoundedBoxTitle(
                               title: 'Laporan Saya',

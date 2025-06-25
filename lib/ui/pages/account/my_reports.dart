@@ -18,9 +18,8 @@ class _MyReportsPageState extends State<MyReportsPage> {
   @override
   void initState() {
     super.initState();
-    // Use global FirestoreHelper from dependencies
-    reportController = Get.put(
-        ReportController(firestoreHelper: dependencies.firestoreHelper));
+    // Gunakan dependency injection yang sudah ada
+    reportController = Get.find<ReportController>();
     reportController.getUserReports();
   }
 

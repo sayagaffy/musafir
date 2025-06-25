@@ -11,7 +11,8 @@ import 'package:musafir/models/report_types.dart';
 class ReportController extends GetxController {
   final FirestoreHelper firestoreHelper;
 
-  ReportController({required this.firestoreHelper});
+  ReportController({FirestoreHelper? firestoreHelper})
+      : firestoreHelper = firestoreHelper ?? FirestoreHelper();
 
   // Reactive variables for report creation
   final _selectedReportType = ''.obs;

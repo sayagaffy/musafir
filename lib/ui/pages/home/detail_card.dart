@@ -14,6 +14,7 @@ import 'package:musafir/ui/widgets/bottom_sheet_menu.dart';
 import 'package:musafir/ui/widgets/custom_button.dart';
 import 'package:musafir/ui/widgets/location_text.dart';
 import 'package:musafir/utilitis/apps_constants.dart';
+import 'package:musafir/ui/pages/home/report_place.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
@@ -107,7 +108,7 @@ class _DetailCardState extends State<DetailCard> {
             );
           }
         }
-        return Icon(
+        return const Icon(
           Icons.bookmark_rounded,
           size: 30,
           color: kWhiteColor,
@@ -130,7 +131,7 @@ class _DetailCardState extends State<DetailCard> {
         if (snapshot.connectionState == ConnectionState.done) {
           // Jika data dari future adalah 0, maka menampilkan ikon tambah
           if (snapshot.data == 0) {
-            return Icon(
+            return const Icon(
               Icons.add_circle,
               size: 30,
               color: kWhiteColor,
@@ -206,7 +207,7 @@ class _DetailCardState extends State<DetailCard> {
                 },
                 // onTap: onTap,
 
-                child: Icon(
+                child: const Icon(
                   Icons.keyboard_backspace_rounded,
                   size: 35,
                   color: kWhiteColor,
@@ -216,7 +217,7 @@ class _DetailCardState extends State<DetailCard> {
                 onTap: () {
                   _dialogBuilder(context);
                 },
-                child: Icon(
+                child: const Icon(
                   Icons.more_horiz,
                   size: 35,
                   color: kWhiteColor,
@@ -308,7 +309,7 @@ class _DetailCardState extends State<DetailCard> {
       height: 67,
       width: double.infinity,
       padding: const EdgeInsets.only(top: 15, bottom: 15, left: 10, right: 10),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: kNeutral20,
       ),
       child: Row(
@@ -393,7 +394,7 @@ class _DetailCardState extends State<DetailCard> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.place,
                       size: 18,
                       color: kRedMain,
@@ -442,7 +443,7 @@ class _DetailCardState extends State<DetailCard> {
                             return Padding(
                               padding:
                                   EdgeInsets.only(left: index.toDouble() * 10),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.attach_money_rounded,
                                 size: 15,
                                 color: kBlueColor,
@@ -463,11 +464,11 @@ class _DetailCardState extends State<DetailCard> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ImageIcon(
-                      const AssetImage(
+                      AssetImage(
                         "assets/icon_prayer.png",
                       ),
                       size: 18,
@@ -610,7 +611,7 @@ class _DetailCardState extends State<DetailCard> {
                       ),
                     );
                   },
-                  child: Icon(
+                  child: const Icon(
                     Icons.info_rounded,
                     size: 20,
                     color: kBlackColor,
@@ -851,7 +852,7 @@ class _DetailCardState extends State<DetailCard> {
                       ),
                       child: Column(
                         children: [
-                          Divider(
+                          const Divider(
                             height: 0.5,
                             color: kNeutral40,
                           ),
@@ -1049,7 +1050,7 @@ class _DetailCardState extends State<DetailCard> {
                             ),
                             child: Column(
                               children: [
-                                Divider(
+                                const Divider(
                                   height: 0.5,
                                   color: kNeutral40,
                                 ),
@@ -1140,7 +1141,7 @@ class _DetailCardState extends State<DetailCard> {
                   width: double.infinity,
                   padding: const EdgeInsetsDirectional.symmetric(vertical: 12),
                   margin: const EdgeInsets.only(bottom: 30),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     border: Border(
                       top: BorderSide(
                         color: kNeutral40,
@@ -1211,13 +1212,13 @@ class _DetailCardState extends State<DetailCard> {
         return Container(
           height: 500,
           padding: const EdgeInsets.only(top: 25, left: 25, right: 25),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: kWhiteColor,
           ),
           width: double.infinity,
           child: (Column(
             children: [
-              Icon(
+              const Icon(
                 Icons.check_circle_rounded,
                 size: 45,
                 color: kBlueColor,
@@ -1257,6 +1258,14 @@ class _DetailCardState extends State<DetailCard> {
         );
       },
     );
+  }
+
+  void _navigateToReportPage() {
+    Get.to(() => ReportPlacePage(
+          // ← PERHATIKAN NAMA CLASS: ReportPlacePage
+          placeId: widget.pageId,
+          placeName: widget.page,
+        ));
   }
 
   Future<void> _showReportBuilder(BuildContext context) {
@@ -1443,9 +1452,7 @@ class _DetailCardState extends State<DetailCard> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  onPressed: () {
-                    _showReportBuilder(context);
-                  },
+                  onPressed: _navigateToReportPage,
                   child: Text(
                     'Laporkan',
                     style: whiteTextStyle.copyWith(
